@@ -1,0 +1,22 @@
+{
+  "name": "darrynten/clarifai-php",
+  "description": "PHP Client for the Clarifai API",
+  "type": "library",
+  "require": {
+    "php": "^5.5.9 || ^7.0",
+    "guzzlehttp/guzzle": "^6.2.1"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "~5.0",
+    "mockery/mockery": "dev-master"
+  },
+  "config": {
+    "bin-dir": "bin"
+  },
+  "autoload": {
+    "psr-4": {
+      "DarrynTen\\Clarifai\\": "src/"
+    },
+    "exclude-from-classmap": ["/Tests/"]
+  }
+}
