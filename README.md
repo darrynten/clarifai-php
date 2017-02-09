@@ -1,6 +1,6 @@
 # clarifai-php
 
-(https://developer.clarifai.com/docs/)[Clarifai API] client for PHP
+[Clarifai API](https://developer.clarifai.com/docs/) client for PHP
 
 > Clarifai is an artificial intelligence company that excels in visual recognition, solving real-world problems for businesses and developers alike.
 
