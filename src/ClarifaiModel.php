@@ -107,10 +107,14 @@ class ClarifaiModel extends Clarifai {
     //
   }
 
+  public function update() {
+    //
+  }
+
   // mergeConcepts
   // deleteConcepts
   // overwriteConcepts
-  // update
+  //
   // getVersion
   // getVersions
   // getOutputInfo

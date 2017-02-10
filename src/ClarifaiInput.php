@@ -90,10 +90,10 @@ class ClarifaiInput {
     $this->rawData = $data;
   }
 
-  // get
+  // mergeConcepts
+  // deleteConcepts
+  // overwriteConcepts
+  //
   // update 
-  // overwrite
-  // merge
-  // delete
 }
 
