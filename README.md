@@ -42,6 +42,11 @@ have covered.
 
 Guzzle is used for the communications
 
+Tests are needed ASAP
+
+A basic structure is there, and all classes have comments for the methods
+they need to support
+
 - [ ] Authentication
 
 Access is currently handled via a Bearer token.
@@ -225,6 +230,18 @@ Each section will have a short explaination and some example code.
   - [ ] Overwrite
 - [ ] Batch Requests
 - [ ] Languages
+
+## Public Model IDs
+
+- General - aaa03c23b3724a16a56b629203edc62c
+- Food - bd367be194cf45149e75f01d59f77ba7
+- Travel - eee28c313d69466f836ab83287a54ed9
+- NSFW - e9576d86d2004ed1a38ba0cf39ecb4b1
+- Weddings - c386b7a870114f4a87477c0824499348
+- Colour - eeed0b6733a644cea07cf4c60f87ebb7
+- Face Detection - a403429f2ddf4b49b307e318f00e528b
+- Apparel - e0be3b9d6a454f0493ac3a30784001ff
+- Celebrity - e466caa0619f444ab97497640cefc4dc
 
 ## Supported Images
 
