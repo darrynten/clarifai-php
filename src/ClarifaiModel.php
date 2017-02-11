@@ -79,9 +79,9 @@ class ClarifaiModel extends Clarifai
      * Constructor
      *
      * @param array $config The config for the concept
-     * @param array $data   The data for the concept
+     * @param array $data The data for the concept
      */
-    public function __construct(Array $config, Array $data)
+    public function __construct(array $config, array $data)
     {
         $this->modelId = $data['id'];
         $this->modelName = $data['name'];
@@ -96,8 +96,8 @@ class ClarifaiModel extends Clarifai
     /**
      * The actual predict call
      *
-     * @param array|string $inputs   The inputs
-     * @param string|null  $language Language to return results in
+     * @param array|string $inputs The inputs
+     * @param string|null $language Language to return results in
      *
      * @return void
      */
@@ -107,6 +107,7 @@ class ClarifaiModel extends Clarifai
     }
 
     // This comes later, after predict
+
     /**
      * Train the model
      *
@@ -136,4 +137,3 @@ class ClarifaiModel extends Clarifai
     // getOutputInfo
     // getInputs
 }
-

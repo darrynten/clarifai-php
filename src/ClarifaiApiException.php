@@ -11,7 +11,7 @@
 
 namespace DarrynTen\Clarifai;
 
-use \Exception;
+use Exception;
 
 /**
  * Custom exception for Clarifai
@@ -29,9 +29,9 @@ class ClarifaiApiException extends Exception
         // Construct message from JSON if required.
         if (substr($message, 0, 1) === '{') {
             $messageObject = json_decode($message);
-            $message = $messageObject->status . ': ' . $messageObject->title . ' - ' . $messageObject->detail;
+            $message = $messageObject->status.': '.$messageObject->title.' - '.$messageObject->detail;
             if (!empty($messageObject->errors)) {
-                $message .= ' ' . serialize($messageObject->errors);
+                $message .= ' '.serialize($messageObject->errors);
             }
         }
 
