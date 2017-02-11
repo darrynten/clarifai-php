@@ -1,8 +1,8 @@
 <?php
 
-namespace Clarifai;
+namespace DarrynTen\Clarifai;
 
-use Clarifai\Concept;
+use DarrynTen\Clarifai\ClarifaiConcept;
 
 /**
  * Single Clarifai Concept
@@ -44,7 +44,7 @@ class ClarifaiConcepts {
     $this->rawData = $data;
 
     foreach ($data as $concept) {
-      $this->concepts[] = new Concept($config, $concept);
+      $this->concepts[] = new ClarifaiConcept($config, $concept);
     }
   }
 

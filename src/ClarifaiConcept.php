@@ -1,6 +1,6 @@
 <?php
 
-namespace Clarifai;
+namespace DarrynTen\Clarifai;
 
 /**
  * Single Clarifai Concept

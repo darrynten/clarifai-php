@@ -1,8 +1,8 @@
 <?php
 
-namespace Clarifai;
+namespace DarrynTen\Clarifai;
 
-use Clarifai\Model;
+use DarrynTen\Clarifai\ClarifaiModel;
 
 /**
  * Single Clarifai Model
@@ -44,7 +44,7 @@ class ClarifaiModels {
     $this->rawData = $data;
 
     foreach ($data as $model) {
-      $this->models[] = new Model($config, $model);
+      $this->models[] = new ClarifaiModel($config, $model);
     }
   }
 
@@ -65,5 +65,6 @@ class ClarifaiModels {
   // getVersion
   // getVersions
   // getOutputInfo
-
+  //
+}
 

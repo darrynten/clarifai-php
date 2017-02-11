@@ -1,9 +1,12 @@
 <?php
 
-namespace Clarifai;
+namespace DarrynTen\Clarifai;
+
+use DarrynTen\Clarifai\ClarifaiApiException;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
+
 
 /**
  * Clarifai Library
@@ -60,7 +63,7 @@ class Clarifai {
    * @param string $clientSecret
    *   The client secret
    */
-  public function __construct(String $clientId, String $clientSecret, String $bearerToken) {
+  public function __construct($clientId, $clientSecret, $bearerToken) {
     // TODO oauth
     $this->clientId = $clientId;
     $this->clientSecret = $clientSecret;
@@ -85,7 +88,7 @@ class Clarifai {
    *
    * @throws ClarifaiApiException
    */
-  protected function request(String $method, String $path, Array $parameters = []) {
+  public function request(String $method, String $path, Array $parameters = []) {
 
     // TODO will change when oauth is implemented
     $options = [
@@ -124,13 +127,7 @@ class Clarifai {
       // All good
       return $data;
     } catch (RequestException $exception) {
-      $response = $exception->getResponse();
-
-      if (!empty($response)) {
-        $message = $response->getBody();
-      } else {
-        $message = $exception->getMessage();
-      }
+      $message = $exception->getMessage();
 
       throw new ClarifaiApiException($message, $exception->getCode(), $exception);
     }

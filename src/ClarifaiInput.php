@@ -1,13 +1,13 @@
 <?php
 
-namespace Clarifai;
+namespace DarrynTen\Clarifai;
 
 /**
  * Single Clarifai Input
  *
  * @package Clarifai
  */
-class ClarifaiInput {
+class ClarifaiInput extends Clarifai {
 
   /**
    * The ID of the input
@@ -82,7 +82,7 @@ class ClarifaiInput {
     // $this->concepts = new Concepts($config, $data['concepts']);
 
     $this->score = $data['score'];
-    $this->metaData = $data['metaData']
+    $this->metaData = $data['metaData'];
 
     // Geo?
 
