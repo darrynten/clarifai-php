@@ -17,7 +17,8 @@
   },
   "autoload": {
     "psr-4": {
-      "DarrynTen\\Clarifai\\": "src/"
+      "DarrynTen\\Clarifai\\": "src/",
+      "DarrynTen\\Clarifai\\Tests\\": "tests/"
     },
     "exclude-from-classmap": ["/Tests/"]
   }
