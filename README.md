@@ -2,11 +2,11 @@
 
 [Clarifai API](https://developer.clarifai.com/docs/) client for PHP
 
-> Clarifai is an artificial intelligence company that excels in visual 
-recognition, solving real-world problems for businesses and developers 
-alike.
+This is a fully unit tested unofficial PHP client for Clarifai
 
-This is an unofficial PHP client for Clarifai
+> Clarifai is an artificial intelligence company that excels in visual
+recognition, solving real-world problems for businesses and developers
+alike.
 
 ## Basic use
 
@@ -23,25 +23,25 @@ with concepts to later train your own model.
 
 #### Model
 
-Clarifai provides many different models that 'see' the world differently. 
-A model contains a group of concepts. A model will only see the concepts 
+Clarifai provides many different models that 'see' the world differently.
+A model contains a group of concepts. A model will only see the concepts
 it contains.
 
-There are times when you wish you had a model that sees the world the way 
+There are times when you wish you had a model that sees the world the way
 you see it. The API allows you to do this. You can create your own model
-and train it with your own images and concepts. Once you train it to see 
-how you would like it to see, you can then use that model to make 
+and train it with your own images and concepts. Once you train it to see
+how you would like it to see, you can then use that model to make
 predictions.
 
-You do not need many images to get started. We recommend starting with 10 
+You do not need many images to get started. We recommend starting with 10
 and adding more as needed.
 
 #### Concepts
 
-Concepts play an important role in creating your own models using your 
+Concepts play an important role in creating your own models using your
 own concepts. Concepts also help you search for inputs.
 
-When you add a concept to an input, you need to indicate whether the 
+When you add a concept to an input, you need to indicate whether the
 concept is present in the image or if it is not present.
 
 ## Features
@@ -52,14 +52,20 @@ Checkboxes have been placed at each section, please check them off
 in this readme when submitting a pull request for the features you
 have covered.
 
-- [ ] Application base
+### Application base
 
-Guzzle is used for the communications
-
-Tests are needed ASAP
+* Guzzle is used for the communications
+* The library has 100% test coverage
+* The library supports framework-agnostic caching so you don't have to
+worry about which framework your package that uses this package is going
+to end up in.
 
 A basic structure is there, and all classes have comments for the methods
 they need to support
+
+The structure is heavily inspired by [The official JS client](https://github.com/Clarifai/clarifai-javascript)
+
+---
 
 - [ ] Authentication
 
@@ -67,6 +73,8 @@ Access is currently handled via a Bearer token.
 
 Authentication in this client should be handled via oauth2
 You would need to initialise the client with your Client ID and Secret.
+
+---
 
 - [ ] Predict
 
