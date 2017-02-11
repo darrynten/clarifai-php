@@ -1,8 +1,8 @@
 <?php
 
-namespace Clarifai;
+namespace DarrynTen\Clarifai;
 
-use Clarifai\Input;
+use DarrynTen\Clarifai\ClarifaiInput;
 
 /**
  * Multiple Clarifai Inputs
@@ -42,7 +42,7 @@ class ClarifaiInputs {
     $this->rawData = $data;
 
     foreach ($data as $input) {
-      $this->inputs[] = new Concept($config, $input);
+      $this->inputs[] = new ClarifaiInput($config, $input);
     }
   }
 
