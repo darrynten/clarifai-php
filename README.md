@@ -2,7 +2,9 @@
 
 [Clarifai API](https://developer.clarifai.com/docs/) client for PHP
 
-> Clarifai is an artificial intelligence company that excels in visual recognition, solving real-world problems for businesses and developers alike.
+> Clarifai is an artificial intelligence company that excels in visual 
+recognition, solving real-world problems for businesses and developers 
+alike.
 
 This is an unofficial PHP client for Clarifai
 
@@ -14,21 +16,33 @@ The API is rather simple, and consists of Inputs, Concepts and Models.
 
 #### Inputs
 
-You send inputs (images) to the service and it returns predictions. In addition to receiving predictions on inputs, you can also 'save' inputs and their predictions to later search against. You can also 'save' inputs with concepts to later train your own model.
+You send inputs (images) to the service and it returns predictions. In
+addition to receiving predictions on inputs, you can also 'save' inputs
+and their predictions to later search against. You can also 'save' inputs
+with concepts to later train your own model.
 
 #### Model
 
-Clarifai provides many different models that 'see' the world differently. A model contains a group of concepts. A model will only see the concepts it contains.
+Clarifai provides many different models that 'see' the world differently. 
+A model contains a group of concepts. A model will only see the concepts 
+it contains.
 
-There are times when you wish you had a model that sees the world the way you see it. The API allows you to do this. You can create your own model and train it with your own images and concepts. Once you train it to see how you would like it to see, you can then use that model to make predictions.
+There are times when you wish you had a model that sees the world the way 
+you see it. The API allows you to do this. You can create your own model
+and train it with your own images and concepts. Once you train it to see 
+how you would like it to see, you can then use that model to make 
+predictions.
 
-You do not need many images to get started. We recommend starting with 10 and adding more as needed.
+You do not need many images to get started. We recommend starting with 10 
+and adding more as needed.
 
 #### Concepts
 
-Concepts play an important role in creating your own models using your own concepts. Concepts also help you search for inputs.
+Concepts play an important role in creating your own models using your 
+own concepts. Concepts also help you search for inputs.
 
-When you add a concept to an input, you need to indicate whether the concept is present in the image or if it is not present.
+When you add a concept to an input, you need to indicate whether the 
+concept is present in the image or if it is not present.
 
 ## Features
 
@@ -252,4 +266,19 @@ Each section will have a short explaination and some example code.
 
 ## Caching
 
-Because these are expensive calls some of them need to be cached.
+Because these are expensive calls (time and money) some of them can
+benefit from being cached. All caching should be off by default and only
+used if explicity set.
+
+These run through the `darrynten/any-cache` package, and no extra config
+is needed. Please ensure that any features that include caching have it
+be optional and initially set to `false` to avoid unexpected behaviour.
+
+## Contributing and Testing
+
+There is currently 100% test coverage in the project, please ensure that
+when contributing you update the tests. For more info see CONTRIBUTING.md
+
+## Acknowledgements
+
+* Add yourself here :)
