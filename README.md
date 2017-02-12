@@ -289,4 +289,4 @@ when contributing you update the tests. For more info see CONTRIBUTING.md
 
 ## Acknowledgements
 
-* [Alexander Marinov](https://github.com/mxnr) for jumping on board.
+* [Dmitry Semenov](https://github.com/mxnr) for jumping on board.
