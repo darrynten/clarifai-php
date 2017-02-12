@@ -43,7 +43,7 @@ class ClarifaiInput extends Clarifai
     /**
      * The concepts associated with this input
      *
-     * @var Concepts $concepts
+     * @var ClarifaiConcepts $concepts
      */
     protected $concepts;
 
@@ -79,9 +79,9 @@ class ClarifaiInput extends Clarifai
      * Constructor
      *
      * @param array $config The config for the input
-     * @param array $data   The data for the input
+     * @param array $data The data for the input
      */
-    public function __construct(Array $config, Array $data)
+    public function __construct(array $config, array $data)
     {
         $this->inputId = $data['id'];
         $this->createdAt = $data['createdAt'];
@@ -103,6 +103,5 @@ class ClarifaiInput extends Clarifai
     // deleteConcepts
     // overwriteConcepts
     //
-    // update 
+    // update
 }
-

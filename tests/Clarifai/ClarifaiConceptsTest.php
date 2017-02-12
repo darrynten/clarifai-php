@@ -2,21 +2,18 @@
 
 namespace DarrynTen\Clarifai\Tests\Clarifai;
 
-use PHPUnit_Framework_TestCase;
-
-use DarrynTen\Clarifai\Clarifai;
 use DarrynTen\Clarifai\ClarifaiConcepts;
-
+use PHPUnit_Framework_TestCase;
 
 class ClarifaiConceptsTest extends PHPUnit_Framework_TestCase
 {
+    use DataHelper;
+
     public function testConstruct()
     {
         $config = [];
         $data = [
-          'concept' => [
-            'name' => 'concept'
-          ]
+            'concept' => $this->getModelData()
         ];
 
         $concept = new ClarifaiConcepts($config, $data);
@@ -24,5 +21,3 @@ class ClarifaiConceptsTest extends PHPUnit_Framework_TestCase
         $this->assertInstanceOf(ClarifaiConcepts::class, $concept);
     }
 }
-
-

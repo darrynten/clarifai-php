@@ -11,8 +11,6 @@
 
 namespace DarrynTen\Clarifai;
 
-use DarrynTen\Clarifai\ClarifaiConcept;
-
 /**
  * Single Clarifai Concept
  *
@@ -45,9 +43,9 @@ class ClarifaiConcepts
      * Constructor
      *
      * @param array $config The config for the concept
-     * @param array $data   The data for the concept
+     * @param array $data The data for the concept
      */
-    public function __construct(Array $config, Array $data)
+    public function __construct(array $config, array $data)
     {
         $this->config = $config;
         $this->rawData = $data;
@@ -63,4 +61,3 @@ class ClarifaiConcepts
     // search
     //
 }
-

@@ -2,21 +2,18 @@
 
 namespace DarrynTen\Clarifai\Tests\Clarifai;
 
-use PHPUnit_Framework_TestCase;
-
-use DarrynTen\Clarifai\Clarifai;
 use DarrynTen\Clarifai\ClarifaiInputs;
-
+use PHPUnit_Framework_TestCase;
 
 class ClarifaiInputsTest extends PHPUnit_Framework_TestCase
 {
+    use DataHelper;
+
     public function testConstruct()
     {
         $config = [];
         $data = [
-          'input' => [
-            'name' => 'input'
-          ]
+            'input' => $this->getInputData()
         ];
 
         $inputs = new ClarifaiInputs($config, $data);
@@ -24,5 +21,3 @@ class ClarifaiInputsTest extends PHPUnit_Framework_TestCase
         $this->assertInstanceOf(ClarifaiInputs::class, $inputs);
     }
 }
-
-

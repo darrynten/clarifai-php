@@ -11,8 +11,6 @@
 
 namespace DarrynTen\Clarifai;
 
-use DarrynTen\Clarifai\ClarifaiInput;
-
 /**
  * Multiple Clarifai Inputs
  *
@@ -45,9 +43,9 @@ class ClarifaiInputs
      * Constructor
      *
      * @param array $config The config for the inputs
-     * @param array $data   The inputs
+     * @param array $data The inputs
      */
-    public function __construct(Array $config, Array $data)
+    public function __construct(array $config, array $data)
     {
         $this->config = $config;
         $this->rawData = $data;
@@ -70,5 +68,3 @@ class ClarifaiInputs
     //
     // getStatus
 }
-
-

@@ -18,7 +18,6 @@ namespace DarrynTen\Clarifai;
  */
 class ClarifaiConcept
 {
-
     /**
      * The ID of the concept
      *
@@ -72,9 +71,9 @@ class ClarifaiConcept
      * Constructor
      *
      * @param array $config The config for the concept
-     * @param array $data   The data for the concept
+     * @param array $data The data for the concept
      */
-    public function __construct(Array $config, Array $data)
+    public function __construct(array $config, array $data)
     {
         $this->conceptId = $data['id'];
         $this->conceptName = $data['name'];

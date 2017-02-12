@@ -11,8 +11,6 @@
 
 namespace DarrynTen\Clarifai;
 
-use DarrynTen\Clarifai\ClarifaiModel;
-
 /**
  * Multiple Clarifai Models
  *
@@ -45,9 +43,9 @@ class ClarifaiModels
      * Constructor
      *
      * @param array $config The config for the model
-     * @param array $data   The data for the model
+     * @param array $data The data for the model
      */
-    public function __construct(Array $config, Array $data)
+    public function __construct(array $config, array $data)
     {
         $this->config = $config;
         $this->rawData = $data;
@@ -76,4 +74,3 @@ class ClarifaiModels
     // getOutputInfo
     //
 }
-

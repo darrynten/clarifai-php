@@ -2,10 +2,9 @@
 
 namespace DarrynTen\Clarifai\Tests\Clarifai;
 
-use PHPUnit_Framework_TestCase;
 use DarrynTen\Clarifai\Clarifai;
-
 use InterNations\Component\HttpMock\PHPUnit\HttpMockTrait;
+use PHPUnit_Framework_TestCase;
 
 class ClarifaiTest extends PHPUnit_Framework_TestCase
 {
@@ -18,7 +17,7 @@ class ClarifaiTest extends PHPUnit_Framework_TestCase
 
     public static function tearDownAfterClass()
     {
-      static::tearDownHttpMockAfterClass();
+        static::tearDownHttpMockAfterClass();
     }
 
     public function setUp()
@@ -66,7 +65,9 @@ class ClarifaiTest extends PHPUnit_Framework_TestCase
 
         $clarifai = new Clarifai('', '', '');
 
-        $this->assertEquals(json_decode('{ body: { code: 1 } }'), $clarifai->handleRequest('GET', 'http://localhost:8082/foo', [], []));
+        $this->assertEquals(
+            json_decode('{ body: { code: 1 } }'),
+            $clarifai->handleRequest('GET', 'http://localhost:8082/foo', [], [])
+        );
     }
-
 }
