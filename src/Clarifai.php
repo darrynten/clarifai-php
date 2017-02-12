@@ -103,7 +103,7 @@ class Clarifai
      *
      * @throws ClarifaiApiException
      */
-    public function request(String $method, String $path, array $parameters = [])
+    public function request(string $method, string $path, array $parameters = [])
     {
         // TODO will change when oauth is implemented
         $options = [

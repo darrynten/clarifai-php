@@ -11,7 +11,6 @@
 
 namespace DarrynTen\Clarifai;
 
-
 /**
  * Single Clarifai Input
  *

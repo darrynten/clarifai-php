@@ -40,10 +40,10 @@ class ClarifaiTest extends PHPUnit_Framework_TestCase
     {
         $this->http->mock
             ->when()
-            ->methodIs('GET')
-            ->pathIs('/foo')
+                ->methodIs('GET')
+                ->pathIs('/foo')
             ->then()
-            ->body('{}')
+                ->body('{}')
             ->end();
         $this->http->setUp();
 
@@ -56,10 +56,10 @@ class ClarifaiTest extends PHPUnit_Framework_TestCase
     {
         $this->http->mock
             ->when()
-            ->methodIs('GET')
-            ->pathIs('/foo')
+                ->methodIs('GET')
+                ->pathIs('/foo')
             ->then()
-            ->body('{ value: 1 }')
+                ->body('{ value: 1 }')
             ->end();
         $this->http->setUp();
 
