@@ -1,10 +1,12 @@
 # clarifai-php
 
-(https://developer.clarifai.com/docs/)[Clarifai API] client for PHP
+[Clarifai API](https://developer.clarifai.com/docs/) client for PHP
 
-> Clarifai is an artificial intelligence company that excels in visual recognition, solving real-world problems for businesses and developers alike.
+This is a fully unit tested unofficial PHP client for Clarifai
 
-This is an unofficial PHP client for Clarifai
+> Clarifai is an artificial intelligence company that excels in visual
+recognition, solving real-world problems for businesses and developers
+alike.
 
 ## Basic use
 
@@ -14,21 +16,33 @@ The API is rather simple, and consists of Inputs, Concepts and Models.
 
 #### Inputs
 
-You send inputs (images) to the service and it returns predictions. In addition to receiving predictions on inputs, you can also 'save' inputs and their predictions to later search against. You can also 'save' inputs with concepts to later train your own model.
+You send inputs (images) to the service and it returns predictions. In
+addition to receiving predictions on inputs, you can also 'save' inputs
+and their predictions to later search against. You can also 'save' inputs
+with concepts to later train your own model.
 
 #### Model
 
-Clarifai provides many different models that 'see' the world differently. A model contains a group of concepts. A model will only see the concepts it contains.
+Clarifai provides many different models that 'see' the world differently.
+A model contains a group of concepts. A model will only see the concepts
+it contains.
 
-There are times when you wish you had a model that sees the world the way you see it. The API allows you to do this. You can create your own model and train it with your own images and concepts. Once you train it to see how you would like it to see, you can then use that model to make predictions.
+There are times when you wish you had a model that sees the world the way
+you see it. The API allows you to do this. You can create your own model
+and train it with your own images and concepts. Once you train it to see
+how you would like it to see, you can then use that model to make
+predictions.
 
-You do not need many images to get started. We recommend starting with 10 and adding more as needed.
+You do not need many images to get started. We recommend starting with 10
+and adding more as needed.
 
 #### Concepts
 
-Concepts play an important role in creating your own models using your own concepts. Concepts also help you search for inputs.
+Concepts play an important role in creating your own models using your
+own concepts. Concepts also help you search for inputs.
 
-When you add a concept to an input, you need to indicate whether the concept is present in the image or if it is not present.
+When you add a concept to an input, you need to indicate whether the
+concept is present in the image or if it is not present.
 
 ## Features
 
@@ -38,9 +52,20 @@ Checkboxes have been placed at each section, please check them off
 in this readme when submitting a pull request for the features you
 have covered.
 
-- [ ] Application base
+### Application base
 
-Guzzle is used for the communications
+* Guzzle is used for the communications
+* The library has 100% test coverage
+* The library supports framework-agnostic caching so you don't have to
+worry about which framework your package that uses this package is going
+to end up in.
+
+A basic structure is there, and all classes have comments for the methods
+they need to support
+
+The structure is heavily inspired by [The official JS client](https://github.com/Clarifai/clarifai-javascript)
+
+---
 
 - [ ] Authentication
 
@@ -48,6 +73,8 @@ Access is currently handled via a Bearer token.
 
 Authentication in this client should be handled via oauth2
 You would need to initialise the client with your Client ID and Secret.
+
+---
 
 - [ ] Predict
 
@@ -226,6 +253,18 @@ Each section will have a short explaination and some example code.
 - [ ] Batch Requests
 - [ ] Languages
 
+## Public Model IDs
+
+- General - aaa03c23b3724a16a56b629203edc62c
+- Food - bd367be194cf45149e75f01d59f77ba7
+- Travel - eee28c313d69466f836ab83287a54ed9
+- NSFW - e9576d86d2004ed1a38ba0cf39ecb4b1
+- Weddings - c386b7a870114f4a87477c0824499348
+- Colour - eeed0b6733a644cea07cf4c60f87ebb7
+- Face Detection - a403429f2ddf4b49b307e318f00e528b
+- Apparel - e0be3b9d6a454f0493ac3a30784001ff
+- Celebrity - e466caa0619f444ab97497640cefc4dc
+
 ## Supported Images
 
 * JPEG
@@ -235,4 +274,19 @@ Each section will have a short explaination and some example code.
 
 ## Caching
 
-Because these are expensive calls some of them need to be cached.
+Because these are expensive calls (time and money) some of them can
+benefit from being cached. All caching should be off by default and only
+used if explicity set.
+
+These run through the `darrynten/any-cache` package, and no extra config
+is needed. Please ensure that any features that include caching have it
+be optional and initially set to `false` to avoid unexpected behaviour.
+
+## Contributing and Testing
+
+There is currently 100% test coverage in the project, please ensure that
+when contributing you update the tests. For more info see CONTRIBUTING.md
+
+## Acknowledgements
+
+* [Dmitry Semenov](https://github.com/mxnr) for jumping on board.
