@@ -108,13 +108,13 @@ class Clarifai
         // TODO will change when oauth is implemented
         $options = [
             'headers' => [
-                'Authorization' => 'Bearer '.$this->bearerToken,
+                'Authorization' => 'Bearer ' . $this->bearerToken,
             ],
         ];
 
         // TODO check for batch operation
 
-        return $this->handleRequest($method, $this->url.$path, $options, $parameters);
+        return $this->handleRequest($method, $this->url . $path, $options, $parameters);
     }
 
     /**
