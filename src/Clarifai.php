@@ -30,65 +30,69 @@ class Clarifai
      *
      * @var Client $client
      */
-    protected $client;
+    private $client;
 
     /**
      * The Clarifai url
      *
      * @var string $url
      */
-    protected $url = 'https://api.clarifai.com';
+    private $url = 'https://api.clarifai.com';
 
     /**
      * The version of the Clarifai API
      *
      * @var string $version
      */
-    protected $version = 'v2';
+    private $version = 'v2';
 
     /**
      * Clarifai Client ID
-     *
-     * TODO using bearer token for now
      *
      * @var string $clientId
      */
     private $clientId;
 
     /**
-     * Clarifai Client Secret
+     * The time until which token is valid
      *
-     * TODO using bearer token for now
+     * @var \DateTime
+     */
+    private $tokenExpireTime;
+
+    /**
+     * Clarifai Client Secret
      *
      * @var string $clientSecret
      */
     private $clientSecret;
 
     /**
-     * Clarifai Bearer Token
+     * Clarifai Token
      *
-     * TODO using this for now
-     *
-     * @var string $bearerToken
+     * @var string $token
      */
-    private $bearerToken;
+    private $token;
+
+    /**
+     * Clarifai Token type
+     *
+     * @var string $token
+     */
+    private $tokenType;
+
 
     /**
      * Clarifai constructor
      *
      * @param string $clientId The client ID
      * @param string $clientSecret The client secret
-     * @param string $bearerToken The bearer token
      */
-    public function __construct($clientId, $clientSecret, $bearerToken)
+    public function __construct($clientId, $clientSecret)
     {
-        // TODO oauth
         $this->clientId = $clientId;
         $this->clientSecret = $clientSecret;
-
-        // Temporary
-        $this->bearerToken = $bearerToken;
-
+        $this->tokenExpireTime = new \DateTime();
         $this->client = new Client();
     }
 
@@ -105,16 +109,14 @@ class Clarifai
      */
     public function request(string $method, string $path, array $parameters = [])
     {
-        // TODO will change when oauth is implemented
         $options = [
             'headers' => [
-                'Authorization' => 'Bearer ' . $this->bearerToken,
+                'Authorization' => $this->getAuthToken(),
             ],
         ];
 
         // TODO check for batch operation
-
-        return $this->handleRequest($method, $this->url . $path, $options, $parameters);
+        return $this->handleRequest($method, $this->url.$path, $options, $parameters);
     }
 
     /**
@@ -154,5 +156,44 @@ class Clarifai
 
             throw new ClarifaiApiException($message, $exception->getCode(), $exception);
         }
+    }
+
+    /**
+     * Get token for Clarifai API requests
+     *
+     * @return string
+     */
+    private function getAuthToken()
+    {
+        // Generate a new token if current is expired or empty
+        if (!$this->token || new \DateTime() > $this->tokenExpireTime) {
+            $this->requestToken();
+        }
+
+        return $this->tokenType . ' ' . $this->token;
+    }
+
+    /**
+     * Make request to Clarifai API for the new token
+     */
+    private function requestToken()
+    {
+        $tokenResponse = $this->handleRequest(
+            'POST',
+            $this->url.'/v1/token', // endpoint is available only in v1
+            [
+                'form_params' => [
+                    'grant_type' => 'client_credentials',
+                    'client_id' => $this->clientId,
+                    'client_secret' => $this->clientSecret,
+                ],
+            ]
+        );
+
+        $this->tokenExpireTime->modify(
+            sprintf('+%s seconds', $tokenResponse->expires_in)
+        );
+        $this->token = $tokenResponse->access_token;
+        $this->tokenType = $tokenResponse->token_type;
     }
 }
