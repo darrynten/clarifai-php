@@ -23,21 +23,21 @@ class ClarifaiInputs
      *
      * @var array $inputs
      */
-    protected $inputs;
+    private $inputs;
 
     /**
      * The config
      *
      * @var object $config
      */
-    protected $config;
+    private $config;
 
     /**
      * The raw data
      *
      * @var array $rawData
      */
-    protected $rawData;
+    private $rawData;
 
     /**
      * Constructor

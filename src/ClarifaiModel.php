@@ -24,56 +24,56 @@ class ClarifaiModel extends Clarifai
      *
      * @var string $modelId
      */
-    protected $modelId;
+    private $modelId;
 
     /**
      * The name of the model
      *
      * @var string $modelName
      */
-    protected $modelName;
+    private $modelName;
 
     /**
      * The date the model was created at
      *
      * @var string $createdAt
      */
-    protected $createdAt;
+    private $createdAt;
 
     /**
      * The app ID
      *
      * @var string $appId
      */
-    protected $appId;
+    private $appId;
 
     /**
      * The output info
      *
      * @var string $outputInfo
      */
-    protected $outputInfo;
+    private $outputInfo;
 
     /**
      * The model version
      *
      * @var string $modelVersion
      */
-    protected $modelVersion;
+    private $modelVersion;
 
     /**
      * The config
      *
      * @var object $config
      */
-    protected $config;
+    private $config;
 
     /**
      * The raw data
      *
      * @var array $rawData
      */
-    protected $rawData;
+    private $rawData;
 
     /**
      * Constructor

@@ -23,21 +23,21 @@ class ClarifaiConcepts
      *
      * @var array $concepts
      */
-    protected $concepts;
+    private $concepts;
 
     /**
      * The config
      *
      * @var object $config
      */
-    protected $config;
+    private $config;
 
     /**
      * The raw data
      *
      * @var array $rawData
      */
-    protected $rawData;
+    private $rawData;
 
     /**
      * Constructor

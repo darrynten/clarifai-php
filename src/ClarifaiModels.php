@@ -23,21 +23,21 @@ class ClarifaiModels
      *
      * @var array $models
      */
-    protected $models;
+    private $models;
 
     /**
      * The config
      *
      * @var object $config
      */
-    protected $config;
+    private $config;
 
     /**
      * The raw data
      *
      * @var array $rawData
      */
-    protected $rawData;
+    private $rawData;
 
     /**
      * Constructor
