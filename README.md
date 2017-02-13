@@ -69,9 +69,8 @@ The structure is heavily inspired by [The official JS client](https://github.com
 
 - [ ] Authentication
 
-Access is currently handled via a Bearer token.
+Access is currently handled via oauth2.
 
-Authentication in this client should be handled via oauth2
 You would need to initialise the client with your Client ID and Secret.
 
 ---

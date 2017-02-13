@@ -12,7 +12,7 @@ class ClarifaiApiExceptionTest extends PHPUnit_Framework_TestCase
     {
         $this->expectException(ClarifaiApiException::class);
 
-        $clarifai = new Clarifai('', '', '');
+        $clarifai = new Clarifai('', '');
 
         $clarifai->request('GET', 'ht://d/d', ['foo' => 'bar']);
     }
@@ -21,7 +21,7 @@ class ClarifaiApiExceptionTest extends PHPUnit_Framework_TestCase
     {
         $this->expectException(ClarifaiApiException::class);
 
-        $clarifai = new Clarifai('', '', '');
+        $clarifai = new Clarifai('', '');
 
         $clarifai->request('POST', 'ht://d/d', ['foo' => 'bar']);
     }
