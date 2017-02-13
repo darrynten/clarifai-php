@@ -116,7 +116,7 @@ class Clarifai
         ];
 
         // TODO check for batch operation
-        return $this->handleRequest($method, $this->url.$path, $options, $parameters);
+        return $this->handleRequest($method, $this->url . $path, $options, $parameters);
     }
 
     /**
