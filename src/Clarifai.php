@@ -30,21 +30,21 @@ class Clarifai
      *
      * @var Client $client
      */
-    protected $client;
+    private $client;
 
     /**
      * The Clarifai url
      *
      * @var string $url
      */
-    protected $url = 'https://api.clarifai.com';
+    private $url = 'https://api.clarifai.com';
 
     /**
      * The version of the Clarifai API
      *
      * @var string $version
      */
-    protected $version = 'v2';
+    private $version = 'v2';
 
     /**
      * Clarifai Client ID

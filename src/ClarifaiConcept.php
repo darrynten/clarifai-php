@@ -23,49 +23,49 @@ class ClarifaiConcept
      *
      * @var string $conceptId
      */
-    protected $conceptId;
+    private $conceptId;
 
     /**
      * The name of the concept
      *
      * @var string $conceptName
      */
-    protected $conceptName;
+    private $conceptName;
 
     /**
      * The date the concept was created at
      *
      * @var string $createdAt
      */
-    protected $createdAt;
+    private $createdAt;
 
     /**
      * The app ID
      *
      * @var string $appId
      */
-    protected $appId;
+    private $appId;
 
     /**
      * The value
      *
      * @var string|null $value
      */
-    protected $value = null;
+    private $value = null;
 
     /**
      * The config
      *
      * @var object $config
      */
-    protected $config;
+    private $config;
 
     /**
      * The raw data
      *
      * @var array $rawData
      */
-    protected $rawData;
+    private $rawData;
 
     /**
      * Constructor

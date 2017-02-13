@@ -24,56 +24,56 @@ class ClarifaiInput extends Clarifai
      *
      * @var string $inputId
      */
-    protected $inputId;
+    private $inputId;
 
     /**
      * The date the input was created at
      *
      * @var string $createdAt
      */
-    protected $createdAt;
+    private $createdAt;
 
     /**
      * The image URL
      *
      * @var string $imageUrl
      */
-    protected $imageUrl;
+    private $imageUrl;
 
     /**
      * The concepts associated with this input
      *
      * @var ClarifaiConcepts $concepts
      */
-    protected $concepts;
+    private $concepts;
 
     /**
      * The input score
      *
      * @var float $score
      */
-    protected $score;
+    private $score;
 
     /**
      * The metadata
      *
      * @var array $metaData
      */
-    protected $metaData;
+    private $metaData;
 
     /**
      * The config
      *
      * @var object $config
      */
-    protected $config;
+    private $config;
 
     /**
      * The raw data
      *
      * @var array $rawData
      */
-    protected $rawData;
+    private $rawData;
 
     /**
      * Constructor
