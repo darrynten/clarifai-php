@@ -3,10 +3,9 @@
 namespace DarrynTen\Clarifai\Tests\Clarifai\Repository;
 
 use DarrynTen\Clarifai\Repository\Models;
-use PHPUnit_Framework_TestCase;
 use DarrynTen\Clarifai\Tests\Clarifai\Helpers\DataHelper;
 
-class ModelsTest extends PHPUnit_Framework_TestCase
+class ModelsTest extends \PHPUnit_Framework_TestCase
 {
     use DataHelper;
 
@@ -17,7 +16,7 @@ class ModelsTest extends PHPUnit_Framework_TestCase
             'model' => $this->getModelData(),
         ];
 
-        $models = new Models($config, $data);
+        $models = new Models($this->getRequestMock(), $config, $data);
 
         $this->assertInstanceOf(Models::class, $models);
     }

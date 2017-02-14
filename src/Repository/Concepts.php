@@ -11,12 +11,14 @@
 
 namespace DarrynTen\Clarifai\Repository;
 
+use DarrynTen\Clarifai\Request\RequestHandler;
+
 /**
  * Single Clarifai Concept
  *
  * @package Clarifai
  */
-class Concepts
+class Concepts extends BaseRepository
 {
     /**
      * A collection of concepts
@@ -42,16 +44,18 @@ class Concepts
     /**
      * Constructor
      *
+     * @param RequestHandler $request
      * @param array $config The config for the concept
      * @param array $data The data for the concept
      */
-    public function __construct(array $config, array $data)
+    public function __construct(RequestHandler $request, array $config, array $data)
     {
+        parent::__construct($request);
         $this->config = $config;
         $this->rawData = $data;
 
         foreach ($data as $concept) {
-            $this->concepts[] = new Concept($config, $concept);
+            $this->concepts[] = new Concept($this->getRequest(), $config, $concept);
         }
     }
 

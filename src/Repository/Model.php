@@ -11,14 +11,15 @@
 
 namespace DarrynTen\Clarifai\Repository;
 
+use DarrynTen\Clarifai\Request\RequestHandler;
+
 /**
  * Single Clarifai Model
  *
  * @package Clarifai
  */
-class Model
+class Model extends BaseRepository
 {
-
     /**
      * The ID of the model
      *
@@ -78,11 +79,13 @@ class Model
     /**
      * Constructor
      *
-     * @param array $config The config for the concept
-     * @param array $data The data for the concept
+     * @param RequestHandler $request
+     * @param array $config The config for the model
+     * @param array $data The data for the model
      */
-    public function __construct(array $config, array $data)
+    public function __construct(RequestHandler $request, array $config, array $data)
     {
+        parent::__construct($request);
         $this->modelId = $data['id'];
         $this->modelName = $data['name'];
         $this->createdAt = $data['createdAt'];

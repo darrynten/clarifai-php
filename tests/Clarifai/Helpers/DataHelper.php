@@ -35,4 +35,12 @@ trait DataHelper
             'metaData' => 'metaData'
         ];
     }
+
+    /**
+     * @return \Mockery\MockInterface|\DarrynTen\Clarifai\Request\RequestHandler
+     */
+    public function getRequestMock()
+    {
+        return \Mockery::mock('DarrynTen\Clarifai\Request\RequestHandler');
+    }
 }

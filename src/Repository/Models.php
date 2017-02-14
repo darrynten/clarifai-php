@@ -11,12 +11,14 @@
 
 namespace DarrynTen\Clarifai\Repository;
 
+use DarrynTen\Clarifai\Request\RequestHandler;
+
 /**
  * Multiple Clarifai Models
  *
  * @package Clarifai
  */
-class Models
+class Models extends BaseRepository
 {
     /**
      * A collection of models
@@ -42,16 +44,18 @@ class Models
     /**
      * Constructor
      *
+     * @param RequestHandler $request
      * @param array $config The config for the model
      * @param array $data The data for the model
      */
-    public function __construct(array $config, array $data)
+    public function __construct(RequestHandler $request, array $config, array $data)
     {
+        parent::__construct($request);
         $this->config = $config;
         $this->rawData = $data;
 
         foreach ($data as $model) {
-            $this->models[] = new Model($config, $model);
+            $this->models[] = new Model($this->getRequest(), $config, $model);
         }
     }
 

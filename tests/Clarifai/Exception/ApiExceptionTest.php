@@ -4,9 +4,8 @@ namespace DarrynTen\Clarifai\Tests\Clarifai;
 
 use DarrynTen\Clarifai\Request\RequestHandler;
 use DarrynTen\Clarifai\Exception\ApiException;
-use PHPUnit_Framework_TestCase;
 
-class ApiExceptionTest extends PHPUnit_Framework_TestCase
+class ApiExceptionTest extends \PHPUnit_Framework_TestCase
 {
     public function testApiException()
     {
