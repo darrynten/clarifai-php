@@ -4,9 +4,8 @@ namespace DarrynTen\Clarifai\Tests\Clarifai\Request;
 
 use DarrynTen\Clarifai\Request\RequestHandler;
 use InterNations\Component\HttpMock\PHPUnit\HttpMockTrait;
-use PHPUnit_Framework_TestCase;
 
-class RequestHandlerTest extends PHPUnit_Framework_TestCase
+class RequestHandlerTest extends \PHPUnit_Framework_TestCase
 {
     use HttpMockTrait;
 

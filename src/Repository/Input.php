@@ -11,14 +11,15 @@
 
 namespace DarrynTen\Clarifai\Repository;
 
+use DarrynTen\Clarifai\Request\RequestHandler;
+
 /**
  * Single Clarifai Input
  *
  * @package Clarifai
  */
-class Input
+class Input extends BaseRepository
 {
-
     /**
      * The ID of the input
      *
@@ -78,11 +79,13 @@ class Input
     /**
      * Constructor
      *
+     * @param RequestHandler $request
      * @param array $config The config for the input
      * @param array $data The data for the input
      */
-    public function __construct(array $config, array $data)
+    public function __construct(RequestHandler $request, array $config, array $data)
     {
+        parent::__construct($request);
         $this->inputId = $data['id'];
         $this->createdAt = $data['createdAt'];
         $this->imageUrl = $data['imageUrl'];

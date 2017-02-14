@@ -84,7 +84,7 @@ class RequestHandler
 
 
     /**
-     * Clarifai constructor
+     * Request handler constructor
      *
      * @param string $clientId The client ID
      * @param string $clientSecret The client secret

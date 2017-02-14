@@ -4,9 +4,8 @@ namespace DarrynTen\Clarifai\Tests\Clarifai\Repository;
 
 use DarrynTen\Clarifai\Repository\Concept;
 use DarrynTen\Clarifai\Tests\Clarifai\Helpers\DataHelper;
-use PHPUnit_Framework_TestCase;
 
-class ConceptTest extends PHPUnit_Framework_TestCase
+class ConceptTest extends \PHPUnit_Framework_TestCase
 {
     use DataHelper;
 
@@ -15,7 +14,7 @@ class ConceptTest extends PHPUnit_Framework_TestCase
         $config = [];
         $data = $this->getModelData();
 
-        $concept = new Concept($config, $data);
+        $concept = new Concept($this->getRequestMock(), $config, $data);
 
         $this->assertInstanceOf(Concept::class, $concept);
     }
