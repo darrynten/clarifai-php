@@ -79,90 +79,86 @@ You would need to initialise the client with your Client ID and Secret.
 
 This is the initial deliverable.
 
-The Classes in question are `ClarifaiModels` and `ClarifaiModel`
+This is a basic library usage example that uses a predict call. The model name is `aaa03c23b3724a16a56b629203edc62c`
 
-This is an example curl request that shows a predict call. The model
-name is `aaa03c23b3724a16a56b629203edc62c`
+```php
 
-```bash
-  curl -X POST \
-    -H "Authorization: Bearer {access_token}" \
-    -H "Content-Type: application/json" \
-    -d '
-    {
-      "inputs": [
-        {
-          "data": {
-            "image": {
-              "url": "https://samples.clarifai.com/metro-north.jpg"
-            }
-          }
-        }
-      ]
-    }'\
-    https://api.clarifai.com/v2/models/aaa03c23b3724a16a56b629203edc62c/outputs
+include 'vendor/autoload.php';
+
+$clarifai = new \DarrynTen\Clarifai\Clarifai(
+    CLIENT_ID,
+    CLIENT_SECRET
+);
+
+$modelResult = $clarifai->getModel()->predictFromUrl(
+    'https://samples.clarifai.com/metro-north.jpg',
+    \DarrynTen\Clarifai\Repository\Model::GENERAL
+);
+
+echo json_encode($modelResult);
+
 ```
 
-The response (abridged)
+The response (abridged) would be:
 
 ```js
 {
-  "status": {
-    "code": 10000,
-    "description": "Ok"
+  "status":{
+     "code":10000,
+     "description":"Ok"
   },
-  "outputs": [
-    {
-      "id": "ea68cac87c304b28a8046557062f34a0",
-      "status": {
-        "code": 10000,
-        "description": "Ok"
-      },
-      "created_at": "2016-11-22T16:50:25Z",
-      "model": {
-        "name": "general-v1.3",
-        "id": "aaa03c23b3724a16a56b629203edc62c",
-        "created_at": "2016-03-09T17:11:39Z",
-        "app_id": null,
-        "output_info": {
-          "message": "Show output_info with: GET /models/{model_id}/output_info",
-          "type": "concept"
+  "outputs":[
+     {
+        "id":"db1b183a95a042d3bd873f8ca69ae2e6",
+        "status":{
+           "code":10000,
+           "description":"Ok"
         },
-        "model_version": {
-          "id": "aa9ca48295b37401f8af92ad1af0d91d",
-          "created_at": "2016-07-13T01:19:12Z",
-          "status": {
-            "code": 21100,
-            "description": "Model trained successfully"
-          }
+        "created_at":"2017-02-14T03:18:54.548733Z",
+        "model":{
+           "name":"general-v1.3",
+           "id":"aaa03c23b3724a16a56b629203edc62c",
+           "created_at":"2016-03-09T17:11:39.608845Z",
+           "app_id":null,
+           "output_info":{
+              "message":"Show output_info with: GET \/models\/{model_id}\/output_info",
+              "type":"concept"
+           },
+           "model_version":{
+              "id":"aa9ca48295b37401f8af92ad1af0d91d",
+              "created_at":"2016-07-13T01:19:12.147644Z",
+              "status":{
+                 "code":21100,
+                 "description":"Model trained successfully"
+              }
+           }
+        },
+        "input":{
+           "id":"db1b183a95a042d3bd873f8ca69ae2e6",
+           "data":{
+              "image":{
+                 "url":"https:\/\/samples.clarifai.com\/metro-north.jpg"
+              }
+           }
+        },
+        "data":{
+           "concepts":[
+              {
+                 "id":"ai_HLmqFqBf",
+                 "name":"\u043f\u043e\u0435\u0437\u0434",
+                 "app_id":null,
+                 "value":0.9989112
+              },
+              // and several others
+              {
+                 "id":"ai_VSVscs9k",
+                 "name":"\u0442\u0435\u0440\u043c\u0438\u043d\u0430\u043b",
+                 "app_id":null,
+                 "value":0.9230834
+              }
+           ]
         }
-      },
-      "input": {
-        "id": "ea68cac87c304b28a8046557062f34a0",
-        "data": {
-          "image": {
-            "url": "https://samples.clarifai.com/metro-north.jpg"
-          }
-        }
-      },
-      "data": {
-        "concepts": [
-          {
-            "id": "ai_HLmqFqBf",
-            "name": "train",
-            "app_id": null,
-            "value": 0.9989112
-          },
-          // and several others
-          {
-            "id": "ai_VSVscs9k",
-            "name": "terminal",
-            "app_id": null,
-            "value": 0.9230834
-          }
-        ]
-      }
-    }
+     }
   ]
 }
 ```
