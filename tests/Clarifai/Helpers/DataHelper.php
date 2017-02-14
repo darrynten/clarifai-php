@@ -1,6 +1,6 @@
 <?php
 
-namespace DarrynTen\Clarifai\Tests\Clarifai;
+namespace DarrynTen\Clarifai\Tests\Clarifai\Helpers;
 
 trait DataHelper
 {

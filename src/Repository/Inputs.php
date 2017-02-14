@@ -9,14 +9,14 @@
  * @link     https://github.com/darrynten/clarifai-php
  */
 
-namespace DarrynTen\Clarifai;
+namespace DarrynTen\Clarifai\Repository;
 
 /**
  * Multiple Clarifai Inputs
  *
  * @package Clarifai
  */
-class ClarifaiInputs
+class Inputs
 {
     /**
      * A collection of inputs
@@ -51,7 +51,7 @@ class ClarifaiInputs
         $this->rawData = $data;
 
         foreach ($data as $input) {
-            $this->inputs[] = new ClarifaiInput($config, $input);
+            $this->inputs[] = new Input($config, $input);
         }
     }
 

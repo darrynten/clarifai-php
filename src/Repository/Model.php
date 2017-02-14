@@ -9,14 +9,14 @@
  * @link     https://github.com/darrynten/clarifai-php
  */
 
-namespace DarrynTen\Clarifai;
+namespace DarrynTen\Clarifai\Repository;
 
 /**
  * Single Clarifai Model
  *
  * @package Clarifai
  */
-class ClarifaiModel extends Clarifai
+class Model
 {
 
     /**

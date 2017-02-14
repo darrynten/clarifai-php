@@ -9,7 +9,7 @@
  * @link     https://github.com/darrynten/clarifai-php
  */
 
-namespace DarrynTen\Clarifai;
+namespace DarrynTen\Clarifai\Exception;
 
 use Exception;
 
@@ -18,7 +18,7 @@ use Exception;
  *
  * @package Clarifai
  */
-class ClarifaiApiException extends Exception
+class ApiException extends Exception
 {
 
     /**

@@ -1,12 +1,12 @@
 <?php
 
-namespace DarrynTen\Clarifai\Tests\Clarifai;
+namespace DarrynTen\Clarifai\Tests\Clarifai\Request;
 
-use DarrynTen\Clarifai\Clarifai;
+use DarrynTen\Clarifai\Request\RequestHandler;
 use InterNations\Component\HttpMock\PHPUnit\HttpMockTrait;
 use PHPUnit_Framework_TestCase;
 
-class ClarifaiTest extends PHPUnit_Framework_TestCase
+class RequestHandlerTest extends PHPUnit_Framework_TestCase
 {
     use HttpMockTrait;
 
@@ -32,8 +32,8 @@ class ClarifaiTest extends PHPUnit_Framework_TestCase
 
     public function testInstanceOf()
     {
-        $clarifai = new Clarifai('', '');
-        $this->assertInstanceOf(Clarifai::class, $clarifai);
+        $clarifai = new RequestHandler('', '');
+        $this->assertInstanceOf(RequestHandler::class, $clarifai);
     }
 
     public function testRequest()
@@ -47,9 +47,9 @@ class ClarifaiTest extends PHPUnit_Framework_TestCase
             ->end();
         $this->http->setUp();
 
-        $clarifai = new Clarifai('', '');
+        $clarifai = new RequestHandler('', '');
 
-        $this->assertEquals(json_decode('{}'), $clarifai->handleRequest('GET', 'http://localhost:8082/foo', [], []));
+        $this->assertEquals(json_decode('{}'), $clarifai->handleRequest('GET', 'http://localhost:8082/foo', []));
     }
 
     public function testRequestEmptyResponse()
@@ -63,11 +63,11 @@ class ClarifaiTest extends PHPUnit_Framework_TestCase
             ->end();
         $this->http->setUp();
 
-        $clarifai = new Clarifai('', '');
+        $clarifai = new RequestHandler('', '');
 
         $this->assertEquals(
             json_decode('{ body: { code: 1 } }'),
-            $clarifai->handleRequest('GET', 'http://localhost:8082/foo', [], [])
+            $clarifai->handleRequest('GET', 'http://localhost:8082/foo', [])
         );
     }
 
@@ -81,9 +81,9 @@ class ClarifaiTest extends PHPUnit_Framework_TestCase
         $tokenType = 'token_type';
         $result = 'result';
 
-        // Creates a partially mock of Clarifai with mocked `handleRequest` method
+        // Creates a partially mock of RequestHandler with mocked `handleRequest` method
         $clarifai = \Mockery::mock(
-            'DarrynTen\Clarifai\Clarifai[handleRequest]',
+            'DarrynTen\Clarifai\Request\RequestHandler[handleRequest]',
             [
                 $clientId,
                 $clientSecret
@@ -116,7 +116,7 @@ class ClarifaiTest extends PHPUnit_Framework_TestCase
             ->twice()
             ->with(
                 $method,
-                'https://api.clarifai.com'.$path,
+                'https://api.clarifai.com/v2/'.$path,
                 [
                     'headers' => [
                         'Authorization' => $tokenType . ' ' . $token,

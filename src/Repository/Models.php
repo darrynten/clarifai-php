@@ -1,29 +1,29 @@
 <?php
 /**
- * Clarifai Concepts
+ * Clarifai Models
  *
- * @category Concept
+ * @category Model
  * @package  Clarifai
  * @author   Darryn Ten <darrynten@github.com>
  * @license  MIT <https://github.com/darrynten/clarifai-php/LICENSE>
  * @link     https://github.com/darrynten/clarifai-php
  */
 
-namespace DarrynTen\Clarifai;
+namespace DarrynTen\Clarifai\Repository;
 
 /**
- * Single Clarifai Concept
+ * Multiple Clarifai Models
  *
  * @package Clarifai
  */
-class ClarifaiConcepts
+class Models
 {
     /**
-     * A collection of concepts
+     * A collection of models
      *
-     * @var array $concepts
+     * @var array $models
      */
-    private $concepts;
+    private $models;
 
     /**
      * The config
@@ -42,22 +42,35 @@ class ClarifaiConcepts
     /**
      * Constructor
      *
-     * @param array $config The config for the concept
-     * @param array $data The data for the concept
+     * @param array $config The config for the model
+     * @param array $data The data for the model
      */
     public function __construct(array $config, array $data)
     {
         $this->config = $config;
         $this->rawData = $data;
 
-        foreach ($data as $concept) {
-            $this->concepts[] = new ClarifaiConcept($config, $concept);
+        foreach ($data as $model) {
+            $this->models[] = new Model($config, $model);
         }
     }
 
+    // init
+    // predict
+    // train
     // list
-    // get
     // create
+    // get
+    // update
+    // delete
     // search
+    //
+    // mergeConcepts
+    // deleteConcepts
+    // overwriteConcepts
+    //
+    // getVersion
+    // getVersions
+    // getOutputInfo
     //
 }

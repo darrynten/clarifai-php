@@ -9,13 +9,14 @@
  * @link     https://github.com/darrynten/clarifai-php
  */
 
-namespace DarrynTen\Clarifai;
+namespace DarrynTen\Clarifai\Request;
 
+use DarrynTen\Clarifai\Exception\ApiException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 
 /**
- * Clarifai Class
+ * RequestHandler Class
  *
  * @category Library
  * @package  Clarifai
@@ -23,7 +24,7 @@ use GuzzleHttp\Exception\RequestException;
  * @license  MIT <https://github.com/darrynten/clarifai-php/LICENSE>
  * @link     https://github.com/darrynten/clarifai-php
  */
-class Clarifai
+class RequestHandler
 {
     /**
      * GuzzleHttp Client
@@ -97,29 +98,6 @@ class Clarifai
     }
 
     /**
-     * Makes a request to Clarifai
-     *
-     * @param string $method The API method
-     * @param string $path The path
-     * @param array $parameters The request parameters
-     *
-     * @return object
-     *
-     * @throws ClarifaiApiException
-     */
-    public function request(string $method, string $path, array $parameters = [])
-    {
-        $options = [
-            'headers' => [
-                'Authorization' => $this->getAuthToken(),
-            ],
-        ];
-
-        // TODO check for batch operation
-        return $this->handleRequest($method, $this->url . $path, $options, $parameters);
-    }
-
-    /**
      * Makes a request using Guzzle
      *
      * @param string $method The HTTP request method (GET/POST/etc)
@@ -127,10 +105,10 @@ class Clarifai
      * @param array $options Request options
      * @param array $parameters Request parameters
      *
-     * @see Clarifai::request()
+     * @see RequestHandler::request()
      *
      * @return []
-     * @throws ClarifaiApiException
+     * @throws ApiException
      */
     public function handleRequest(string $method, string $uri = '', array $options = [], array $parameters = [])
     {
@@ -154,7 +132,7 @@ class Clarifai
         } catch (RequestException $exception) {
             $message = $exception->getMessage();
 
-            throw new ClarifaiApiException($message, $exception->getCode(), $exception);
+            throw new ApiException($message, $exception->getCode(), $exception);
         }
     }
 
@@ -195,5 +173,33 @@ class Clarifai
         );
         $this->token = $tokenResponse->access_token;
         $this->tokenType = $tokenResponse->token_type;
+    }
+
+    /**
+     * Makes a request to Clarifai
+     *
+     * @param string $method The API method
+     * @param string $path The path
+     * @param array $parameters The request parameters
+     *
+     * @return object
+     *
+     * @throws ApiException
+     */
+    public function request(string $method, string $path, array $parameters = [])
+    {
+        $options = [
+            'headers' => [
+                'Authorization' => $this->getAuthToken(),
+            ],
+        ];
+
+        // TODO check for batch operation
+        return $this->handleRequest(
+            $method,
+            sprintf('%s/%s/%s', $this->url, $this->version, $path),
+            $options,
+            $parameters
+        );
     }
 }

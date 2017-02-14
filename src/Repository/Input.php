@@ -9,14 +9,14 @@
  * @link     https://github.com/darrynten/clarifai-php
  */
 
-namespace DarrynTen\Clarifai;
+namespace DarrynTen\Clarifai\Repository;
 
 /**
  * Single Clarifai Input
  *
  * @package Clarifai
  */
-class ClarifaiInput extends Clarifai
+class Input
 {
 
     /**
@@ -43,7 +43,7 @@ class ClarifaiInput extends Clarifai
     /**
      * The concepts associated with this input
      *
-     * @var ClarifaiConcepts $concepts
+     * @var Concepts $concepts
      */
     private $concepts;
 

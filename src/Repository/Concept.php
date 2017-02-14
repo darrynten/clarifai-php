@@ -9,14 +9,14 @@
  * @link     https://github.com/darrynten/clarifai-php
  */
 
-namespace DarrynTen\Clarifai;
+namespace DarrynTen\Clarifai\Repository;
 
 /**
  * Single Clarifai Concept
  *
  * @package Clarifai
  */
-class ClarifaiConcept
+class Concept
 {
     /**
      * The ID of the concept
