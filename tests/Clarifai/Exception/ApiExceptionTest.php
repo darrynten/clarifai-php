@@ -2,35 +2,34 @@
 
 namespace DarrynTen\Clarifai\Tests\Clarifai;
 
-use DarrynTen\Clarifai\Clarifai;
-use DarrynTen\Clarifai\ClarifaiApiException;
-use PHPUnit_Framework_TestCase;
+use DarrynTen\Clarifai\Request\RequestHandler;
+use DarrynTen\Clarifai\Exception\ApiException;
 
-class ClarifaiApiExceptionTest extends PHPUnit_Framework_TestCase
+class ApiExceptionTest extends \PHPUnit_Framework_TestCase
 {
     public function testApiException()
     {
-        $this->expectException(ClarifaiApiException::class);
+        $this->expectException(ApiException::class);
 
-        $clarifai = new Clarifai('', '');
+        $clarifai = new RequestHandler('', '');
 
         $clarifai->request('GET', 'ht://d/d', ['foo' => 'bar']);
     }
 
     public function testApiPostException()
     {
-        $this->expectException(ClarifaiApiException::class);
+        $this->expectException(ApiException::class);
 
-        $clarifai = new Clarifai('', '');
+        $clarifai = new RequestHandler('', '');
 
         $clarifai->request('POST', 'ht://d/d', ['foo' => 'bar']);
     }
 
     public function testApiJsonException()
     {
-        $this->expectException(ClarifaiApiException::class);
+        $this->expectException(ApiException::class);
 
-        throw new ClarifaiApiException(
+        throw new ApiException(
             json_encode(
                 [
                     'errors' => [

@@ -1,6 +1,6 @@
 <?php
 
-namespace DarrynTen\Clarifai\Tests\Clarifai;
+namespace DarrynTen\Clarifai\Tests\Clarifai\Helpers;
 
 trait DataHelper
 {
@@ -34,5 +34,13 @@ trait DataHelper
             'score' => 'score',
             'metaData' => 'metaData'
         ];
+    }
+
+    /**
+     * @return \Mockery\MockInterface|\DarrynTen\Clarifai\Request\RequestHandler
+     */
+    public function getRequestMock()
+    {
+        return \Mockery::mock('DarrynTen\Clarifai\Request\RequestHandler');
     }
 }

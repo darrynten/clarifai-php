@@ -9,14 +9,16 @@
  * @link     https://github.com/darrynten/clarifai-php
  */
 
-namespace DarrynTen\Clarifai;
+namespace DarrynTen\Clarifai\Repository;
+
+use DarrynTen\Clarifai\Request\RequestHandler;
 
 /**
  * Multiple Clarifai Inputs
  *
  * @package Clarifai
  */
-class ClarifaiInputs
+class Inputs extends BaseRepository
 {
     /**
      * A collection of inputs
@@ -42,16 +44,18 @@ class ClarifaiInputs
     /**
      * Constructor
      *
+     * @param RequestHandler $request
      * @param array $config The config for the inputs
      * @param array $data The inputs
      */
-    public function __construct(array $config, array $data)
+    public function __construct(RequestHandler $request, array $config, array $data)
     {
+        parent::__construct($request);
         $this->config = $config;
         $this->rawData = $data;
 
         foreach ($data as $input) {
-            $this->inputs[] = new ClarifaiInput($config, $input);
+            $this->inputs[] = new Input($this->getRequest(), $config, $input);
         }
     }
 

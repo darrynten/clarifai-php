@@ -9,14 +9,16 @@
  * @link     https://github.com/darrynten/clarifai-php
  */
 
-namespace DarrynTen\Clarifai;
+namespace DarrynTen\Clarifai\Repository;
+
+use DarrynTen\Clarifai\Request\RequestHandler;
 
 /**
  * Single Clarifai Concept
  *
  * @package Clarifai
  */
-class ClarifaiConcept
+class Concept extends BaseRepository
 {
     /**
      * The ID of the concept
@@ -70,11 +72,13 @@ class ClarifaiConcept
     /**
      * Constructor
      *
+     * @param RequestHandler $request
      * @param array $config The config for the concept
      * @param array $data The data for the concept
      */
-    public function __construct(array $config, array $data)
+    public function __construct(RequestHandler $request, array $config, array $data)
     {
+        parent::__construct($request);
         $this->conceptId = $data['id'];
         $this->conceptName = $data['name'];
         $this->createdAt = $data['createdAt'];

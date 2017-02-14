@@ -9,16 +9,17 @@
  * @link     https://github.com/darrynten/clarifai-php
  */
 
-namespace DarrynTen\Clarifai;
+namespace DarrynTen\Clarifai\Repository;
+
+use DarrynTen\Clarifai\Request\RequestHandler;
 
 /**
  * Single Clarifai Input
  *
  * @package Clarifai
  */
-class ClarifaiInput extends Clarifai
+class Input extends BaseRepository
 {
-
     /**
      * The ID of the input
      *
@@ -43,7 +44,7 @@ class ClarifaiInput extends Clarifai
     /**
      * The concepts associated with this input
      *
-     * @var ClarifaiConcepts $concepts
+     * @var Concepts $concepts
      */
     private $concepts;
 
@@ -78,11 +79,13 @@ class ClarifaiInput extends Clarifai
     /**
      * Constructor
      *
+     * @param RequestHandler $request
      * @param array $config The config for the input
      * @param array $data The data for the input
      */
-    public function __construct(array $config, array $data)
+    public function __construct(RequestHandler $request, array $config, array $data)
     {
+        parent::__construct($request);
         $this->inputId = $data['id'];
         $this->createdAt = $data['createdAt'];
         $this->imageUrl = $data['imageUrl'];

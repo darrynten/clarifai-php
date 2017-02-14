@@ -1,8 +1,8 @@
 <?php
 /**
- * Clarifai Library
+ * Clarifai
  *
- * @category Library
+ * @category Base
  * @package  Clarifai
  * @author   Darryn Ten <darrynten@github.com>
  * @license  MIT <https://github.com/darrynten/clarifai-php/LICENSE>
@@ -11,76 +11,20 @@
 
 namespace DarrynTen\Clarifai;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
+use DarrynTen\Clarifai\Repository;
+use DarrynTen\Clarifai\Request\RequestHandler;
 
 /**
- * Clarifai Class
+ * Base class for Clarifai manipulation
  *
- * @category Library
- * @package  Clarifai
- * @author   Darryn Ten <darrynten@github.com>
- * @license  MIT <https://github.com/darrynten/clarifai-php/LICENSE>
- * @link     https://github.com/darrynten/clarifai-php
+ * @package Clarifai
  */
 class Clarifai
 {
     /**
-     * GuzzleHttp Client
-     *
-     * @var Client $client
+     * @var RequestHandler $clientId
      */
-    private $client;
-
-    /**
-     * The Clarifai url
-     *
-     * @var string $url
-     */
-    private $url = 'https://api.clarifai.com';
-
-    /**
-     * The version of the Clarifai API
-     *
-     * @var string $version
-     */
-    private $version = 'v2';
-
-    /**
-     * Clarifai Client ID
-     *
-     * @var string $clientId
-     */
-    private $clientId;
-
-    /**
-     * The time until which token is valid
-     *
-     * @var \DateTime
-     */
-    private $tokenExpireTime;
-
-    /**
-     * Clarifai Client Secret
-     *
-     * @var string $clientSecret
-     */
-    private $clientSecret;
-
-    /**
-     * Clarifai Token
-     *
-     * @var string $token
-     */
-    private $token;
-
-    /**
-     * Clarifai Token type
-     *
-     * @var string $token
-     */
-    private $tokenType;
-
+    private $request;
 
     /**
      * Clarifai constructor
@@ -90,110 +34,80 @@ class Clarifai
      */
     public function __construct($clientId, $clientSecret)
     {
-        $this->clientId = $clientId;
-        $this->clientSecret = $clientSecret;
-        $this->tokenExpireTime = new \DateTime();
-        $this->client = new Client();
+        $this->request = new RequestHandler($clientId, $clientSecret);
     }
 
     /**
-     * Makes a request to Clarifai
-     *
-     * @param string $method The API method
-     * @param string $path The path
-     * @param array $parameters The request parameters
-     *
-     * @return object
-     *
-     * @throws ClarifaiApiException
+     * @return RequestHandler
      */
-    public function request(string $method, string $path, array $parameters = [])
+    public function getRequest()
     {
-        $options = [
-            'headers' => [
-                'Authorization' => $this->getAuthToken(),
-            ],
-        ];
-
-        // TODO check for batch operation
-        return $this->handleRequest($method, $this->url . $path, $options, $parameters);
+        return $this->request;
     }
 
     /**
-     * Makes a request using Guzzle
+     * @param array|null $config
+     * @param array|null $data
      *
-     * @param string $method The HTTP request method (GET/POST/etc)
-     * @param string $uri The resource
-     * @param array $options Request options
-     * @param array $parameters Request parameters
-     *
-     * @see Clarifai::request()
-     *
-     * @return []
-     * @throws ClarifaiApiException
+     * @return Repository\Model
      */
-    public function handleRequest(string $method, string $uri = '', array $options = [], array $parameters = [])
+    public function getModel($config = null, $data = null)
     {
-        // Are we going a GET or a POST?
-        if (!empty($parameters)) {
-            if ($method === 'GET') {
-                // Send as get params
-                $options['query'] = $parameters;
-            } else {
-                // Otherwise send JSON in the body
-                $options['json'] = (object)$parameters;
-            }
-        }
-
-        // Let's go
-        try {
-            $response = $this->client->request($method, $uri, $options);
-
-            // All good
-            return json_decode($response->getBody());
-        } catch (RequestException $exception) {
-            $message = $exception->getMessage();
-
-            throw new ClarifaiApiException($message, $exception->getCode(), $exception);
-        }
+        return new Repository\Model($this->getRequest(), $config, $data);
     }
 
     /**
-     * Get token for Clarifai API requests
+     * @param $config
+     * @param $data
      *
-     * @return string
+     * @return Repository\Models
      */
-    private function getAuthToken()
+    public function getModels($config, $data)
     {
-        // Generate a new token if current is expired or empty
-        if (!$this->token || new \DateTime() > $this->tokenExpireTime) {
-            $this->requestToken();
-        }
-
-        return $this->tokenType . ' ' . $this->token;
+        return new Repository\Models($this->getRequest(), $config, $data);
     }
 
     /**
-     * Make request to Clarifai API for the new token
+     * @param $config
+     * @param $data
+     *
+     * @return Repository\Concept
      */
-    private function requestToken()
+    public function getConcept($config, $data)
     {
-        $tokenResponse = $this->handleRequest(
-            'POST',
-            $this->url.'/v1/token', // endpoint is available only in v1
-            [
-                'form_params' => [
-                    'grant_type' => 'client_credentials',
-                    'client_id' => $this->clientId,
-                    'client_secret' => $this->clientSecret,
-                ],
-            ]
-        );
+        return new Repository\Concept($this->getRequest(), $config, $data);
+    }
 
-        $this->tokenExpireTime->modify(
-            sprintf('+%s seconds', $tokenResponse->expires_in)
-        );
-        $this->token = $tokenResponse->access_token;
-        $this->tokenType = $tokenResponse->token_type;
+    /**
+     * @param $config
+     * @param $data
+     *
+     * @return Repository\Concepts
+     */
+    public function getConcepts($config, $data)
+    {
+        return new Repository\Concepts($this->getRequest(), $config, $data);
+    }
+
+    /**
+     * @param $config
+     * @param $data
+     *
+     * @return Repository\Input
+     */
+    public function getInput($config, $data)
+    {
+        return new Repository\Input($this->getRequest(), $config, $data);
+    }
+
+    /**
+     * @param $config
+     * @param $data
+     *
+     * @return Repository\Inputs
+     */
+    public function getInputs($config, $data)
+    {
+        return new Repository\Inputs($this->getRequest(), $config, $data);
     }
 }
