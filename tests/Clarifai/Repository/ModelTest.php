@@ -32,13 +32,16 @@ class ModelTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(BaseRepository::class, $this->model);
     }
 
-    public function testPredictFromUrl()
+    /**
+     * Set Request mock for predict calls
+     *
+     * @param array $expectedImageData
+     * @param string $modelType
+     * @param string $lang
+     * @param string $expectedData
+     */
+    private function setRequestMock(array $expectedImageData, string $modelType, string $lang, string $expectedData)
     {
-        $url = 'url';
-        $modelType = 'type';
-        $lang = 'lang';
-        $expectedData = 'data';
-
         $this->request->shouldReceive('request')
             ->once()
             ->with(
@@ -48,26 +51,64 @@ class ModelTest extends \PHPUnit_Framework_TestCase
                     'inputs' => [
                         [
                             'data' => [
-                                'image' =>[
-                                    'url' => 'url',
-                                ],
+                                'image' => $expectedImageData,
                             ],
                         ],
                     ],
                     'model' => [
                         'output_info' => [
                             'output_config' =>[
-                                'language' => 'lang',
+                                'language' => $lang,
                             ],
                         ],
                     ],
                 ]
             )
             ->andReturn($expectedData);
+    }
+
+    public function testPredictUrl()
+    {
+        $url = 'url';
+        $modelType = 'type';
+        $lang = 'lang';
+        $expectedData = 'data';
+
+        $this->setRequestMock(['url' => $url], $modelType, $lang, $expectedData);
 
         $this->assertEquals(
             $expectedData,
-            $this->model->predictFromUrl($url, $modelType, $lang)
+            $this->model->predictUrl($url, $modelType, $lang)
         );
+    }
+
+    public function testPredictPath()
+    {
+        $file = __FILE__;
+        $modelType = 'type';
+        $lang = 'lang';
+        $expectedData = 'data';
+
+        $this->setRequestMock(
+            [
+                'base64' => base64_encode(file_get_contents($file))
+            ],
+            $modelType,
+            $lang,
+            $expectedData
+        );
+
+        $this->assertEquals(
+            $expectedData,
+            $this->model->predictPath($file, $modelType, $lang)
+        );
+    }
+
+    /**
+     * @expectedException \Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException
+     */
+    public function testPredictPathException()
+    {
+        $this->model->predictPath('path', 'model', 'ru');
     }
 }

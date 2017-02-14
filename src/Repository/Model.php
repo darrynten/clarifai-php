@@ -12,6 +12,7 @@
 namespace DarrynTen\Clarifai\Repository;
 
 use DarrynTen\Clarifai\Request\RequestHandler;
+use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 
 /**
  * Single Clarifai Model
@@ -152,30 +153,18 @@ class Model extends BaseRepository
     /**
      * The actual predict call
      *
-     * @param array|string $inputs The inputs
-     * @param string|null $language Language to return results in
-     *
-     * @return void
-     */
-    public function predict($inputs, $language = null)
-    {
-        //
-    }
-
-    /**
-     * The actual predict call
-     *
-     * @param array|string $inputs The inputs
+     * @param array $image
+     * @param $modelType
      * @param string|null $language Language to return results in
      *
      * @return object
      */
-    public function predictFromUrl($url, $modelType, $language = null)
+    private function predict(array $image, $modelType, $language = null)
     {
         $data['inputs'] = [
             [
                 'data' => [
-                    'image' => ['url' => $url]
+                    'image' => $image
                 ]
             ]
         ];
@@ -194,6 +183,44 @@ class Model extends BaseRepository
             'POST',
             sprintf('models/%s/outputs', $modelType),
             $data
+        );
+    }
+
+    /**
+     * Predict by url
+     *
+     * @param string $url Url of image
+     * @param string $modelType Type of model to predict
+     * @param string|null $language Language to return results in
+     *
+     * @return object
+     */
+    public function predictUrl($url, $modelType, $language = null)
+    {
+        return $this->predict(['url' => $url], $modelType, $language);
+    }
+
+    /**
+     * Predict by image path
+     *
+     * @param string $path Path to image
+     * @param string $modelType Type of model to predict
+     * @param string|null $language Language to return results in
+     *
+     * @return object
+     */
+    public function predictPath($path, $modelType, $language = null)
+    {
+        if (!file_exists($path)) {
+            throw new FileNotFoundException($path);
+        }
+
+        return $this->predict(
+            [
+                'base64' => base64_encode(file_get_contents($path))
+            ],
+            $modelType,
+            $language
         );
     }
 
