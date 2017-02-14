@@ -160,7 +160,7 @@ The response (abridged) would be:
         }
      }
   ]
-}%
+}
 ```
 
 This can happen either with an image URL or b64 encoded data.
