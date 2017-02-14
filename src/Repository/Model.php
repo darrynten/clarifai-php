@@ -142,7 +142,6 @@ class Model extends BaseRepository
             $this->createdAt = $data['createdAt'];
             $this->appId = $data['appId'];
             $this->value = $data['value'] || null;
-
         }
 
         $this->config = $config;
