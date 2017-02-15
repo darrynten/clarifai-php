@@ -119,7 +119,7 @@ class RequestHandler
                 $options['query'] = $parameters;
             } else {
                 // Otherwise send JSON in the body
-                $options['json'] = (object)$parameters;
+                $options['json'] = (object) $parameters;
             }
         }
 
