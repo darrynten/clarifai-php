@@ -90,7 +90,7 @@ $clarifai = new \DarrynTen\Clarifai\Clarifai(
     CLIENT_SECRET
 );
 
-$modelResult = $clarifai->getModel()->predictFromUrl(
+$modelResult = $clarifai->getModel()->predictUrl(
     'https://samples.clarifai.com/metro-north.jpg',
     \DarrynTen\Clarifai\Repository\Model::GENERAL
 );
@@ -164,6 +164,13 @@ The response (abridged) would be:
 ```
 
 This can happen either with an image URL or b64 encoded data.
+
+```php
+    $modelResult = $clarifai->getModel()->predictPath(
+        '/user/images/image.png',
+        \DarrynTen\Clarifai\Repository\Model::GENERAL
+    );
+```
 
 ---
 
