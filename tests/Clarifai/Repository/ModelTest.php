@@ -111,4 +111,26 @@ class ModelTest extends \PHPUnit_Framework_TestCase
     {
         $this->model->predictPath('path', 'model', 'ru');
     }
+
+    public function testPredictEncoded()
+    {
+        $hash = 'hash';
+        $modelType = 'type';
+        $lang = 'lang';
+        $expectedData = 'data';
+
+        $this->setRequestMock(
+            [
+                'base64' => $hash
+            ],
+            $modelType,
+            $lang,
+            $expectedData
+        );
+
+        $this->assertEquals(
+            $expectedData,
+            $this->model->predictEncoded($hash, $modelType, $lang)
+        );
+    }
 }

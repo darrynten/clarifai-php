@@ -223,6 +223,26 @@ class Model extends BaseRepository
         );
     }
 
+    /**
+     * Predict base64 encoded image
+     *
+     * @param string $hash base64 encoded image
+     * @param string $modelType Type of model to predict
+     * @param string|null $language Language to return results in
+     *
+     * @return object
+     */
+    public function predictEncoded($hash, $modelType, $language = null)
+    {
+        return $this->predict(
+            [
+                'base64' => $hash
+            ],
+            $modelType,
+            $language
+        );
+    }
+
     // This comes later, after predict
 
     /**

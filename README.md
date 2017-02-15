@@ -163,11 +163,20 @@ The response (abridged) would be:
 }
 ```
 
-This can happen either with an image URL or b64 encoded data.
+This can happen either with an image URL:
 
 ```php
     $modelResult = $clarifai->getModel()->predictPath(
         '/user/images/image.png',
+        \DarrynTen\Clarifai\Repository\Model::GENERAL
+    );
+```
+
+or b64 encoded data:
+
+```php
+    $modelResult = $clarifai->getModel()->predictEncoded(
+        ENCODED_IMAGE_HASH,
         \DarrynTen\Clarifai\Repository\Model::GENERAL
     );
 ```
