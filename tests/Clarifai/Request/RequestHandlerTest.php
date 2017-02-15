@@ -37,18 +37,68 @@ class RequestHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testRequest()
     {
+        $data = '{\'key\':\'data\'}';
+
         $this->http->mock
             ->when()
                 ->methodIs('GET')
                 ->pathIs('/foo')
             ->then()
-                ->body('{}')
+                ->body($data)
             ->end();
         $this->http->setUp();
 
         $clarifai = new RequestHandler('', '');
 
-        $this->assertEquals(json_decode('{}'), $clarifai->handleRequest('GET', 'http://localhost:8082/foo', []));
+        $this->assertEquals(
+            json_decode($data),
+            $clarifai->handleRequest('GET', 'http://localhost:8082/foo', [])
+        );
+    }
+
+    public function testRequestWithQuery()
+    {
+        $parameters = ['data' => 'value'];
+        $data = '{\'key\':\'data\'}';
+
+        $this->http->mock
+            ->when()
+                ->methodIs('GET')
+                ->pathIs('/foo?data=value')
+            ->queryParamsAre($parameters)
+            ->then()
+                ->body($data)
+            ->end();
+        $this->http->setUp();
+
+        $clarifai = new RequestHandler('', '');
+
+        $this->assertEquals(
+            json_decode($data),
+            $clarifai->handleRequest('GET', 'http://localhost:8082/foo', [], $parameters)
+        );
+    }
+
+    public function testRequestWithJson()
+    {
+        $parameters = ['data123' => 'value'];
+        $data = '{\'key\':\'data\'}';
+
+        $this->http->mock
+            ->when()
+                ->methodIs('POST')
+                ->pathIs('/foo')
+            ->then()
+                ->body($data)
+            ->end();
+        $this->http->setUp();
+
+        $clarifai = new RequestHandler('', '');
+
+        $this->assertEquals(
+            json_decode($data),
+            $clarifai->handleRequest('POST', 'http://localhost:8082/foo', [], $parameters)
+        );
     }
 
     public function testRequestEmptyResponse()
@@ -68,6 +118,26 @@ class RequestHandlerTest extends \PHPUnit_Framework_TestCase
             json_decode('{ body: { code: 1 } }'),
             $clarifai->handleRequest('GET', 'http://localhost:8082/foo', [])
         );
+    }
+
+    /**
+     * @expectedException \DarrynTen\Clarifai\Exception\ApiException
+     * @expectedExceptionMessage Server error: `GET http://localhost:8082/foo` resulted in a `500 Internal Server Error
+     * @expectedExceptionCode 500
+     */
+    public function testRequestException()
+    {
+        $this->http->mock
+            ->when()
+               ->methodIs('GET')
+                ->pathIs('/foo')
+            ->then()
+                ->statusCode(500)
+            ->end();
+        $this->http->setUp();
+
+        $clarifai = new RequestHandler('', '');
+        $clarifai->handleRequest('GET', 'http://localhost:8082/foo', []);
     }
 
     public function testRequestWithToken()
