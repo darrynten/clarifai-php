@@ -72,6 +72,35 @@ class Model extends BaseRepository
     const COLOR = 'eeed0b6733a644cea07cf4c60f87ebb7';
 
     /**
+     * Model id of the Face Clarifai model
+     *
+     * The Face Detection model analyzes images, GIFs and videos and
+     * returns probability scores on the likelihood that the media
+     * contains human faces. If human faces are detected, the model will
+     * also return the coordinate locations of those faces with a
+     * bounding box.
+     */
+    const FACE = 'a403429f2ddf4b49b307e318f00e528b';
+
+    /**
+     * Model id of the Apparel Clarifai model
+     *
+     * The 'Apparel Model' model analyzes images and returns probability
+     * scores on the likelihood that the media contains a recognized
+     * clothing or accessory item.
+     */
+    const APPAREL = 'e0be3b9d6a454f0493ac3a30784001ff';
+
+    /**
+     * Model id of the Celebrity Clarifai model
+     *
+     * The Celebrity model analyzes images and returns probability scores
+     * on the likelihood that the media contains the face(s) of a
+     * recognized celebrity.
+     */
+    const CELEBRITY = 'e466caa0619f444ab97497640cefc4dc';
+
+    /**
      * The ID of the model
      *
      * @var string $modelId
