@@ -131,4 +131,124 @@ class InputTest extends \PHPUnit_Framework_TestCase
             $this->input->addEncoded($hash)
         );
     }
+
+    public function testAddMultipleIdsByUrl()
+    {
+        $image1 = ['image' => 'path1', 'id' => '1'];
+        $image2 = ['image' => 'path2', 'id' => '2'];
+        $expectedData = 'data';
+
+        $this->request->shouldReceive('request')
+            ->once()
+            ->with(
+                'POST',
+                'inputs',
+                [
+                    'inputs' => [
+                        [
+                            'data' => [
+                                'image' => ['url' => $image1['image']],
+                            ],
+                            'id' => $image1['id'],
+                        ],
+                        [
+                            'data' => [
+                                'image' => ['url' => $image2['image']],
+                            ],
+                            'id' => $image2['id'],
+                        ],
+                    ],
+
+                ]
+            )
+            ->andReturn($expectedData);
+
+        $this->assertEquals(
+            $expectedData,
+            $this->input->addMultipleIdsByUrl([$image1, $image2])
+        );
+    }
+
+    /**
+     * @expectedException \Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException
+     */
+    public function testAddMultipleIdsByPathException()
+    {
+        $this->input->addMultipleIdsByPath([['image' => 'path', 'id' => '1']]);
+    }
+
+    public function testAddMultipleIdsByPath()
+    {
+        $image1 = ['image' => __FILE__, 'id' => '1'];
+        $image2 = ['image' => __FILE__, 'id' => '2'];
+
+        $expectedData = 'data';
+
+        $this->request->shouldReceive('request')
+            ->once()
+            ->with(
+                'POST',
+                'inputs',
+                [
+                    'inputs' => [
+                        [
+                            'data' => [
+                                'image' => ['base64' => base64_encode(file_get_contents($image1['image']))],
+                            ],
+                            'id' => $image1['id'],
+                        ],
+                        [
+                            'data' => [
+                                'image' => ['base64' => base64_encode(file_get_contents($image2['image']))],
+                            ],
+                            'id' => $image2['id'],
+                        ],
+                    ],
+
+                ]
+            )
+            ->andReturn($expectedData);
+
+        $this->assertEquals(
+            $expectedData,
+            $this->input->addMultipleIdsByPath([$image1, $image2])
+        );
+    }
+
+    public function testAddMultipleIdsByEncoded()
+    {
+        $image1 = ['image' => 'hash1', 'id' => '1'];
+        $image2 = ['image' => 'hash2', 'id' => '2'];
+        $expectedData = 'data';
+
+        $this->request->shouldReceive('request')
+            ->once()
+            ->with(
+                'POST',
+                'inputs',
+                [
+                    'inputs' => [
+                        [
+                            'data' => [
+                                'image' => ['base64' => $image1['image']],
+                            ],
+                            'id' => $image1['id'],
+                        ],
+                        [
+                            'data' => [
+                                'image' => ['base64' => $image2['image']],
+                            ],
+                            'id' => $image2['id'],
+                        ],
+                    ],
+
+                ]
+            )
+            ->andReturn($expectedData);
+
+        $this->assertEquals(
+            $expectedData,
+            $this->input->addMultipleIdsByEncoded([$image1, $image2])
+        );
+    }
 }

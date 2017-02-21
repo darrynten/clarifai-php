@@ -176,6 +176,105 @@ class Input extends BaseRepository
         );
     }
 
+
+    /**
+     * Forms $data['inputs'] in Multiple Inputs
+     *
+     * @param array $inputs
+     * @param array $image
+     * @param string $id
+     * @return array
+     */
+    private function addImage(array $inputs, array $image, $id)
+    {
+
+        $inputs[] = [
+            'data' => [
+                'image' => $image,
+            ],
+            'id' => $id,
+        ];
+
+        return $inputs;
+    }
+
+    /**
+     * Adds Multiple Inputs with Ids by Url
+     *
+     * @param array $images
+     *
+     * @return object
+     */
+    public function addMultipleIdsByUrl(array $images)
+    {
+        $data['inputs'] = [];
+
+        foreach ($images as $image) {
+
+            $data['inputs'] = $this->addImage($data['inputs'], ["url" => $image["image"]], $image["id"]);
+        }
+
+        return $this->getRequest()->request(
+            'POST',
+            'inputs',
+            $data
+        );
+    }
+
+    /**
+     * Adds Multiple Inputs with Ids by Path
+     *
+     * @param array $images
+     *
+     * @return object
+     */
+    public function addMultipleIdsByPath(array $images)
+    {
+        $data['inputs'] = [];
+
+        foreach ($images as $image) {
+
+            if (!file_exists($image["image"])) {
+                throw new FileNotFoundException($image["image"]);
+            }
+
+            $data['inputs'] = $this->addImage(
+                $data['inputs'],
+                ['base64' => base64_encode(file_get_contents($image["image"]))],
+                $image["id"]
+            );
+        }
+
+        return $this->getRequest()->request(
+            'POST',
+            'inputs',
+            $data
+        );
+    }
+
+    /**
+     * Adds Multiple Inputs with Ids Encoded by Base64
+     *
+     * @param array $images
+     *
+     * @return object
+     */
+    public function addMultipleIdsByEncoded(array $images)
+    {
+        $data['inputs'] = [];
+
+        foreach ($images as $image) {
+
+            $data['inputs'] = $this->addImage($data['inputs'], ['base64' => $image["image"]], $image["id"]);
+        }
+
+        return $this->getRequest()->request(
+            'POST',
+            'inputs',
+            $data
+        );
+    }
+
     // mergeConcepts
     // deleteConcepts
     // overwriteConcepts
