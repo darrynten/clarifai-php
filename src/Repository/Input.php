@@ -12,6 +12,7 @@
 namespace DarrynTen\Clarifai\Repository;
 
 use DarrynTen\Clarifai\Request\RequestHandler;
+use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 
 /**
  * Single Clarifai Input
@@ -127,15 +128,51 @@ class Input extends BaseRepository
         $data['inputs'] = [
             [
                 'data' => [
-                    'image' => $image
-                ]
-            ]
+                    'image' => $image,
+                ],
+            ],
         ];
 
         return $this->getRequest()->request(
             'POST',
             'inputs',
             $data
+        );
+    }
+
+    /**
+     * Add by image path
+     *
+     * @param string $path Path to image
+     *
+     * @return object
+     */
+    public function addPath($path)
+    {
+        if (!file_exists($path)) {
+            throw new FileNotFoundException($path);
+        }
+
+        return $this->add(
+            [
+                'base64' => base64_encode(file_get_contents($path)),
+            ]
+        );
+    }
+
+    /**
+     * Add base64 encoded image
+     *
+     * @param string $hash base64 encoded image
+     *
+     * @return object
+     */
+    public function addEncoded($hash)
+    {
+        return $this->add(
+            [
+                'base64' => $hash,
+            ]
         );
     }
 

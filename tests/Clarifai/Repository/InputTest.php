@@ -61,4 +61,74 @@ class InputTest extends \PHPUnit_Framework_TestCase
             $this->input->addUrl($url)
         );
     }
+
+    public function testAddPath()
+    {
+        $file = __FILE__;
+        $expectedData = 'data';
+
+        $this->request->shouldReceive('request')
+            ->once()
+            ->with(
+                'POST',
+                'inputs',
+                [
+                    'inputs' => [
+                        [
+                            'data' => [
+                                'image' => [
+                                    'base64' => base64_encode(file_get_contents($file)),
+                                ],
+                            ],
+                        ],
+                    ],
+
+                ]
+            )
+            ->andReturn($expectedData);
+
+        $this->assertEquals(
+            $expectedData,
+            $this->input->addPath($file)
+        );
+    }
+
+    /**
+     * @expectedException \Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException
+     */
+    public function testAddPathException()
+    {
+        $this->input->addPath('path');
+    }
+
+    public function testAddEncoded()
+    {
+        $hash = 'hash';
+        $expectedData = 'data';
+
+        $this->request->shouldReceive('request')
+            ->once()
+            ->with(
+                'POST',
+                'inputs',
+                [
+                    'inputs' => [
+                        [
+                            'data' => [
+                                'image' => [
+                                    'base64' => $hash,
+                                ],
+                            ],
+                        ],
+                    ],
+
+                ]
+            )
+            ->andReturn($expectedData);
+
+        $this->assertEquals(
+            $expectedData,
+            $this->input->addEncoded($hash)
+        );
+    }
 }
