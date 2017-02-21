@@ -83,23 +83,60 @@ class Input extends BaseRepository
      * @param array $config The config for the input
      * @param array $data The data for the input
      */
-    public function __construct(RequestHandler $request, array $config, array $data)
+    public function __construct(RequestHandler $request, array $config = null, array $data = null)
     {
         parent::__construct($request);
-        $this->inputId = $data['id'];
-        $this->createdAt = $data['createdAt'];
-        $this->imageUrl = $data['imageUrl'];
+        if (!empty($data)) {
+            $this->inputId = $data['id'];
+            $this->createdAt = $data['createdAt'];
+            $this->imageUrl = $data['imageUrl'];
 
-        // TODO
-        // $this->concepts = new Concepts($config, $data['concepts']);
+            // TODO
+            // $this->concepts = new Concepts($config, $data['concepts']);
 
-        $this->score = $data['score'];
-        $this->metaData = $data['metaData'];
-
+            $this->score = $data['score'];
+            $this->metaData = $data['metaData'];
+        }
         // Geo?
 
         $this->config = $config;
         $this->rawData = $data;
+    }
+
+    /**
+     * Add Url
+     *
+     * @param string $url Url of image
+     *
+     * @return object
+     */
+    public function addUrl($url)
+    {
+        return $this->add(['url' => $url]);
+    }
+
+    /**
+     * Add method
+     *
+     * @param array $image
+     *
+     * @return object
+     */
+    private function add(array $image)
+    {
+        $data['inputs'] = [
+            [
+                'data' => [
+                    'image' => $image
+                ]
+            ]
+        ];
+
+        return $this->getRequest()->request(
+            'POST',
+            'inputs',
+            $data
+        );
     }
 
     // mergeConcepts

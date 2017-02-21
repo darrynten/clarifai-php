@@ -95,7 +95,7 @@ class Clarifai
      *
      * @return Repository\Input
      */
-    public function getInput($config, $data)
+    public function getInput($config = null, $data = null)
     {
         return new Repository\Input($this->getRequest(), $config, $data);
     }
