@@ -180,6 +180,83 @@ or b64 encoded data:
         \DarrynTen\Clarifai\Repository\Model::GENERAL
     );
 ```
+---
+
+- [ ] Inputs
+
+Add an input using a publicly accessible URL:
+
+```php
+    $inputResult = $clarifai->getInput()->addUrl(
+        'https://samples.clarifai.com/metro-north.jpg'
+    );
+```
+
+Add an input using local path to image:
+
+```php
+    $inputResult = $clarifai->getInput()->addPath(
+        '/user/images/image.png'
+    );
+```
+
+Add an input using bytes:
+
+```php
+    $inputResult = $clarifai->getInput()->addEncoded(ENCODED_IMAGE_HASH);
+```
+
+Add multiple inputs with ids by publicly accessible URL:
+
+```php
+    $inputResult = $clarifai->getInput()->addMultipleIdsByUrl(
+        [
+            [
+                'image' => 'https://samples.clarifai.com/metro-north.jpg',
+                'id' => 'id1',
+            ],
+            [
+                'image' => 'https://samples.clarifai.com/puppy.jpeg',
+                'id' => 'id2',
+            ],
+        ]
+    );
+```
+
+Add multiple inputs with ids by using local path to images:
+
+```php
+    $inputResult = $clarifai->getInput()->addMultipleIdsByPath(
+        [
+            [
+                'image' => '/samples.clarifai.com/metro-north.jpg',
+                'id' => 'id1',
+            ],
+            [
+                'image' => '/samples.clarifai.com/puppy.jpeg',
+                'id' => 'id2',
+            ],
+        ]
+    );
+```
+
+Add multiple inputs with ids using bytes:
+
+```php
+    $inputResult = $clarifai->getInput()->addMultipleIdsByEncoded(
+        [
+            [
+                'image' => 'ENCODED_IMAGE_HASH1',
+                'id' => 'id1',
+            ],
+            [
+                'image' => 'ENCODED_IMAGE_HASH2',
+                'id' => 'id2',
+            ],
+        ]
+    );
+```
+
 
 ---
 

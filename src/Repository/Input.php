@@ -187,7 +187,6 @@ class Input extends BaseRepository
      */
     private function addImage(array $inputs, array $image, $id)
     {
-
         $inputs[] = [
             'data' => [
                 'image' => $image,
@@ -211,7 +210,7 @@ class Input extends BaseRepository
 
         foreach ($images as $image) {
 
-            $data['inputs'] = $this->addImage($data['inputs'], ["url" => $image["image"]], $image["id"]);
+            $data['inputs'] = $this->addImage($data['inputs'], ['url' => $image['image']], $image['id']);
         }
 
         return $this->getRequest()->request(
@@ -234,14 +233,14 @@ class Input extends BaseRepository
 
         foreach ($images as $image) {
 
-            if (!file_exists($image["image"])) {
-                throw new FileNotFoundException($image["image"]);
+            if (!file_exists($image['image'])) {
+                throw new FileNotFoundException($image['image']);
             }
 
             $data['inputs'] = $this->addImage(
                 $data['inputs'],
-                ['base64' => base64_encode(file_get_contents($image["image"]))],
-                $image["id"]
+                ['base64' => base64_encode(file_get_contents($image['image']))],
+                $image['id']
             );
         }
 
@@ -265,7 +264,7 @@ class Input extends BaseRepository
 
         foreach ($images as $image) {
 
-            $data['inputs'] = $this->addImage($data['inputs'], ['base64' => $image["image"]], $image["id"]);
+            $data['inputs'] = $this->addImage($data['inputs'], ['base64' => $image['image']], $image['id']);
         }
 
         return $this->getRequest()->request(
