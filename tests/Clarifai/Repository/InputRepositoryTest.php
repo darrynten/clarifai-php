@@ -2,8 +2,9 @@
 
 namespace DarrynTen\Clarifai\Tests\Clarifai\Repository;
 
+use DarrynTen\Clarifai\Model\Input;
 use DarrynTen\Clarifai\Repository\BaseRepository;
-use DarrynTen\Clarifai\Repository\Input;
+use DarrynTen\Clarifai\Repository\InputRepository;
 use DarrynTen\Clarifai\Tests\Clarifai\Helpers\DataHelper;
 
 class InputTest extends \PHPUnit_Framework_TestCase
@@ -11,9 +12,9 @@ class InputTest extends \PHPUnit_Framework_TestCase
     use DataHelper;
 
     /**
-     * @var Input
+     * @var InputRepository
      */
-    private $input;
+    private $inputRepository;
 
     /**
      * @var \Mockery\MockInterface|\DarrynTen\Clarifai\Request\RequestHandler
@@ -23,13 +24,13 @@ class InputTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->request = $this->getRequestMock();
-        $this->input = new Input($this->request, [], []);
+        $this->inputRepository = new InputRepository($this->request, [], []);
     }
 
     public function testInstanceOfModel()
     {
-        $this->assertInstanceOf(Input::class, $this->input);
-        $this->assertInstanceOf(BaseRepository::class, $this->input);
+        $this->assertInstanceOf(InputRepository::class, $this->inputRepository);
+        $this->assertInstanceOf(BaseRepository::class, $this->inputRepository);
     }
 
     public function testAdd()
@@ -40,29 +41,17 @@ class InputTest extends \PHPUnit_Framework_TestCase
         $crop = [0.1, 0.2, 0.5];
         $concepts = ['first' => true, 'second' => true];
         $metadata = ['first' => 'value1', 'second' => 'value2'];
+        
+        $image1 = new Input($image_url, Input::IMG_URL);
+        $image1->setId('id1')->setCrop($crop);
 
-        $image1 = [
-                'image' => $image_url,
-                'method' => 'url',
-                'crop' => $crop,
-                'id' => 'id1',
-            ];
-        $image2 = [
-            'image' => $image_path,
-            'method' => 'path',
-            'concepts' => $concepts,
-            'id' => 'id2',
-        ];
-        $image3 = [
-            'image' => $image_hash,
-            'method' => 'base64',
-            'metadata' => $metadata,
-            'id' => 'id3',
-        ];
+        $image2 = new Input($image_path, Input::IMG_PATH);
+        $image2->setId('id2')->setConcepts($concepts);
 
-        $image4 = [
-            'image' => $image_url,
-        ];
+        $image3 = new Input($image_hash, Input::IMG_BASE64);
+        $image3->setId('id3')->setMetaData($metadata);
+
+        $image4 = new Input($image_url);
 
         $expectedData = 'data';
 
@@ -81,7 +70,7 @@ class InputTest extends \PHPUnit_Framework_TestCase
                                 ],
                             ],
                             'id' => 'id1',
-                        ]
+                        ],
                     ],
 
                 ]
@@ -90,7 +79,7 @@ class InputTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             $expectedData,
-            $this->input->add($image1)
+            $this->inputRepository->add($image1)
         );
 
         $this->request->shouldReceive('request')
@@ -118,7 +107,7 @@ class InputTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             $expectedData,
-            $this->input->add($image2)
+            $this->inputRepository->add($image2)
         );
 
         $this->request->shouldReceive('request')
@@ -143,7 +132,7 @@ class InputTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             $expectedData,
-            $this->input->add($image3)
+            $this->inputRepository->add($image3)
         );
 
         $this->request->shouldReceive('request')
@@ -159,7 +148,7 @@ class InputTest extends \PHPUnit_Framework_TestCase
                                     'url' => $image_url,
                                 ],
                             ],
-                        ]
+                        ],
                     ],
 
                 ]
@@ -168,7 +157,51 @@ class InputTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             $expectedData,
-            $this->input->add($image4)
+            $this->inputRepository->add($image4)
+        );
+
+        $this->request->shouldReceive('request')
+            ->once()
+            ->with(
+                'POST',
+                'inputs',
+                [
+                    'inputs' => [
+                        [
+                            'data' => [
+                                'image' => [
+                                    'url' => $image_url,
+                                    'crop' => $crop,
+                                ],
+                            ],
+                            'id' => 'id1',
+                        ],
+                        [
+                            'data' => [
+                                'image' => ['base64' => base64_encode(file_get_contents($image_path))],
+                                'concepts' => [
+                                    ['id' => 'first', 'value' => true],
+                                    ['id' => 'second', 'value' => true],
+                                ],
+                            ],
+                            'id' => 'id2',
+                        ],
+                        [
+                            'data' => [
+                                'image' => ['base64' => $image_hash],
+                                'metadata' => ['first' => 'value1', 'second' => 'value2'],
+                            ],
+                            'id' => 'id3',
+                        ],
+                    ],
+
+                ]
+            )
+            ->andReturn($expectedData);
+
+        $this->assertEquals(
+            $expectedData,
+            $this->inputRepository->add([$image1, $image2, $image3])
         );
     }
 
@@ -177,7 +210,7 @@ class InputTest extends \PHPUnit_Framework_TestCase
      */
     public function testGenerateImageAddressException()
     {
-        $this->input->generateImageAddress('path', 'path');
+        $this->inputRepository->generateImageAddress('path', 'path');
     }
 
     public function testGenerateImageAddress()
@@ -188,17 +221,17 @@ class InputTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             ['url' => $image_url],
-            $this->input->generateImageAddress($image_url, 'url')
+            $this->inputRepository->generateImageAddress($image_url, 'url')
         );
 
         $this->assertEquals(
             ['base64' => base64_encode(file_get_contents($image_path))],
-            $this->input->generateImageAddress($image_path, 'path')
+            $this->inputRepository->generateImageAddress($image_path, 'path')
         );
 
         $this->assertEquals(
             ['base64' => $image_hash],
-            $this->input->generateImageAddress($image_hash, 'base64')
+            $this->inputRepository->generateImageAddress($image_hash, 'base64')
         );
 
     }
@@ -209,7 +242,7 @@ class InputTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             ['id' => $id],
-            $this->input->addImageId([], $id)
+            $this->inputRepository->addImageId([], $id)
         );
     }
 
@@ -219,7 +252,7 @@ class InputTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             ['crop' => $crop],
-            $this->input->addImageCrop([], $crop)
+            $this->inputRepository->addImageCrop([], $crop)
         );
     }
 
@@ -235,7 +268,7 @@ class InputTest extends \PHPUnit_Framework_TestCase
                     ['id' => 'second', 'value' => false],
                 ],
             ],
-            $this->input->addImageConcepts([], $concepts)
+            $this->inputRepository->addImageConcepts([], $concepts)
         );
     }
 
@@ -248,84 +281,7 @@ class InputTest extends \PHPUnit_Framework_TestCase
             [
                 'metadata' => ['first' => 'value1', 'second' => 'value2'],
             ],
-            $this->input->addImageMetadata([], $metadata)
-        );
-    }
-
-    public function testAddMultiple()
-    {
-        $image_url = 'image';
-        $image_path = __FILE__;
-        $image_hash = 'hash';
-        $crop = [0.1, 0.2, 0.5];
-        $concepts = ['first' => true, 'second' => true];
-        $metadata = ['first' => 'value1', 'second' => 'value2'];
-        $images = [
-            [
-                'image' => $image_url,
-                'method' => 'url',
-                'crop' => $crop,
-                'id' => 'id1',
-            ],
-            [
-                'image' => $image_path,
-                'method' => 'path',
-                'concepts' => $concepts,
-                'id' => 'id2',
-            ],
-            [
-                'image' => $image_hash,
-                'method' => 'base64',
-                'metadata' => $metadata,
-                'id' => 'id3',
-            ],
-
-        ];
-
-        $expectedData = 'data';
-
-        $this->request->shouldReceive('request')
-            ->once()
-            ->with(
-                'POST',
-                'inputs',
-                [
-                    'inputs' => [
-                        [
-                            'data' => [
-                                'image' => [
-                                    'url' => $image_url,
-                                    'crop' => $crop,
-                                ],
-                            ],
-                            'id' => 'id1',
-                        ],
-                        [
-                            'data' => [
-                                'image' => ['base64' => base64_encode(file_get_contents($image_path))],
-                                'concepts' => [
-                                    ['id' => 'first', 'value' => true],
-                                    ['id' => 'second', 'value' => true],
-                                ],
-                            ],
-                            'id' => 'id2',
-                        ],
-                        [
-                            'data' => [
-                                'image' => ['base64' => $image_hash],
-                                'metadata' => ['first' => 'value1', 'second' => 'value2'],
-                            ],
-                            'id' => 'id3',
-                        ],
-                    ],
-
-                ]
-            )
-            ->andReturn($expectedData);
-
-        $this->assertEquals(
-            $expectedData,
-            $this->input->addMultiple($images)
+            $this->inputRepository->addImageMetadata([], $metadata)
         );
     }
 }
