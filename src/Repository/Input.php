@@ -22,6 +22,21 @@ use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 class Input extends BaseRepository
 {
     /**
+     * Uses Image publicly accessible URL
+     */
+    const IMG_URL = 'url';
+
+    /**
+     * Uses Image local path
+     */
+    const IMG_PATH = 'path';
+
+    /**
+     * Uses Base64 Encoded Image
+     */
+    const IMG_BASE64 = 'base64';
+
+    /**
      * The ID of the input
      *
      * @var string $inputId
@@ -105,33 +120,41 @@ class Input extends BaseRepository
     }
 
     /**
-     * Add Url
-     *
-     * @param string $url Url of image
-     *
-     * @return object
-     */
-    public function addUrl($url)
-    {
-        return $this->add(['url' => $url]);
-    }
-
-    /**
-     * Add method
+     * Add One Image method
      *
      * @param array $image
      *
      * @return object
      */
-    private function add(array $image)
+    public function add(array $image)
     {
-        $data['inputs'] = [
-            [
-                'data' => [
-                    'image' => $image,
-                ],
-            ],
-        ];
+        $data['inputs'] = [];
+
+        $data['inputs'][] = $this->addNewImage($image);
+
+        return $this->getRequest()->request(
+            'POST',
+            'inputs',
+            $data
+        );
+
+    }
+
+    /**
+     * Adds Multiple Inputs
+     *
+     * @param array $images
+     *
+     * @return object
+     */
+    public function addMultiple(array $images)
+    {
+        $data['inputs'] = [];
+
+        foreach ($images as $image) {
+
+            $data['inputs'][] = $this->addNewImage($image);
+        }
 
         return $this->getRequest()->request(
             'POST',
@@ -141,137 +164,140 @@ class Input extends BaseRepository
     }
 
     /**
-     * Add by image path
+     * Adds new Image to Custom Input
      *
-     * @param string $path Path to image
-     *
-     * @return object
+     * @param array $image
+     * @return array
      */
-    public function addPath($path)
+    public function addNewImage(array $image)
     {
-        if (!file_exists($path)) {
-            throw new FileNotFoundException($path);
+        $data = [];
+
+        if (!isset($image['method'])) {
+            $image['method'] = 'url';
         }
 
-        return $this->add(
-            [
-                'base64' => base64_encode(file_get_contents($path)),
-            ]
-        );
+        if (isset($image['image'])) {
+            $data['data'] = [
+                'image' => $this->generateImageAddress($image['image'], $image['method']),
+            ];
+        }
+
+        if (isset($image['id'])) {
+            $data = $this->addImageId($data, $image['id']);
+        }
+
+        if (isset($image['crop']) && is_array($image['crop'])) {
+            $data['data']['image'] = $this->addImageCrop($data['data']['image'], $image['crop']);
+        }
+
+        if (isset($image['concepts']) && is_array($image['concepts'])) {
+            $data['data'] = $this->addImageConcepts($data['data'], $image['concepts']);
+        }
+
+        if (isset($image['metadata']) && is_array($image['metadata'])) {
+            $data['data'] = $this->addImageMetadata($data['data'], $image['metadata']);
+        }
+
+        return $data;
     }
 
     /**
-     * Add base64 encoded image
+     * Generate Image With Download Type
      *
-     * @param string $hash base64 encoded image
-     *
-     * @return object
+     * @param $image
+     * @param null $method
+     * @return array
      */
-    public function addEncoded($hash)
+    public function generateImageAddress(string $image, $method = null)
     {
-        return $this->add(
-            [
-                'base64' => $hash,
-            ]
-        );
+
+        if ($method == self::IMG_BASE64) {
+
+            return ['base64' => $image];
+
+        } elseif ($method == self::IMG_PATH) {
+
+            if (!file_exists($image)) {
+                throw new FileNotFoundException($image);
+            }
+
+            return ['base64' => base64_encode(file_get_contents($image))];
+
+        } else {
+
+            return ['url' => $image];
+
+        }
+
     }
 
-
     /**
-     * Forms $data['inputs'] in Multiple Inputs
+     * Adds Image Id to Image Data
      *
-     * @param array $inputs
-     * @param array $image
+     * @param array $data
      * @param string $id
      * @return array
      */
-    private function addImage(array $inputs, array $image, $id)
+    public function addImageId(array $data, string $id)
     {
-        $inputs[] = [
-            'data' => [
-                'image' => $image,
-            ],
-            'id' => $id,
-        ];
 
-        return $inputs;
+        $data['id'] = $id;
+
+        return $data;
     }
 
     /**
-     * Adds Multiple Inputs with Ids by Url
+     * Adds Image Crop to Image Data
      *
-     * @param array $images
-     *
-     * @return object
+     * @param array $data
+     * @param array $crop
+     * @return array
      */
-    public function addMultipleIdsByUrl(array $images)
+    public function addImageCrop(array $data, array $crop)
     {
-        $data['inputs'] = [];
 
-        foreach ($images as $image) {
+        $data['crop'] = $crop;
 
-            $data['inputs'] = $this->addImage($data['inputs'], ['url' => $image['image']], $image['id']);
-        }
-
-        return $this->getRequest()->request(
-            'POST',
-            'inputs',
-            $data
-        );
+        return $data;
     }
 
     /**
-     * Adds Multiple Inputs with Ids by Path
+     * Adds Image Concepts to Image Data
      *
-     * @param array $images
-     *
-     * @return object
+     * @param array $data
+     * @param array $concepts
+     * @return array
      */
-    public function addMultipleIdsByPath(array $images)
+    public function addImageConcepts(array $data, array $concepts)
     {
-        $data['inputs'] = [];
 
-        foreach ($images as $image) {
+        $data['concepts'] = [];
 
-            if (!file_exists($image['image'])) {
-                throw new FileNotFoundException($image['image']);
-            }
-
-            $data['inputs'] = $this->addImage(
-                $data['inputs'],
-                ['base64' => base64_encode(file_get_contents($image['image']))],
-                $image['id']
-            );
+        foreach ($concepts as $concept_id => $value) {
+            $data['concepts'][] = ['id' => $concept_id, 'value' => $value];
         }
 
-        return $this->getRequest()->request(
-            'POST',
-            'inputs',
-            $data
-        );
+        return $data;
     }
 
     /**
-     * Adds Multiple Inputs with Ids Encoded by Base64
+     * Adds Image Metadaya to Image Data
      *
-     * @param array $images
-     *
-     * @return object
+     * @param array $data
+     * @param array $metadata
+     * @return array
      */
-    public function addMultipleIdsByEncoded(array $images)
+    public function addImageMetadata(array $data, array $metadata)
     {
-        $data['inputs'] = [];
 
-        foreach ($images as $image) {
+        $data['metadata'] = [];
 
-            $data['inputs'] = $this->addImage($data['inputs'], ['base64' => $image['image']], $image['id']);
+        foreach ($metadata as $meta_name => $meta_value) {
+            $data['metadata'][$meta_name] = $meta_value;
         }
 
-        return $this->getRequest()->request(
-            'POST',
-            'inputs',
-            $data
-        );
+        return $data;
     }
 
     // mergeConcepts

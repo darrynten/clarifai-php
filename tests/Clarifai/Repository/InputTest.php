@@ -34,37 +34,36 @@ class InputTest extends \PHPUnit_Framework_TestCase
 
     public function testAdd()
     {
-        $url = 'url';
-        $expectedData = 'data';
+        $image_url = 'image';
+        $image_path = __FILE__;
+        $image_hash = 'hash';
+        $crop = [0.1, 0.2, 0.5];
+        $concepts = ['first' => true, 'second' => true];
+        $metadata = ['first' => 'value1', 'second' => 'value2'];
 
+        $image1 = [
+                'image' => $image_url,
+                'method' => 'url',
+                'crop' => $crop,
+                'id' => 'id1',
+            ];
+        $image2 = [
+            'image' => $image_path,
+            'method' => 'path',
+            'concepts' => $concepts,
+            'id' => 'id2',
+        ];
+        $image3 = [
+            'image' => $image_hash,
+            'method' => 'base64',
+            'metadata' => $metadata,
+            'id' => 'id3',
+        ];
 
-        $this->request->shouldReceive('request')
-            ->once()
-            ->with(
-                'POST',
-                'inputs',
-                [
-                    'inputs' => [
-                        [
-                            'data' => [
-                                'image' => ['url' => $url],
-                            ],
-                        ],
-                    ],
+        $image4 = [
+            'image' => $image_url,
+        ];
 
-                ]
-            )
-            ->andReturn($expectedData);
-
-        $this->assertEquals(
-            $expectedData,
-            $this->input->addUrl($url)
-        );
-    }
-
-    public function testAddPath()
-    {
-        $file = __FILE__;
         $expectedData = 'data';
 
         $this->request->shouldReceive('request')
@@ -77,9 +76,39 @@ class InputTest extends \PHPUnit_Framework_TestCase
                         [
                             'data' => [
                                 'image' => [
-                                    'base64' => base64_encode(file_get_contents($file)),
+                                    'url' => $image_url,
+                                    'crop' => $crop,
                                 ],
                             ],
+                            'id' => 'id1',
+                        ]
+                    ],
+
+                ]
+            )
+            ->andReturn($expectedData);
+
+        $this->assertEquals(
+            $expectedData,
+            $this->input->add($image1)
+        );
+
+        $this->request->shouldReceive('request')
+            ->once()
+            ->with(
+                'POST',
+                'inputs',
+                [
+                    'inputs' => [
+                        [
+                            'data' => [
+                                'image' => ['base64' => base64_encode(file_get_contents($image_path))],
+                                'concepts' => [
+                                    ['id' => 'first', 'value' => true],
+                                    ['id' => 'second', 'value' => true],
+                                ],
+                            ],
+                            'id' => 'id2',
                         ],
                     ],
 
@@ -89,21 +118,170 @@ class InputTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             $expectedData,
-            $this->input->addPath($file)
+            $this->input->add($image2)
+        );
+
+        $this->request->shouldReceive('request')
+            ->once()
+            ->with(
+                'POST',
+                'inputs',
+                [
+                    'inputs' => [
+                        [
+                            'data' => [
+                                'image' => ['base64' => $image_hash],
+                                'metadata' => ['first' => 'value1', 'second' => 'value2'],
+                            ],
+                            'id' => 'id3',
+                        ],
+                    ],
+
+                ]
+            )
+            ->andReturn($expectedData);
+
+        $this->assertEquals(
+            $expectedData,
+            $this->input->add($image3)
+        );
+
+        $this->request->shouldReceive('request')
+            ->once()
+            ->with(
+                'POST',
+                'inputs',
+                [
+                    'inputs' => [
+                        [
+                            'data' => [
+                                'image' => [
+                                    'url' => $image_url,
+                                ],
+                            ],
+                        ]
+                    ],
+
+                ]
+            )
+            ->andReturn($expectedData);
+
+        $this->assertEquals(
+            $expectedData,
+            $this->input->add($image4)
         );
     }
 
     /**
      * @expectedException \Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException
      */
-    public function testAddPathException()
+    public function testGenerateImageAddressException()
     {
-        $this->input->addPath('path');
+        $this->input->generateImageAddress('path', 'path');
     }
 
-    public function testAddEncoded()
+    public function testGenerateImageAddress()
     {
-        $hash = 'hash';
+        $image_url = 'image';
+        $image_path = __FILE__;
+        $image_hash = 'hash';
+
+        $this->assertEquals(
+            ['url' => $image_url],
+            $this->input->generateImageAddress($image_url, 'url')
+        );
+
+        $this->assertEquals(
+            ['base64' => base64_encode(file_get_contents($image_path))],
+            $this->input->generateImageAddress($image_path, 'path')
+        );
+
+        $this->assertEquals(
+            ['base64' => $image_hash],
+            $this->input->generateImageAddress($image_hash, 'base64')
+        );
+
+    }
+
+    public function testAddImageId()
+    {
+        $id = 'image_id';
+
+        $this->assertEquals(
+            ['id' => $id],
+            $this->input->addImageId([], $id)
+        );
+    }
+
+    public function testAddImageCrop()
+    {
+        $crop = [0.1, 0.2, 0.5];
+
+        $this->assertEquals(
+            ['crop' => $crop],
+            $this->input->addImageCrop([], $crop)
+        );
+    }
+
+    public function testAddImageConcepts()
+    {
+
+        $concepts = ['first' => true, 'second' => false];
+
+        $this->assertEquals(
+            [
+                'concepts' => [
+                    ['id' => 'first', 'value' => true],
+                    ['id' => 'second', 'value' => false],
+                ],
+            ],
+            $this->input->addImageConcepts([], $concepts)
+        );
+    }
+
+    public function testAddImageMetadata()
+    {
+
+        $metadata = ['first' => 'value1', 'second' => 'value2'];
+
+        $this->assertEquals(
+            [
+                'metadata' => ['first' => 'value1', 'second' => 'value2'],
+            ],
+            $this->input->addImageMetadata([], $metadata)
+        );
+    }
+
+    public function testAddMultiple()
+    {
+        $image_url = 'image';
+        $image_path = __FILE__;
+        $image_hash = 'hash';
+        $crop = [0.1, 0.2, 0.5];
+        $concepts = ['first' => true, 'second' => true];
+        $metadata = ['first' => 'value1', 'second' => 'value2'];
+        $images = [
+            [
+                'image' => $image_url,
+                'method' => 'url',
+                'crop' => $crop,
+                'id' => 'id1',
+            ],
+            [
+                'image' => $image_path,
+                'method' => 'path',
+                'concepts' => $concepts,
+                'id' => 'id2',
+            ],
+            [
+                'image' => $image_hash,
+                'method' => 'base64',
+                'metadata' => $metadata,
+                'id' => 'id3',
+            ],
+
+        ];
+
         $expectedData = 'data';
 
         $this->request->shouldReceive('request')
@@ -116,9 +294,28 @@ class InputTest extends \PHPUnit_Framework_TestCase
                         [
                             'data' => [
                                 'image' => [
-                                    'base64' => $hash,
+                                    'url' => $image_url,
+                                    'crop' => $crop,
                                 ],
                             ],
+                            'id' => 'id1',
+                        ],
+                        [
+                            'data' => [
+                                'image' => ['base64' => base64_encode(file_get_contents($image_path))],
+                                'concepts' => [
+                                    ['id' => 'first', 'value' => true],
+                                    ['id' => 'second', 'value' => true],
+                                ],
+                            ],
+                            'id' => 'id2',
+                        ],
+                        [
+                            'data' => [
+                                'image' => ['base64' => $image_hash],
+                                'metadata' => ['first' => 'value1', 'second' => 'value2'],
+                            ],
+                            'id' => 'id3',
                         ],
                     ],
 
@@ -128,127 +325,7 @@ class InputTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             $expectedData,
-            $this->input->addEncoded($hash)
-        );
-    }
-
-    public function testAddMultipleIdsByUrl()
-    {
-        $image1 = ['image' => 'path1', 'id' => '1'];
-        $image2 = ['image' => 'path2', 'id' => '2'];
-        $expectedData = 'data';
-
-        $this->request->shouldReceive('request')
-            ->once()
-            ->with(
-                'POST',
-                'inputs',
-                [
-                    'inputs' => [
-                        [
-                            'data' => [
-                                'image' => ['url' => $image1['image']],
-                            ],
-                            'id' => $image1['id'],
-                        ],
-                        [
-                            'data' => [
-                                'image' => ['url' => $image2['image']],
-                            ],
-                            'id' => $image2['id'],
-                        ],
-                    ],
-
-                ]
-            )
-            ->andReturn($expectedData);
-
-        $this->assertEquals(
-            $expectedData,
-            $this->input->addMultipleIdsByUrl([$image1, $image2])
-        );
-    }
-
-    /**
-     * @expectedException \Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException
-     */
-    public function testAddMultipleIdsByPathException()
-    {
-        $this->input->addMultipleIdsByPath([['image' => 'path', 'id' => '1']]);
-    }
-
-    public function testAddMultipleIdsByPath()
-    {
-        $image1 = ['image' => __FILE__, 'id' => '1'];
-        $image2 = ['image' => __FILE__, 'id' => '2'];
-
-        $expectedData = 'data';
-
-        $this->request->shouldReceive('request')
-            ->once()
-            ->with(
-                'POST',
-                'inputs',
-                [
-                    'inputs' => [
-                        [
-                            'data' => [
-                                'image' => ['base64' => base64_encode(file_get_contents($image1['image']))],
-                            ],
-                            'id' => $image1['id'],
-                        ],
-                        [
-                            'data' => [
-                                'image' => ['base64' => base64_encode(file_get_contents($image2['image']))],
-                            ],
-                            'id' => $image2['id'],
-                        ],
-                    ],
-
-                ]
-            )
-            ->andReturn($expectedData);
-
-        $this->assertEquals(
-            $expectedData,
-            $this->input->addMultipleIdsByPath([$image1, $image2])
-        );
-    }
-
-    public function testAddMultipleIdsByEncoded()
-    {
-        $image1 = ['image' => 'hash1', 'id' => '1'];
-        $image2 = ['image' => 'hash2', 'id' => '2'];
-        $expectedData = 'data';
-
-        $this->request->shouldReceive('request')
-            ->once()
-            ->with(
-                'POST',
-                'inputs',
-                [
-                    'inputs' => [
-                        [
-                            'data' => [
-                                'image' => ['base64' => $image1['image']],
-                            ],
-                            'id' => $image1['id'],
-                        ],
-                        [
-                            'data' => [
-                                'image' => ['base64' => $image2['image']],
-                            ],
-                            'id' => $image2['id'],
-                        ],
-                    ],
-
-                ]
-            )
-            ->andReturn($expectedData);
-
-        $this->assertEquals(
-            $expectedData,
-            $this->input->addMultipleIdsByEncoded([$image1, $image2])
+            $this->input->addMultiple($images)
         );
     }
 }
