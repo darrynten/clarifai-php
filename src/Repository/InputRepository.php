@@ -11,7 +11,7 @@
 
 namespace DarrynTen\Clarifai\Repository;
 
-use DarrynTen\Clarifai\Model\Input;
+use DarrynTen\Clarifai\Entity\Input;
 use DarrynTen\Clarifai\Request\RequestHandler;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 
@@ -41,14 +41,14 @@ class InputRepository extends BaseRepository
     {
         $data['inputs'] = [];
 
-        if(is_array($input_data)) {
+        if (is_array($input_data)) {
 
             foreach ($input_data as $image) {
 
                 $data['inputs'][] = $this->addNewImage($image);
             }
-        }else{
-             $data['inputs'][] = $this->addNewImage($input_data);
+        } else {
+            $data['inputs'][] = $this->addNewImage($input_data);
         }
 
         return $this->getRequest()->request(
@@ -188,6 +188,80 @@ class InputRepository extends BaseRepository
         }
 
         return $data;
+    }
+
+    /**
+     * Gets All Inputs
+     *
+     * @return array
+     * @throws \Exception
+     */
+
+    public function get()
+    {
+        $inputResult = $this->getRequest()->request(
+            'GET',
+            'inputs'
+        );
+
+        $input_array = [];
+
+        if (property_exists($inputResult, 'inputs')) {
+            foreach ($inputResult->inputs as $input) {
+                $image = new Input($input);
+                $input_array[] = $image;
+            }
+        } else {
+            throw new \Exception('Inputs Not Found');
+        }
+
+        return $input_array;
+    }
+
+    /**
+     * Gets Input By Id
+     *
+     * @param $id
+     * @return Input
+     * @throws \Exception
+     */
+    public function getById($id)
+    {
+        $inputResult = $this->getRequest()->request(
+            'GET',
+            sprintf('inputs/%s', $id)
+        );
+
+        if (property_exists($inputResult, 'input')) {
+            $input = new Input($inputResult->input);
+        } else {
+            throw new \Exception('Input Not Found');
+        }
+
+        return $input;
+    }
+
+    /**
+     * Gets Status of your Inputs
+     *
+     * @return \stdClass
+     * @throws \Exception
+     */
+
+    public function getStatus()
+    {
+        $statusResult = $this->getRequest()->request(
+            'GET',
+            'inputs/status'
+        );
+
+        if (property_exists($statusResult, 'counts')) {
+            $status = $statusResult->counts;
+        } else {
+            throw new \Exception('Status Not Found');
+        }
+
+        return $status;
     }
 
     // mergeConcepts

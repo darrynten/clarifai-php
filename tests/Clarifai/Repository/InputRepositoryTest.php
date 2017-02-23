@@ -2,12 +2,12 @@
 
 namespace DarrynTen\Clarifai\Tests\Clarifai\Repository;
 
-use DarrynTen\Clarifai\Model\Input;
+use DarrynTen\Clarifai\Entity\Input;
 use DarrynTen\Clarifai\Repository\BaseRepository;
 use DarrynTen\Clarifai\Repository\InputRepository;
 use DarrynTen\Clarifai\Tests\Clarifai\Helpers\DataHelper;
 
-class InputTest extends \PHPUnit_Framework_TestCase
+class InputRepositoryTest extends \PHPUnit_Framework_TestCase
 {
     use DataHelper;
 
@@ -41,7 +41,7 @@ class InputTest extends \PHPUnit_Framework_TestCase
         $crop = [0.1, 0.2, 0.5];
         $concepts = ['first' => true, 'second' => true];
         $metadata = ['first' => 'value1', 'second' => 'value2'];
-        
+
         $image1 = new Input($image_url, Input::IMG_URL);
         $image1->setId('id1')->setCrop($crop);
 
