@@ -69,7 +69,7 @@ class Input
     /**
      * The metadata
      *
-     * @var \stdClass $metaData
+     * @var array $metaData
      */
     private $metaData;
 
@@ -82,30 +82,31 @@ class Input
 
     /**
      * Input constructor.
-     * @param \stdClass|null $input
+     * @param array|null $input
      * @throws \Exception
      */
-    public function __construct(\stdClass $input = null)
+    public function __construct(array $input = null)
     {
         if ($input) {
-            $this->setId($input->id)
-                ->setCreatedAt($input->created_at)
-                ->setStatus($input->status->code, $input->status->description);
-            if ($input->data->image->url) {
-                $this->setImage($input->data->image->url)->isUrl();
-            } elseif ($input->data->image->base64) {
-                $this->setImage($input->data->image->url)->isEncoded();
+            $this->setId($input['id'])
+                ->setCreatedAt($input['created_at'])
+                ->setStatus($input['status']['code'], $input['status']['description']);
+            if (isset($input['data']['image']['url'])) {
+                $this->setImage($input['data']['image']['url'])->isUrl();
+            } elseif (isset($input['data']['image']['base64'])) {
+                $this->setImage($input['data']['image']['url'])->isEncoded();
             } else {
                 throw new \Exception('Couldn\'t indetify image method');
             }
-            if (property_exists($input->data->image, 'crop')) {
-                $this->setCrop($input->data->image->crop);
+            if (isset($input['data']['image']['crop'])) {
+                $this->setCrop($input['data']['image']['crop']);
             }
-            if (property_exists($input->data, 'concepts')) {
-                $this->setConcepts($input->data->concepts);
-            }
-            if (property_exists($input->data, 'metadata')) {
-                $this->setMetaData($input->data->metadata);
+//          TODO: Implement Concept Entity
+//            if (property_exists($input->data, 'concepts')) {
+//                $this->setConcepts($input->data->concepts);
+//            }
+            if (isset($input['data']['metadata'])) {
+                $this->setMetaData($input['data']['metadata']);
             }
         }
     }
@@ -236,7 +237,7 @@ class Input
     }
 
     /**
-     * @return \stdClass
+     * @return array
      */
     public function getMetaData()
     {
@@ -244,10 +245,10 @@ class Input
     }
 
     /**
-     * @param \stdClass $metaData
+     * @param array $metaData
      * @return $this
      */
-    public function setMetaData(\stdClass $metaData)
+    public function setMetaData(array $metaData)
     {
         $this->metaData = $metaData;
 

@@ -119,7 +119,7 @@ class RequestHandler
                 $options['query'] = $parameters;
             } else {
                 // Otherwise send JSON in the body
-                $options['json'] = (object) $parameters;
+                $options['json'] = (object)$parameters;
             }
         }
 
@@ -128,7 +128,7 @@ class RequestHandler
             $response = $this->client->request($method, $uri, $options);
 
             // All good
-            return json_decode($response->getBody());
+            return json_decode($response->getBody(), true);
         } catch (RequestException $exception) {
             $message = $exception->getMessage();
 
@@ -148,7 +148,7 @@ class RequestHandler
             $this->requestToken();
         }
 
-        return $this->tokenType . ' ' . $this->token;
+        return $this->tokenType.' '.$this->token;
     }
 
     /**
@@ -169,10 +169,10 @@ class RequestHandler
         );
 
         $this->tokenExpireTime->modify(
-            sprintf('+%s seconds', $tokenResponse->expires_in)
+            sprintf('+%s seconds', $tokenResponse['expires_in'])
         );
-        $this->token = $tokenResponse->access_token;
-        $this->tokenType = $tokenResponse->token_type;
+        $this->token = $tokenResponse['access_token'];
+        $this->tokenType = $tokenResponse['token_type'];
     }
 
     /**

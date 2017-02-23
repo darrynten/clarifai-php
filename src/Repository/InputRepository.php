@@ -32,31 +32,42 @@ class InputRepository extends BaseRepository
     }
 
     /**
-     * add Input Method
+     * Add Input Method
      *
      * @param $input_data
-     * @return object
+     * @return array
+     * @throws \Exception
      */
     public function add($input_data)
     {
         $data['inputs'] = [];
 
         if (is_array($input_data)) {
-
             foreach ($input_data as $image) {
-
                 $data['inputs'][] = $this->addNewImage($image);
             }
         } else {
             $data['inputs'][] = $this->addNewImage($input_data);
         }
 
-        return $this->getRequest()->request(
+        $inputResult = $this->getRequest()->request(
             'POST',
             'inputs',
             $data
         );
 
+        $input_array = [];
+
+        if ($inputResult['inputs']) {
+            foreach ($inputResult['inputs'] as $input) {
+                $image = new Input($input);
+                $input_array[] = $image;
+            }
+        } else {
+            throw new \Exception('Inputs Not Found');
+        }
+
+        return $input_array;
     }
 
     /**
@@ -80,10 +91,10 @@ class InputRepository extends BaseRepository
         if ($image->getCrop()) {
             $data['data']['image'] = $this->addImageCrop($data['data']['image'], $image->getCrop());
         }
-
-        if ($image->getConcepts()) {
-            $data['data'] = $this->addImageConcepts($data['data'], $image->getConcepts());
-        }
+// TODO: Implement Concept Entity
+//        if ($image->getConcepts()) {
+//            $data['data'] = $this->addImageConcepts($data['data'], $image->getConcepts());
+//        }
 
         if ($image->getMetaData()) {
             $data['data'] = $this->addImageMetadata($data['data'], $image->getMetaData());
@@ -206,8 +217,8 @@ class InputRepository extends BaseRepository
 
         $input_array = [];
 
-        if (property_exists($inputResult, 'inputs')) {
-            foreach ($inputResult->inputs as $input) {
+        if ($inputResult['inputs']) {
+            foreach ($inputResult['inputs'] as $input) {
                 $image = new Input($input);
                 $input_array[] = $image;
             }
@@ -232,8 +243,8 @@ class InputRepository extends BaseRepository
             sprintf('inputs/%s', $id)
         );
 
-        if (property_exists($inputResult, 'input')) {
-            $input = new Input($inputResult->input);
+        if ($inputResult['input']) {
+            $input = new Input($inputResult['input']);
         } else {
             throw new \Exception('Input Not Found');
         }
@@ -256,12 +267,64 @@ class InputRepository extends BaseRepository
         );
 
         if (property_exists($statusResult, 'counts')) {
-            $status = $statusResult->counts;
+            $status = $statusResult['counts'];
         } else {
             throw new \Exception('Status Not Found');
         }
 
         return $status;
+    }
+
+    /**
+     * Deletes Input By Id
+     *
+     * @param $id
+     * @return array
+     */
+    public function deleteById($id)
+    {
+        $deleteResult = $this->getRequest()->request(
+            'DELETE',
+            sprintf('inputs/%s', $id)
+        );
+
+        return $deleteResult['status'];
+    }
+
+    /**
+     * Deletes Inputs By Id Array
+     *
+     * @param array $ids
+     * @return array
+     */
+    public function deleteByIdArray(array $ids)
+    {
+        $data['ids'] = $ids;
+
+        $deleteResult = $this->getRequest()->request(
+            'DELETE',
+            'inputs',
+            $data
+        );
+
+        return $deleteResult['status'];
+    }
+
+    /**
+     * Deletes All Inputs
+     *
+     * @return array
+     */
+    public function deleteAll()
+    {
+
+        $deleteResult = $this->getRequest()->request(
+            'DELETE',
+            'inputs',
+            ['delete_all' => true]
+        );
+
+        return $deleteResult['status'];
     }
 
     // mergeConcepts
