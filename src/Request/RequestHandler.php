@@ -107,7 +107,7 @@ class RequestHandler
      *
      * @see RequestHandler::request()
      *
-     * @return []
+     * @return array
      * @throws ApiException
      */
     public function handleRequest(string $method, string $uri = '', array $options = [], array $parameters = [])
@@ -148,7 +148,7 @@ class RequestHandler
             $this->requestToken();
         }
 
-        return $this->tokenType.' '.$this->token;
+        return $this->tokenType . ' ' . $this->token;
     }
 
     /**
@@ -158,7 +158,7 @@ class RequestHandler
     {
         $tokenResponse = $this->handleRequest(
             'POST',
-            $this->url.'/v1/token', // endpoint is available only in v1
+            $this->url . '/v1/token', // endpoint is available only in v1
             [
                 'form_params' => [
                     'grant_type' => 'client_credentials',

@@ -24,6 +24,7 @@ class InputRepository extends BaseRepository
 {
     /**
      * InputRepository constructor.
+     *
      * @param RequestHandler $request
      */
     public function __construct(RequestHandler $request)
@@ -35,7 +36,9 @@ class InputRepository extends BaseRepository
      * Add Input Method
      *
      * @param $input_data
+     *
      * @return array
+     *
      * @throws \Exception
      */
     public function add($input_data)
@@ -74,6 +77,7 @@ class InputRepository extends BaseRepository
      *  Adds new Image to Custom Input
      *
      * @param Input $image
+     *
      * @return array
      */
     public function addNewImage(Input $image)
@@ -108,29 +112,22 @@ class InputRepository extends BaseRepository
      *
      * @param $image
      * @param null $method
+     *
      * @return array
      */
     public function generateImageAddress(string $image, $method = null)
     {
-
         if ($method == Input::IMG_BASE64) {
-
             return ['base64' => $image];
-
         } elseif ($method == Input::IMG_PATH) {
-
             if (!file_exists($image)) {
                 throw new FileNotFoundException($image);
             }
 
             return ['base64' => base64_encode(file_get_contents($image))];
-
         } else {
-
             return ['url' => $image];
-
         }
-
     }
 
     /**
@@ -138,11 +135,11 @@ class InputRepository extends BaseRepository
      *
      * @param array $data
      * @param string $id
+     *
      * @return array
      */
     public function addImageId(array $data, string $id)
     {
-
         $data['id'] = $id;
 
         return $data;
@@ -153,11 +150,11 @@ class InputRepository extends BaseRepository
      *
      * @param array $data
      * @param array $crop
+     *
      * @return array
      */
     public function addImageCrop(array $data, array $crop)
     {
-
         $data['crop'] = $crop;
 
         return $data;
@@ -168,11 +165,11 @@ class InputRepository extends BaseRepository
      *
      * @param array $data
      * @param array $concepts
+     *
      * @return array
      */
     public function addImageConcepts(array $data, array $concepts)
     {
-
         $data['concepts'] = [];
 
         foreach ($concepts as $concept_id => $value) {
@@ -187,6 +184,7 @@ class InputRepository extends BaseRepository
      *
      * @param array $data
      * @param array $metadata
+     *
      * @return array
      */
     public function addImageMetadata(array $data, array $metadata)
@@ -205,9 +203,9 @@ class InputRepository extends BaseRepository
      * Gets All Inputs
      *
      * @return array
+     *
      * @throws \Exception
      */
-
     public function get()
     {
         $inputResult = $this->getRequest()->request(
@@ -233,7 +231,9 @@ class InputRepository extends BaseRepository
      * Gets Input By Id
      *
      * @param $id
+     *
      * @return Input
+     *
      * @throws \Exception
      */
     public function getById($id)
@@ -255,10 +255,10 @@ class InputRepository extends BaseRepository
     /**
      * Gets Status of your Inputs
      *
-     * @return \stdClass
+     * @return array
+     *
      * @throws \Exception
      */
-
     public function getStatus()
     {
         $statusResult = $this->getRequest()->request(
@@ -266,7 +266,7 @@ class InputRepository extends BaseRepository
             'inputs/status'
         );
 
-        if (property_exists($statusResult, 'counts')) {
+        if (isset($statusResult['counts'])) {
             $status = $statusResult['counts'];
         } else {
             throw new \Exception('Status Not Found');
@@ -279,6 +279,7 @@ class InputRepository extends BaseRepository
      * Deletes Input By Id
      *
      * @param $id
+     *
      * @return array
      */
     public function deleteById($id)
@@ -295,6 +296,7 @@ class InputRepository extends BaseRepository
      * Deletes Inputs By Id Array
      *
      * @param array $ids
+     *
      * @return array
      */
     public function deleteByIdArray(array $ids)
@@ -317,7 +319,6 @@ class InputRepository extends BaseRepository
      */
     public function deleteAll()
     {
-
         $deleteResult = $this->getRequest()->request(
             'DELETE',
             'inputs',

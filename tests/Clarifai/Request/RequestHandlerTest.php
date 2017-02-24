@@ -187,7 +187,7 @@ class RequestHandlerTest extends \PHPUnit_Framework_TestCase
                 'https://api.clarifai.com/v2/'.$path,
                 [
                     'headers' => [
-                        'Authorization' => $tokenType.' '.$token,
+                        'Authorization' => $tokenType . ' ' . $token,
                     ],
                 ],
                 []

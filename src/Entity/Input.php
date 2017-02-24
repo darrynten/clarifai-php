@@ -82,19 +82,27 @@ class Input
 
     /**
      * Input constructor.
+     *
      * @param array|null $input
+     *
      * @throws \Exception
      */
     public function __construct(array $input = null)
     {
         if ($input) {
-            $this->setId($input['id'])
-                ->setCreatedAt($input['created_at'])
-                ->setStatus($input['status']['code'], $input['status']['description']);
+            if (isset($input['id'])) {
+                $this->setId($input['id']);
+            }
+            if (isset($input['created_at'])) {
+                $this->setCreatedAt($input['created_at']);
+            }
+            if (isset($input['status'])) {
+                $this->setStatus($input['status']['code'], $input['status']['description']);;
+            }
             if (isset($input['data']['image']['url'])) {
                 $this->setImage($input['data']['image']['url'])->isUrl();
             } elseif (isset($input['data']['image']['base64'])) {
-                $this->setImage($input['data']['image']['url'])->isEncoded();
+                $this->setImage($input['data']['image']['base64'])->isEncoded();
             } else {
                 throw new \Exception('Couldn\'t indetify image method');
             }
@@ -121,6 +129,7 @@ class Input
 
     /**
      * @param string $id
+     *
      * @return $this
      */
     public function setId(string $id)
@@ -140,6 +149,7 @@ class Input
 
     /**
      * @param string $image
+     *
      * @return $this
      */
     public function setImage(string $image)
@@ -159,6 +169,7 @@ class Input
 
     /**
      * @param string $imageMethod
+     *
      * @return $this
      */
     public function setImageMethod(string $imageMethod)
@@ -208,6 +219,7 @@ class Input
 
     /**
      * @param array $concepts
+     *
      * @return $this
      */
     public function setConcepts(array $concepts)
@@ -227,6 +239,7 @@ class Input
 
     /**
      * @param array $crop
+     *
      * @return $this
      */
     public function setCrop(array $crop)
@@ -246,6 +259,7 @@ class Input
 
     /**
      * @param array $metaData
+     *
      * @return $this
      */
     public function setMetaData(array $metaData)
@@ -265,6 +279,7 @@ class Input
 
     /**
      * @param string $createdAt
+     *
      * @return $this
      */
     public function setCreatedAt(string $createdAt)
@@ -285,6 +300,7 @@ class Input
     /**
      * @param null $code
      * @param null $description
+     *
      * @return $this
      */
     public function setStatus($code = null, $description = null)
