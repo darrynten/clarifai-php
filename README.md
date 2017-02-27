@@ -65,19 +65,14 @@ they need to support
 
 The structure is heavily inspired by [The official JS client](https://github.com/Clarifai/clarifai-javascript)
 
----
-
-- [ ] Authentication
+### Authentication
 
 Access is currently handled via oauth2.
 
 You would need to initialise the client with your Client ID and Secret.
 
----
+### Predict
 
-- [ ] Predict
-
-This is the initial deliverable.
 
 This is a basic library usage example that uses a predict call. The model name is `aaa03c23b3724a16a56b629203edc62c`
 
@@ -180,144 +175,31 @@ or b64 encoded data:
         \DarrynTen\Clarifai\Repository\Model::GENERAL
     );
 ```
----
-
-- [ ] Inputs
-
-Add an input using a publicly accessible URL:
-
-```php
-    $input = new Input();
-    $input->setImage('https://samples.clarifai.com/metro-north.jpg')->isUrl();
-    $inputResult = $clarifai->getInputRepository()->add($input);
-```
-
-Add an input using local path to image:
-
-```php
-    $input = new Input();
-    $input->setImage('/samples.clarifai.com/metro-north.jpg')->isPath();
-    $inputResult = $clarifai->getInputRepository()->add($input);
-```
-
-Add an input using bytes:
-
-```php
-    $input = new Input();
-    $input->setImage(ENCODED_IMAGE_HASH)->isEncoded();
-    $inputResult = $clarifai->getInputRepository()->add($input);
-```
-
-Add multiple inputs with ids:
-
-```php
-    $input1 = new Input();
-    $input1->setImage('https://samples.clarifai.com/metro-north.jpg')->isUrl()->setId('id1');
-    $input2 = new Input();
-    $input2->setImage('https://samples.clarifai.com/puppy.jpeg')->isUrl()->setId('id2');
-    $inputResult = $clarifai->getInputRepository()->add([$input1, $input2]);
-```
-
-Add inputs with concepts(not implemented yet)
-
-
-Add input with metadata:
-
-```php
-    $input1 = new Input();
-    $input1->setImage('https://samples.clarifai.com/metro-north.jpg')->isUrl()->setMetaData([['key' => 'value', 'list' => [1, 2, 3]]);
-    $inputResult = $clarifai->getInputRepository()->add($input);
-```
-
-Add input with a crop:
-
-```php
-    $input1 = new Input();
-    $input1->setImage('https://samples.clarifai.com/metro-north.jpg')->isUrl()->setCrop([0.2, 0.4, 0.3, 0.6]);
-    $inputResult = $clarifai->getInputRepository()->add($input);
-```
-
-Get Inputs:
-```php
-    $inputResult = $clarifai->getInputRepository()->get();
-```
-
-Get Input by Id:
-```php
-    $inputResult = $clarifai->getInputRepository()->getById('id');
-```
-
-Get Inputs Status:
-```php
-    $inputResult = $clarifai->getInputRepository()->getStatus();
-```
-
-Concept features (Update/Delete/BulkUpdate/BulkDelete) are not implemented yet
-
-Delete Input By Id:
-```php
-    $inputResult = $clarifai->getInputRepository()->deleteById('id');
-```
-
-Delete A List Of Inputs:
-```php
-    $inputResult = $clarifai->getInputRepository()->deleteByIdArray(['id1', 'id2']);
-```
-
-Delete All Inputs:
-```php
-    $inputResult = $clarifai->getInputRepository()->deleteAll();
-```
-
-
----
-
-Following the delivery of a prediction mechanism, this is the roadmap
-for this project.
-
-- [ ] Train
-  - [ ] Add Image with Concepts
-  - [ ] Create a Model
-  - [ ] Train a Model
-  - [ ] Predict with a Model
-- [ ] Search
-  - [ ] Add Image to Search
-  - [ ] Search by Concept
-  - [ ] Reverse Image Search
-- [ ] Public Models
-  - [ ] General
-  - [ ] Food
-  - [ ] Travel
-  - [ ] NSFW
-  - [ ] Weddings
-  - [ ] Colour
-  - [ ] Face Detection
-  - [ ] Apparel
-  - [ ] Celebrity
-- [ ] Applications
-- [ ] Languages
 
 ## Documentation
 
-This will mimic the documentation available on the site.
+This will eventually mimic the documentation available on the site.
 https://developer.clarifai.com/guide
 
-Each section will have a short explaination and some example code.
+Each section must have a short explaination and some example code like on the
+API docs page.
+
+Checked off bits are complete.
 
 - [ ] Inputs
-  - [ ] Add
+  - [x] Add
   - [ ] Add with Concepts
-  - [ ] Add with Custom Metadata
-  - [ ] Add with Crop
-  - [ ] Get Inputs
-  - [ ] Get Input Status
+  - [x] Add with Custom Metadata
+  - [x] Add with Crop
+  - [x] Get Inputs
+  - [x] Get Input Status
   - [ ] Update Input with Concepts
   - [ ] Delete Concepts from Input
   - [ ] Bulk Update Inputs with Concepts
   - [ ] Bulk Delete Concepts from Input List
-  - [ ] Delete Input by ID
-  - [ ] Delete Input List
-  - [ ] Delete All Inpits
+  - [x] Delete Input by ID
+  - [x] Delete Input List
+  - [x] Delete All Inpits
 - [ ] Models
   - [ ] Create Model
   - [ ] Create Model With Concepts
@@ -335,7 +217,7 @@ Each section will have a short explaination and some example code.
   - [ ] Delete Model Version
   - [ ] Delete All Models
   - [ ] Train Model
-  - [ ] Predict With Model
+  - [x] Predict With Model
   - [ ] Search Model by Name and Type
 - [ ] Searches
   - [ ] Search by Predicted Concepts
@@ -351,6 +233,195 @@ Each section will have a short explaination and some example code.
   - [ ] Remove
   - [ ] Overwrite
 - [ ] Batch Requests
+- [ ] Languages
+
+## Inputs
+
+The API is built around a simple idea. You send inputs (images) to the service
+and it returns predictions. In addition to receiving predictions on inputs, you
+can also 'save' inputs and their predictions to later search against. You can
+also 'save' inputs with concepts to later train your own model.
+
+### Add Inputs
+
+You can add inputs one by one or in bulk. If you do send bulk, you are limited
+to sending 128 inputs at a time.
+
+Images can either be publicly accessible URLs or file bytes. If you are sending
+file bytes, you must use base64 encoding.
+
+You are encouraged to send inputs with your own id. This will help you later
+match the input to your own database. If you do not send an id, one will be
+created for you.
+
+#### Add an input using a publicly accessible URL
+
+```php
+    $input = new Input();
+    $input->setImage('https://samples.clarifai.com/metro-north.jpg')->isUrl();
+    $inputResult = $clarifai->getInputRepository()->add($input);
+```
+
+#### Add an input using local path to image
+
+```php
+    $input = new Input();
+    $input->setImage('/samples.clarifai.com/metro-north.jpg')->isPath();
+    $inputResult = $clarifai->getInputRepository()->add($input);
+```
+
+#### Add an input using bytes
+
+The data must be base64 encoded. When you add a base64 image to our servers, a
+copy will be stored and hosted on our servers. If you already have an image
+hosting service we recommend using it and adding images via the url parameter.
+
+```php
+    $input = new Input();
+    $input->setImage(ENCODED_IMAGE_HASH)->isEncoded();
+    $inputResult = $clarifai->getInputRepository()->add($input);
+```
+
+#### Add multiple inputs with ids
+
+```php
+    $input1 = new Input();
+    $input1->setImage('https://samples.clarifai.com/metro-north.jpg')->isUrl()->setId('id1');
+    $input2 = new Input();
+    $input2->setImage('https://samples.clarifai.com/puppy.jpeg')->isUrl()->setId('id2');
+    $inputResult = $clarifai->getInputRepository()->add([$input1, $input2]);
+```
+
+#### Add inputs with concepts
+
+# (not implemented yet)
+
+#### Add input with metadata
+
+In addition to adding an input with concepts, you can also add an input with
+custom metadata. This metadata will then be searchable. Metadata can be any
+arbitrary JSON.
+
+```php
+    $input1 = new Input();
+    $input1->setImage('https://samples.clarifai.com/metro-north.jpg')->isUrl()
+        ->setMetaData([['key' => 'value', 'list' => [1, 2, 3]]);
+    $inputResult = $clarifai->getInputRepository()->add($input);
+```
+
+#### Add input with a crop
+
+When adding an input, you can specify crop points. The API will crop the image
+and use the resulting image. Crop points are given as percentages from the top
+left point in the order of top, left, bottom and right.
+
+As an example, if you provide a crop as `0.2, 0.4, 0.3, 0.6` that means the
+cropped image will have a top edge that starts 20% down from the original top
+edge, a left edge that starts 40% from the original left edge, a bottom edge
+that starts 30% from the original top edge and a right edge that starts 60% from
+the original left edge.
+
+```php
+    $input1 = new Input();
+    $input1->setImage('https://samples.clarifai.com/metro-north.jpg')->isUrl()
+        ->setCrop([0.2, 0.4, 0.3, 0.6]);
+    $inputResult = $clarifai->getInputRepository()->add($input);
+```
+
+#### Get Inputs
+
+You can list all the inputs (images) you have previously added either for search
+or train.
+
+If you added inputs with concepts, they will be returned in the response as well.
+
+# This request is implemented but is not yet paginated
+
+```php
+    $inputResult = $clarifai->getInputRepository()->get();
+```
+
+#### Get Input by Id
+
+If you'd like to get a specific input by id, you can do that as well.
+
+```php
+    $inputResult = $clarifai->getInputRepository()->getById('id');
+```
+
+#### Get Inputs Status
+
+If you add inputs in bulk, they will process in the background. You can get the
+status of all your inputs (processed, to_process and errors) like this:
+
+```php
+    $inputResult = $clarifai->getInputRepository()->getStatus();
+```
+
+# Concept features (Update/Delete/BulkUpdate/BulkDelete) are not implemented yet
+
+#### Update input with concepts
+
+To update an input with a new concept, or to change a concept value from true/false, you can do that:
+
+Not yet implemented
+
+#### Delete concepts from input
+
+To remove concepts that were already added to an input, you can do this:
+
+Not yet implemented
+
+#### Bulk update inputs with concepts
+
+You can update an existing input using its Id. This is useful if you'd like to add concepts to an input after its already been added.
+
+Not yet implemented
+
+#### Bulk delete concepts from list of inputs
+
+You can bulk delete multiple concepts from a list of inputs:
+
+Not yet implemented
+
+#### Delete Input By Id
+
+You can delete a single input by id
+
+```php
+    $inputResult = $clarifai->getInputRepository()->deleteById('id');
+```
+
+#### Delete A List Of Inputs
+
+You can also delete multiple inputs in one API call. This will happen
+asynchronously.
+
+```php
+    $inputResult = $clarifai->getInputRepository()->deleteByIdArray(['id1', 'id2']);
+```
+
+#### Delete All Inputs
+
+If you would like to delete all inputs from an application, you can do that as
+well. This will happen asynchronously.
+
+```php
+    $inputResult = $clarifai->getInputRepository()->deleteAll();
+```
+
+# Roadmap
+
+- [ ] Train
+  - [ ] Add Image with Concepts
+  - [ ] Create a Model
+  - [ ] Train a Model
+  - [ ] Predict with a Model
+- [ ] Search
+  - [ ] Add Image to Search
+  - [ ] Search by Concept
+  - [ ] Reverse Image Search
+- [ ] Applications
 - [ ] Languages
 
 ## Public Model IDs
@@ -390,3 +461,4 @@ when contributing you update the tests. For more info see CONTRIBUTING.md
 ## Acknowledgements
 
 * [Dmitry Semenov](https://github.com/mxnr) for jumping on board.
+* [Andrei Voitik](https://github.com/vojtik) for all his great input.
