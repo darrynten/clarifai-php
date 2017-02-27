@@ -221,7 +221,7 @@ Add multiple inputs with ids:
 Add inputs with concepts(not implemented yet)
 
 
-Add input with metadata
+Add input with metadata:
 
 ```php
     $input1 = new Input();
@@ -237,34 +237,34 @@ Add input with a crop:
     $inputResult = $clarifai->getInputRepository()->add($input);
 ```
 
-Get Inputs
+Get Inputs:
 ```php
     $inputResult = $clarifai->getInputRepository()->get();
 ```
 
-Get Input by Id
+Get Input by Id:
 ```php
     $inputResult = $clarifai->getInputRepository()->getById('id');
 ```
 
-Get Inputs Status
+Get Inputs Status:
 ```php
     $inputResult = $clarifai->getInputRepository()->getStatus();
 ```
 
 Concept features (Update/Delete/BulkUpdate/BulkDelete) are not implemented yet
 
-Delete Input By Id
+Delete Input By Id:
 ```php
     $inputResult = $clarifai->getInputRepository()->deleteById('id');
 ```
 
-Delete A List Of Inputs
+Delete A List Of Inputs:
 ```php
     $inputResult = $clarifai->getInputRepository()->deleteByIdArray(['id1', 'id2']);
 ```
 
-Delete All Inputs
+Delete All Inputs:
 ```php
     $inputResult = $clarifai->getInputRepository()->deleteAll();
 ```
