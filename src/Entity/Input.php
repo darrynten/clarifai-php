@@ -97,7 +97,7 @@ class Input
                 $this->setCreatedAt($input['created_at']);
             }
             if (isset($input['status'])) {
-                $this->setStatus($input['status']['code'], $input['status']['description']);;
+                $this->setStatus($input['status']['code'], $input['status']['description']);
             }
             if (isset($input['data']['image']['url'])) {
                 $this->setImage($input['data']['image']['url'])->isUrl();
@@ -310,6 +310,4 @@ class Input
 
         return $this;
     }
-
-
 }

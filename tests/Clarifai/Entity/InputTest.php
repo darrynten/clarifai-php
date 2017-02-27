@@ -27,7 +27,7 @@ class InputTest extends \PHPUnit_Framework_TestCase
             ['Image', 'https://samples.clarifai.com/metro-north.jpg'],
             ['ImageMethod', Input::IMG_BASE64],
             ['ImageMethod', Input::IMG_URL],
-            ['ImageMethod', Input::IMG_URL],
+            ['ImageMethod', Input::IMG_PATH],
             ['Concepts', []],
             ['Crop', [0.2, 0.4, 0.3, 0.6]],
             ['MetaData', ['first' => 'value1', 'second' => 'value2']],
