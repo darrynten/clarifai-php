@@ -416,7 +416,7 @@ class InputRepositoryTest extends \PHPUnit_Framework_TestCase
      * Output data for GetById Response
      *
      * @param Input $input
-     * 
+     *
      * @return array
      */
     public function getOneInputResponse(Input $input)
