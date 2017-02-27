@@ -187,95 +187,86 @@ or b64 encoded data:
 Add an input using a publicly accessible URL:
 
 ```php
-    $inputResult = $clarifai->getInput()->add(
-        [
-            'image' => 'https://samples.clarifai.com/metro-north.jpg',
-        ],
-    );
+    $input = new Input();
+    $input->setImage('https://samples.clarifai.com/metro-north.jpg')->isUrl();
+    $inputResult = $clarifai->getInputRepository()->add($input);
 ```
 
 Add an input using local path to image:
 
 ```php
-    $inputResult = $clarifai->getInput()->add(
-        [
-            'image' => '/samples.clarifai.com/metro-north.jpg',
-            'method' => 'path'
-        ],
-    );
+    $input = new Input();
+    $input->setImage('/samples.clarifai.com/metro-north.jpg')->isPath();
+    $inputResult = $clarifai->getInputRepository()->add($input);
 ```
 
 Add an input using bytes:
 
 ```php
-    $inputResult = $clarifai->getInput()->add(
-        [
-            'image' => ENCODED_IMAGE_HASH,
-            'method' => 'base64'
-        ],
-    );
+    $input = new Input();
+    $input->setImage(ENCODED_IMAGE_HASH)->isEncoded();
+    $inputResult = $clarifai->getInputRepository()->add($input);
 ```
 
 Add multiple inputs with ids:
 
 ```php
-    $inputResult = $clarifai->getInput()->addMultiple(
-        [
-            [
-                'image' => '/samples.clarifai.com/metro-north.jpg',
-                'method' => 'path'
-                'id' => 'id1',
-            ],
-            [
-                'image' => 'https://samples.clarifai.com/puppy.jpeg',
-                'method' => 'url'
-                'id' => 'id2',
-            ],
-        ]
-    );
+    $input1 = new Input();
+    $input1->setImage('https://samples.clarifai.com/metro-north.jpg')->isUrl()->setId('id1');
+    $input2 = new Input();
+    $input2->setImage('https://samples.clarifai.com/puppy.jpeg')->isUrl()->setId('id2');
+    $inputResult = $clarifai->getInputRepository()->add([$input1, $input2]);
 ```
 
-Add inputs with concepts:
+Add inputs with concepts(not implemented yet)
 
-```php
-    $inputResult = $clarifai->getInput()->addMultiple(
-        [
-            [
-                'image' => '/samples.clarifai.com/metro-north.jpg',
-                'concepts' => ['boscoe' => true ],
-                'id' => 'id1',
-            ],
-            [
-                'image' => '/samples.clarifai.com/puppy.jpeg',
-                'concepts' => ['water' => true, 'boscoe' => true],
-                'id' => 'id2',
-            ],
-        ]
-    );
-```
 
 Add input with metadata
 
 ```php
-    $inputResult = $clarifai->getInput()->add(
-        [
-            'image' => '/samples.clarifai.com/metro-north.jpg',
-            'metadata' => ['key' => 'value', 'list' => [1, 2, 3]],
-            'id' => 'id1',
-        ],
-    );
+    $input1 = new Input();
+    $input1->setImage('https://samples.clarifai.com/metro-north.jpg')->isUrl()->setMetaData([['key' => 'value', 'list' => [1, 2, 3]]);
+    $inputResult = $clarifai->getInputRepository()->add($input);
 ```
 
 Add input with a crop:
 
 ```php
-    $inputResult = $clarifai->getInput()->add(
-        [
-            'image' => '/samples.clarifai.com/metro-north.jpg',
-            'crop' => [0.2, 0.4, 0.3, 0.6],
-            'id' => 'id1',
-        ],
-    );
+    $input1 = new Input();
+    $input1->setImage('https://samples.clarifai.com/metro-north.jpg')->isUrl()->setCrop([0.2, 0.4, 0.3, 0.6]);
+    $inputResult = $clarifai->getInputRepository()->add($input);
+```
+
+Get Inputs
+```php
+    $inputResult = $clarifai->getInputRepository()->get();
+```
+
+Get Input by Id
+```php
+    $inputResult = $clarifai->getInputRepository()->getById('id');
+```
+
+Get Inputs Status
+```php
+    $inputResult = $clarifai->getInputRepository()->getStatus();
+```
+
+Concept features (Update/Delete/BulkUpdate/BulkDelete) are not implemented yet
+
+Delete Input By Id
+```php
+    $inputResult = $clarifai->getInputRepository()->deleteById('id');
+```
+
+Delete A List Of Inputs
+```php
+    $inputResult = $clarifai->getInputRepository()->deleteByIdArray(['id1', 'id2']);
+```
+
+Delete All Inputs
+```php
+    $inputResult = $clarifai->getInputRepository()->deleteAll();
 ```
 
 
