@@ -107,7 +107,7 @@ class RequestHandler
      *
      * @see RequestHandler::request()
      *
-     * @return []
+     * @return array
      * @throws ApiException
      */
     public function handleRequest(string $method, string $uri = '', array $options = [], array $parameters = [])
@@ -119,7 +119,7 @@ class RequestHandler
                 $options['query'] = $parameters;
             } else {
                 // Otherwise send JSON in the body
-                $options['json'] = (object) $parameters;
+                $options['json'] = (object)$parameters;
             }
         }
 
@@ -128,7 +128,7 @@ class RequestHandler
             $response = $this->client->request($method, $uri, $options);
 
             // All good
-            return json_decode($response->getBody());
+            return json_decode($response->getBody(), true);
         } catch (RequestException $exception) {
             $message = $exception->getMessage();
 
@@ -158,7 +158,7 @@ class RequestHandler
     {
         $tokenResponse = $this->handleRequest(
             'POST',
-            $this->url.'/v1/token', // endpoint is available only in v1
+            $this->url . '/v1/token', // endpoint is available only in v1
             [
                 'form_params' => [
                     'grant_type' => 'client_credentials',
@@ -169,10 +169,10 @@ class RequestHandler
         );
 
         $this->tokenExpireTime->modify(
-            sprintf('+%s seconds', $tokenResponse->expires_in)
+            sprintf('+%s seconds', $tokenResponse['expires_in'])
         );
-        $this->token = $tokenResponse->access_token;
-        $this->tokenType = $tokenResponse->token_type;
+        $this->token = $tokenResponse['access_token'];
+        $this->tokenType = $tokenResponse['token_type'];
     }
 
     /**

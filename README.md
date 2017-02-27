@@ -180,6 +180,95 @@ or b64 encoded data:
         \DarrynTen\Clarifai\Repository\Model::GENERAL
     );
 ```
+---
+
+- [ ] Inputs
+
+Add an input using a publicly accessible URL:
+
+```php
+    $input = new Input();
+    $input->setImage('https://samples.clarifai.com/metro-north.jpg')->isUrl();
+    $inputResult = $clarifai->getInputRepository()->add($input);
+```
+
+Add an input using local path to image:
+
+```php
+    $input = new Input();
+    $input->setImage('/samples.clarifai.com/metro-north.jpg')->isPath();
+    $inputResult = $clarifai->getInputRepository()->add($input);
+```
+
+Add an input using bytes:
+
+```php
+    $input = new Input();
+    $input->setImage(ENCODED_IMAGE_HASH)->isEncoded();
+    $inputResult = $clarifai->getInputRepository()->add($input);
+```
+
+Add multiple inputs with ids:
+
+```php
+    $input1 = new Input();
+    $input1->setImage('https://samples.clarifai.com/metro-north.jpg')->isUrl()->setId('id1');
+    $input2 = new Input();
+    $input2->setImage('https://samples.clarifai.com/puppy.jpeg')->isUrl()->setId('id2');
+    $inputResult = $clarifai->getInputRepository()->add([$input1, $input2]);
+```
+
+Add inputs with concepts(not implemented yet)
+
+
+Add input with metadata:
+
+```php
+    $input1 = new Input();
+    $input1->setImage('https://samples.clarifai.com/metro-north.jpg')->isUrl()->setMetaData([['key' => 'value', 'list' => [1, 2, 3]]);
+    $inputResult = $clarifai->getInputRepository()->add($input);
+```
+
+Add input with a crop:
+
+```php
+    $input1 = new Input();
+    $input1->setImage('https://samples.clarifai.com/metro-north.jpg')->isUrl()->setCrop([0.2, 0.4, 0.3, 0.6]);
+    $inputResult = $clarifai->getInputRepository()->add($input);
+```
+
+Get Inputs:
+```php
+    $inputResult = $clarifai->getInputRepository()->get();
+```
+
+Get Input by Id:
+```php
+    $inputResult = $clarifai->getInputRepository()->getById('id');
+```
+
+Get Inputs Status:
+```php
+    $inputResult = $clarifai->getInputRepository()->getStatus();
+```
+
+Concept features (Update/Delete/BulkUpdate/BulkDelete) are not implemented yet
+
+Delete Input By Id:
+```php
+    $inputResult = $clarifai->getInputRepository()->deleteById('id');
+```
+
+Delete A List Of Inputs:
+```php
+    $inputResult = $clarifai->getInputRepository()->deleteByIdArray(['id1', 'id2']);
+```
+
+Delete All Inputs:
+```php
+    $inputResult = $clarifai->getInputRepository()->deleteAll();
+```
+
 
 ---
 

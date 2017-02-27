@@ -41,10 +41,10 @@ class RequestHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->http->mock
             ->when()
-                ->methodIs('GET')
-                ->pathIs('/foo')
+            ->methodIs('GET')
+            ->pathIs('/foo')
             ->then()
-                ->body($data)
+            ->body($data)
             ->end();
         $this->http->setUp();
 
@@ -63,11 +63,11 @@ class RequestHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->http->mock
             ->when()
-                ->methodIs('GET')
-                ->pathIs('/foo?data=value')
+            ->methodIs('GET')
+            ->pathIs('/foo?data=value')
             ->queryParamsAre($parameters)
             ->then()
-                ->body($data)
+            ->body($data)
             ->end();
         $this->http->setUp();
 
@@ -86,10 +86,10 @@ class RequestHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->http->mock
             ->when()
-                ->methodIs('POST')
-                ->pathIs('/foo')
+            ->methodIs('POST')
+            ->pathIs('/foo')
             ->then()
-                ->body($data)
+            ->body($data)
             ->end();
         $this->http->setUp();
 
@@ -105,10 +105,10 @@ class RequestHandlerTest extends \PHPUnit_Framework_TestCase
     {
         $this->http->mock
             ->when()
-                ->methodIs('GET')
-                ->pathIs('/foo')
+            ->methodIs('GET')
+            ->pathIs('/foo')
             ->then()
-                ->body('{ value: 1 }')
+            ->body('{ value: 1 }')
             ->end();
         $this->http->setUp();
 
@@ -129,10 +129,10 @@ class RequestHandlerTest extends \PHPUnit_Framework_TestCase
     {
         $this->http->mock
             ->when()
-               ->methodIs('GET')
-                ->pathIs('/foo')
+            ->methodIs('GET')
+            ->pathIs('/foo')
             ->then()
-                ->statusCode(500)
+            ->statusCode(500)
             ->end();
         $this->http->setUp();
 
@@ -155,7 +155,7 @@ class RequestHandlerTest extends \PHPUnit_Framework_TestCase
             'DarrynTen\Clarifai\Request\RequestHandler[handleRequest]',
             [
                 $clientId,
-                $clientSecret
+                $clientSecret,
             ]
         );
 
@@ -173,13 +173,12 @@ class RequestHandlerTest extends \PHPUnit_Framework_TestCase
                 ]
             )
             ->andReturn(
-                (object) [
+                (array)[
                     'expires_in' => '60',
                     'access_token' => $token,
                     'token_type' => $tokenType,
                 ]
-            )
-        ;
+            );
 
         $clarifai->shouldReceive('handleRequest')
             ->twice()
@@ -189,7 +188,7 @@ class RequestHandlerTest extends \PHPUnit_Framework_TestCase
                 [
                     'headers' => [
                         'Authorization' => $tokenType . ' ' . $token,
-                    ]
+                    ],
                 ],
                 []
             )

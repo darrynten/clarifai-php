@@ -2,7 +2,7 @@
 
 namespace DarrynTen\Clarifai\Tests\Clarifai\Repository;
 
-use DarrynTen\Clarifai\Repository\Inputs;
+use DarrynTen\Clarifai\Repository\InputsRepository;
 use DarrynTen\Clarifai\Tests\Clarifai\Helpers\DataHelper;
 
 class InputsTest extends \PHPUnit_Framework_TestCase
@@ -16,8 +16,8 @@ class InputsTest extends \PHPUnit_Framework_TestCase
             'input' => $this->getInputData()
         ];
 
-        $inputs = new Inputs($this->getRequestMock(), $config, $data);
+        $inputs = new InputsRepository($this->getRequestMock(), $config, $data);
 
-        $this->assertInstanceOf(Inputs::class, $inputs);
+        $this->assertInstanceOf(InputsRepository::class, $inputs);
     }
 }

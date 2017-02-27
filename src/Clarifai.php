@@ -93,21 +93,21 @@ class Clarifai
      * @param $config
      * @param $data
      *
-     * @return Repository\Input
+     * @return Repository\InputRepository
      */
-    public function getInput($config, $data)
+    public function getInputRepository($config = null, $data = null)
     {
-        return new Repository\Input($this->getRequest(), $config, $data);
+        return new Repository\InputRepository($this->getRequest(), $config, $data);
     }
 
     /**
      * @param $config
      * @param $data
      *
-     * @return Repository\Inputs
+     * @return Repository\InputsRepository
      */
-    public function getInputs($config, $data)
+    public function getInputsRepository($config, $data)
     {
-        return new Repository\Inputs($this->getRequest(), $config, $data);
+        return new Repository\InputsRepository($this->getRequest(), $config, $data);
     }
 }

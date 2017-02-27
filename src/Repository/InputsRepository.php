@@ -18,7 +18,7 @@ use DarrynTen\Clarifai\Request\RequestHandler;
  *
  * @package Clarifai
  */
-class Inputs extends BaseRepository
+class InputsRepository extends BaseRepository
 {
     /**
      * A collection of inputs
@@ -55,7 +55,7 @@ class Inputs extends BaseRepository
         $this->rawData = $data;
 
         foreach ($data as $input) {
-            $this->inputs[] = new Input($this->getRequest(), $config, $input);
+            $this->inputs[] = new InputRepository($this->getRequest(), $config, $input);
         }
     }
 
