@@ -52,6 +52,13 @@ class Model
     private $modelVersion;
 
     /**
+     * Output Config
+     *
+     * @var array $outputConfig
+     */
+    private $outputConfig = ['concepts_mutually_exclusive' => '', 'closed_environment' => ''];
+
+    /**
      * Model constructor.
      *
      * @param array|null $model
@@ -76,6 +83,9 @@ class Model
             }
             if (isset($model['model_version'])) {
                 $this->setModelVersion(new ModelVersion($model['model_version']));
+            }
+            if (isset($model['output_config'])) {
+                $this->setOutputConfig($model['output_info']['concepts_mutually_exclusive'], $model['output_info']['closed_environment']);
             }
 //          TODO: Implement Concept Entity
 //            if (property_exists($input->data, 'concepts')) {
@@ -208,4 +218,25 @@ class Model
         return $this;
     }
 
+    /**
+     * @return array
+     */
+    public function getOutputConfig()
+    {
+        return $this->outputConfig;
+    }
+
+    /**
+     * @param null $concepts_mutually_exclusive
+     * @param null $closed_environment
+     *
+     * @return $this
+     */
+    public function setOutputConfig($concepts_mutually_exclusive = null, $closed_environment = null)
+    {
+        $this->outputConfig['concepts_mutually_exclusive'] = $concepts_mutually_exclusive;
+        $this->outputConfig['description'] = $closed_environment;
+
+        return $this;
+    }
 }

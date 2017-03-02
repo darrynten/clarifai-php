@@ -307,7 +307,7 @@ class ModelRepository extends BaseRepository
      */
     public function create(Model $model)
     {
-        $data['model'] = ['id' => $model->getId()];
+        $data['model'] = $this->createModelData($model);
 
         $inputResult = $this->getRequest()->request(
             'POST',
@@ -322,6 +322,27 @@ class ModelRepository extends BaseRepository
         }
 
         return $model;
+    }
+
+    /**
+     * Create new Model
+     *
+     * @param Model $model
+     *
+     * @return array
+     */
+    public function createModelData(Model $model)
+    {
+        $data = [];
+
+        if($model->getId()){
+            $data['id'] = $model->getId();
+        }
+        if($model->getName()){
+            $data['name'] = $model->getName();
+        }
+
+        return $data;
     }
 
     /**
