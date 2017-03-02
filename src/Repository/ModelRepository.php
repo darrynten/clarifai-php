@@ -323,6 +323,60 @@ class ModelRepository extends BaseRepository
         return $model;
     }
 
+    /**
+     * Gets All Models
+     *
+     * @return array
+     *
+     * @throws \Exception
+     */
+    public function get()
+    {
+        $inputResult = $this->getRequest()->request(
+            'GET',
+            'models'
+        );
+
+        $modelsArray = [];
+
+        if ($inputResult['models']) {
+            foreach ($inputResult['models'] as $model) {
+                $model = new Model($model);
+                $modelsArray[] = $model;
+            }
+        } else {
+            throw new \Exception('Models Not Found');
+        }
+
+        return  $modelsArray;
+    }
+
+    /**
+     * Gets Model By Id
+     *
+     * @param $id
+     *
+     * @return Model
+     *
+     * @throws \Exception
+     */
+    public function getById($id)
+    {
+        $inputResult = $this->getRequest()->request(
+            'GET',
+            sprintf('models/%s', $id)
+        );
+
+        if ($inputResult['model']) {
+            $model = new Model($inputResult['model']);
+        } else {
+            throw new \Exception('Model Not Found');
+        }
+
+        return $model;
+    }
+
+
     // mergeConcepts
     // deleteConcepts
     // overwriteConcepts
