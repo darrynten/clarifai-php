@@ -47,7 +47,7 @@ class Model
     /**
      * modelVersion
      *
-     * @var array $modelVersion
+     * @var ModelVersion
      */
     private $modelVersion;
 
@@ -75,7 +75,7 @@ class Model
                 $this->setOutputInfo($model['output_info']);
             }
             if (isset($model['model_version'])) {
-                $this->setModelVersion($model['model_version']);
+                $this->setModelVersion(new ModelVersion($model['model_version']));
             }
 //          TODO: Implement Concept Entity
 //            if (property_exists($input->data, 'concepts')) {
@@ -189,7 +189,7 @@ class Model
     }
 
     /**
-     * @return array
+     * @return modelVersion
      */
     public function getModelVersion()
     {
@@ -197,11 +197,11 @@ class Model
     }
 
     /**
-     * @param array $modelVersion
+     * @param modelVersion $modelVersion
      *
      * @return $this
      */
-    public function setModelVersion(array $modelVersion)
+    public function setModelVersion(ModelVersion $modelVersion)
     {
         $this->modelVersion = $modelVersion;
 

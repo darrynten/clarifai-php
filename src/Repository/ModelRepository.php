@@ -12,6 +12,7 @@
 namespace DarrynTen\Clarifai\Repository;
 
 use DarrynTen\Clarifai\Entity\Model;
+use DarrynTen\Clarifai\Entity\ModelVersion;
 use DarrynTen\Clarifai\Request\RequestHandler;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 
@@ -348,7 +349,7 @@ class ModelRepository extends BaseRepository
             throw new \Exception('Models Not Found');
         }
 
-        return  $modelsArray;
+        return $modelsArray;
     }
 
     /**
@@ -374,6 +375,83 @@ class ModelRepository extends BaseRepository
         }
 
         return $model;
+    }
+
+    /**
+     * Gets Model Output Info By Id
+     *
+     * @param $id
+     *
+     * @return array
+     *
+     * @throws \Exception
+     */
+    public function getOutputInfoById($id)
+    {
+        $inputResult = $this->getRequest()->request(
+            'GET',
+            sprintf('models/%s/output_info', $id)
+        );
+
+        //TODO: Figure out why it returns full Model Entity instead of only [output_info] part
+
+        return $inputResult;
+    }
+
+    /**
+     * Gets Model Versions
+     *
+     * @param $id
+     *
+     * @return array
+     *
+     * @throws \Exception
+     */
+    public function getModelVersions($id)
+    {
+        $inputResult = $this->getRequest()->request(
+            'GET',
+            sprintf('models/%s/versions', $id)
+        );
+
+        $modelVersions = [];
+
+        if ($inputResult['model_versions']) {
+            foreach ($inputResult['model_versions'] as $version) {
+                $modelVersion = new ModelVersion($version);
+                $modelVersions[] = $modelVersion;
+            }
+        } else {
+            throw new \Exception('Model Versions Not Found');
+        }
+
+        return $modelVersions;
+    }
+
+    /**
+     * Gets Model Version By Id
+     *
+     * @param string $model_id
+     * @param string $version_id
+     *
+     * @return array
+     *
+     * @throws \Exception
+     */
+    public function getModelVersionById($model_id, $version_id)
+    {
+        $inputResult = $this->getRequest()->request(
+            'GET',
+            sprintf('models/%s/versions/%s', $model_id, $version_id)
+        );
+
+        if ($inputResult['model_version']) {
+            $modelVersion = new ModelVersion($inputResult['model_version']);
+        } else {
+            throw new \Exception('Model Versions Not Found');
+        }
+
+        return $modelVersion;
     }
 
 
