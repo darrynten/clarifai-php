@@ -75,7 +75,7 @@ class Model
                 $this->setOutputInfo($model['output_info']);
             }
             if (isset($model['model_version'])) {
-                $this->setAppId($model['model_version']);
+                $this->setModelVersion($model['model_version']);
             }
 //          TODO: Implement Concept Entity
 //            if (property_exists($input->data, 'concepts')) {
