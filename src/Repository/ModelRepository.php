@@ -11,15 +11,16 @@
 
 namespace DarrynTen\Clarifai\Repository;
 
+use DarrynTen\Clarifai\Entity\Model;
 use DarrynTen\Clarifai\Request\RequestHandler;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 
 /**
- * Single Clarifai Model
+ * Single Clarifai ModelRepository
  *
  * @package Clarifai
  */
-class Model extends BaseRepository
+class ModelRepository extends BaseRepository
 {
     /**
      * Model id of the General Clarifai model
@@ -192,18 +193,18 @@ class Model extends BaseRepository
         $data['inputs'] = [
             [
                 'data' => [
-                    'image' => $image
-                ]
-            ]
+                    'image' => $image,
+                ],
+            ],
         ];
 
         if ($language) {
             $data['model'] = [
                 'output_info' => [
                     'output_config' => [
-                        'language' => $language
-                    ]
-                ]
+                        'language' => $language,
+                    ],
+                ],
             ];
         }
 
@@ -245,7 +246,7 @@ class Model extends BaseRepository
 
         return $this->predict(
             [
-                'base64' => base64_encode(file_get_contents($path))
+                'base64' => base64_encode(file_get_contents($path)),
             ],
             $modelType,
             $language
@@ -265,7 +266,7 @@ class Model extends BaseRepository
     {
         return $this->predict(
             [
-                'base64' => $hash
+                'base64' => $hash,
             ],
             $modelType,
             $language
@@ -292,6 +293,34 @@ class Model extends BaseRepository
     public function update()
     {
         //
+    }
+
+    /**
+     * Create new Model
+     *
+     * @param Model $model
+     *
+     * @return Model
+     *
+     * @throws \Exception
+     */
+    public function create(Model $model)
+    {
+        $data['model'] = ['id' => $model->getId()];
+
+        $inputResult = $this->getRequest()->request(
+            'POST',
+            'models',
+            $data
+        );
+
+        if ($inputResult['model']) {
+            $model = new Model($inputResult['model']);
+        } else {
+            throw new \Exception('Model Not Found');
+        }
+
+        return $model;
     }
 
     // mergeConcepts

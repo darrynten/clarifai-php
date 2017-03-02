@@ -55,7 +55,7 @@ class Models extends BaseRepository
         $this->rawData = $data;
 
         foreach ($data as $model) {
-            $this->models[] = new Model($this->getRequest(), $config, $model);
+            $this->models[] = new ModelRepository($this->getRequest(), $config, $model);
         }
     }
 

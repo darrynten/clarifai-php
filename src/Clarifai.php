@@ -49,11 +49,11 @@ class Clarifai
      * @param array|null $config
      * @param array|null $data
      *
-     * @return Repository\Model
+     * @return Repository\ModelRepository
      */
-    public function getModel($config = null, $data = null)
+    public function getModelRepository($config = null, $data = null)
     {
-        return new Repository\Model($this->getRequest(), $config, $data);
+        return new Repository\ModelRepository($this->getRequest(), $config, $data);
     }
 
     /**

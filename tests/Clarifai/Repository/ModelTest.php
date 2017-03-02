@@ -3,7 +3,7 @@
 namespace DarrynTen\Clarifai\Tests\Clarifai\Repository;
 
 use DarrynTen\Clarifai\Repository\BaseRepository;
-use DarrynTen\Clarifai\Repository\Model;
+use DarrynTen\Clarifai\Repository\ModelRepository;
 use DarrynTen\Clarifai\Tests\Clarifai\Helpers\DataHelper;
 
 class ModelTest extends \PHPUnit_Framework_TestCase
@@ -11,9 +11,9 @@ class ModelTest extends \PHPUnit_Framework_TestCase
     use DataHelper;
 
     /**
-     * @var Model
+     * @var ModelRepository
      */
-    private $model;
+    private $modelRepository;
 
     /**
      * @var \Mockery\MockInterface|\DarrynTen\Clarifai\Request\RequestHandler
@@ -23,13 +23,13 @@ class ModelTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->request = $this->getRequestMock();
-        $this->model = new Model($this->request, [], []);
+        $this->modelRepository = new ModelRepository($this->request, [], []);
     }
 
     public function testInstanceOfModel()
     {
-        $this->assertInstanceOf(Model::class, $this->model);
-        $this->assertInstanceOf(BaseRepository::class, $this->model);
+        $this->assertInstanceOf(ModelRepository::class, $this->modelRepository);
+        $this->assertInstanceOf(BaseRepository::class, $this->modelRepository);
     }
 
     /**
@@ -78,7 +78,7 @@ class ModelTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             $expectedData,
-            $this->model->predictUrl($url, $modelType, $lang)
+            $this->modelRepository->predictUrl($url, $modelType, $lang)
         );
     }
 
@@ -100,7 +100,7 @@ class ModelTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             $expectedData,
-            $this->model->predictPath($file, $modelType, $lang)
+            $this->modelRepository->predictPath($file, $modelType, $lang)
         );
     }
 
@@ -109,7 +109,7 @@ class ModelTest extends \PHPUnit_Framework_TestCase
      */
     public function testPredictPathException()
     {
-        $this->model->predictPath('path', 'model', 'ru');
+        $this->modelRepository->predictPath('path', 'model', 'ru');
     }
 
     public function testPredictEncoded()
@@ -130,7 +130,7 @@ class ModelTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             $expectedData,
-            $this->model->predictEncoded($hash, $modelType, $lang)
+            $this->modelRepository->predictEncoded($hash, $modelType, $lang)
         );
     }
 }
