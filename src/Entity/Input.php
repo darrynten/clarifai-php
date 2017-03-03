@@ -2,6 +2,8 @@
 
 namespace DarrynTen\Clarifai\Entity;
 
+use DarrynTen\Clarifai\Repository\Concepts;
+
 /**
  * Single Clarifai Input
  *
@@ -55,7 +57,7 @@ class Input
     /**
      * The concepts associated with this input
      *
-     * @var array $concepts
+     * @var Concepts[] $concepts
      */
     private $concepts;
 
@@ -81,40 +83,47 @@ class Input
     private $status = ['code' => '', 'description' => ''];
 
     /**
+     * The raw data
+     *
+     * @var array $rawData
+     */
+    private $rawData = [];
+
+    /**
      * Input constructor.
      *
-     * @param array|null $input
+     * @param array|null $rawData
      *
      * @throws \Exception
      */
-    public function __construct(array $input = null)
+    public function __construct(array $rawData = null)
     {
-        if ($input) {
-            if (isset($input['id'])) {
-                $this->setId($input['id']);
+        if ($rawData) {
+//            $this->setRawData($rawData);
+            if (isset($rawData['id'])) {
+                $this->setId($rawData['id']);
             }
-            if (isset($input['created_at'])) {
-                $this->setCreatedAt($input['created_at']);
+            if (isset($rawData['created_at'])) {
+                $this->setCreatedAt($rawData['created_at']);
             }
-            if (isset($input['status'])) {
-                $this->setStatus($input['status']['code'], $input['status']['description']);
+            if (isset($rawData['status'])) {
+                $this->setStatus($rawData['status']['code'], $rawData['status']['description']);
             }
-            if (isset($input['data']['image']['url'])) {
-                $this->setImage($input['data']['image']['url'])->isUrl();
-            } elseif (isset($input['data']['image']['base64'])) {
-                $this->setImage($input['data']['image']['base64'])->isEncoded();
+            if (isset($rawData['data']['image']['url'])) {
+                $this->setImage($rawData['data']['image']['url'])->isUrl();
+            } elseif (isset($rawData['data']['image']['base64'])) {
+                $this->setImage($rawData['data']['image']['base64'])->isEncoded();
             } else {
                 throw new \Exception('Couldn\'t indetify image method');
             }
-            if (isset($input['data']['image']['crop'])) {
-                $this->setCrop($input['data']['image']['crop']);
+            if (isset($rawData['data']['image']['crop'])) {
+                $this->setCrop($rawData['data']['image']['crop']);
             }
-//          TODO: Implement Concept Entity
-//            if (property_exists($input->data, 'concepts')) {
-//                $this->setConcepts($input->data->concepts);
-//            }
-            if (isset($input['data']['metadata'])) {
-                $this->setMetaData($input['data']['metadata']);
+            if (isset($rawData['data']['concepts'])) {
+                $this->setRawConcepts($rawData['data']['concepts']);
+            }
+            if (isset($rawData['data']['metadata'])) {
+                $this->setMetaData($rawData['data']['metadata']);
             }
         }
     }
@@ -210,7 +219,7 @@ class Input
     }
 
     /**
-     * @return array
+     * @return Concepts[]
      */
     public function getConcepts()
     {
@@ -218,12 +227,31 @@ class Input
     }
 
     /**
-     * @param array $concepts
+     * @param Concepts[] $concepts
      *
      * @return $this
      */
     public function setConcepts(array $concepts)
     {
+        $this->concepts = $concepts;
+
+        return $this;
+    }
+
+    /**
+     * Sets concepts from Raw Data
+     *
+     * @param array $rawConcepts
+     *
+     * @return $this
+     */
+    public function setRawConcepts(array $rawConcepts)
+    {
+        $concepts = [];
+        foreach($rawConcepts as $rawConcept){
+            $concept = new Concept($rawConcept);
+            $concepts[] = $concept;
+        }
         $this->concepts = $concepts;
 
         return $this;
@@ -307,6 +335,26 @@ class Input
     {
         $this->status['code'] = $code;
         $this->status['description'] = $description;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getRawData()
+    {
+        return $this->rawData;
+    }
+
+    /**
+     * @param array $rawData
+     *
+     * @return $this
+     */
+    public function setRawData(array $rawData)
+    {
+        $this->rawData = $rawData;
 
         return $this;
     }

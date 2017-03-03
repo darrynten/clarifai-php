@@ -455,7 +455,7 @@ class ModelRepository extends BaseRepository
      * @param string $model_id
      * @param string $version_id
      *
-     * @return array
+     * @return ModelVersion
      *
      * @throws \Exception
      */
