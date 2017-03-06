@@ -52,7 +52,7 @@ trait ConceptDataHelper
     /**
      * Gets Raw Data from Concept Entities
      *
-     * @param $concepts
+     * @param Concept[] $concepts
      *
      * @return array
      */
