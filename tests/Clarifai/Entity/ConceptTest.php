@@ -65,7 +65,9 @@ class ConceptTest extends \PHPUnit_Framework_TestCase
         );
         $id = 'id';
         $value = 1;
-        $data = $this->getConceptConstructData($id, 'name', 'appId', $value);
+        $name = 'name';
+        $appId = 'appId';
+        $data = $this->getConceptConstructData($id, $name, $appId, $value);
         $this->concept = new Concept($data);
         $this->assertEquals(
             $data,

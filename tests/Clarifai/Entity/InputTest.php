@@ -100,7 +100,12 @@ class InputTest extends \PHPUnit_Framework_TestCase
         $conceptData1 = $this->getConceptConstructData('id1', 'name1', 'appId1', true);
         $conceptData2 = $this->getConceptConstructData('id2', 'name2', 'appId2', false);
 
-        $data = $this->getInputConstructData([$conceptData1, $conceptData2]);
+        $data = $this->getInputFullConstructData(
+            'id',
+            'image',
+            Input::IMG_URL
+        );
+        $data['data']['concepts'] = [$conceptData1, $conceptData2];
 
         $this->input = new Input($data);
 
@@ -206,7 +211,7 @@ class InputTest extends \PHPUnit_Framework_TestCase
             [],
             $this->input->getRawData()
         );
-        $data = $this->getInputConstructData();
+        $data = $this->getInputFullConstructData('id', 'image', Input::IMG_URL);
         $this->assertSame(
             $this->input,
             $this->input->setRawData($data)

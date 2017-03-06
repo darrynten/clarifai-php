@@ -231,7 +231,7 @@ class InputRepository extends BaseRepository
             sprintf('inputs/%s', $id)
         );
 
-        if ($inputResult['input']) {
+        if (isset($inputResult['input'])) {
             $input = new Input($inputResult['input']);
         } else {
             throw new \Exception('Input Not Found');

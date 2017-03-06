@@ -16,14 +16,20 @@ trait ConceptDataHelper
      *
      * @return array
      */
-    public function getConceptConstructData($id, $name, $appId, $value)
+    public function getConceptConstructData($id, $name, $appId, bool $value)
     {
-        return [
+        $data = [
             'id' => $id,
-            'name' => $name,
-            'app_id' => $appId,
             'value' => $value,
         ];
+        if ($name) {
+            $data['name'] = $name;
+        }
+        if ($appId) {
+            $data['app_id'] = $appId;
+        }
+
+        return $data;
     }
 
     /**
@@ -36,10 +42,41 @@ trait ConceptDataHelper
      *
      * @return Concept
      */
-    public function getConceptEntity($id, $value, $name = null, $appId = null)
+    public function getConceptEntity($id, bool $value, $name = null, $appId = null)
     {
         $concept = new Concept($this->getConceptConstructData($id, $name, $appId, $value));
 
         return $concept;
+    }
+
+    /**
+     * Gets Raw Data from Concept Entities
+     *
+     * @param $concepts
+     *
+     * @return array
+     */
+    public function getConceptsRawData($concepts)
+    {
+        $data = [];
+
+        foreach ($concepts as $concept) {
+            $rawConcept = [];
+            if ($concept->getId()) {
+                $rawConcept['id'] = $concept->getId();
+            }
+
+            $rawConcept['value'] = $concept->getValue();
+
+            if ($concept->getName()) {
+                $rawConcept['name'] = $concept->getName();
+            }
+            if ($concept->getAppId()) {
+                $rawConcept['app_id'] = $concept->getAppId();
+            }
+            $data[] = $rawConcept;
+        }
+
+        return $data;
     }
 }

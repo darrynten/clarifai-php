@@ -6,11 +6,13 @@ use DarrynTen\Clarifai\Entity\Concept;
 use DarrynTen\Clarifai\Entity\Input;
 use DarrynTen\Clarifai\Repository\BaseRepository;
 use DarrynTen\Clarifai\Repository\InputRepository;
+use DarrynTen\Clarifai\Tests\Clarifai\Helpers\ConceptDataHelper;
 use DarrynTen\Clarifai\Tests\Clarifai\Helpers\DataHelper;
+use DarrynTen\Clarifai\Tests\Clarifai\Helpers\InputDataHelper;
 
 class InputRepositoryTest extends \PHPUnit_Framework_TestCase
 {
-    use DataHelper;
+    use DataHelper, InputDataHelper, ConceptDataHelper;
 
     /**
      * @var InputRepository
@@ -36,18 +38,35 @@ class InputRepositoryTest extends \PHPUnit_Framework_TestCase
 
     public function testAdd()
     {
+        $input1 = $this->getFullInputMock('id1', 'image1', Input::IMG_URL);
+        $input2 = $this->getFullInputMock('id2', 'image2', Input::IMG_BASE64);
+
         $this->request->shouldReceive('request')
             ->once()
             ->with(
                 'POST',
                 'inputs',
-                $this->getAddRequest()
+                $this->getAddRequest($input1)
             )
-            ->andReturn($this->getInputResponse());
+            ->andReturn($this->getInputResponse($input1));
 
         $this->assertEquals(
-            $this->getInputCollectionMock(),
-            $this->inputRepository->add($this->getInputCollectionMock())
+            [$input1],
+            $this->inputRepository->add($input1)
+        );
+
+        $this->request->shouldReceive('request')
+            ->once()
+            ->with(
+                'POST',
+                'inputs',
+                $this->getAddRequest([$input1, $input2])
+            )
+            ->andReturn($this->getInputResponse([$input1, $input2]));
+
+        $this->assertEquals(
+            [$input1, $input2],
+            $this->inputRepository->add([$input1, $input2])
         );
     }
 
@@ -136,23 +155,26 @@ class InputRepositoryTest extends \PHPUnit_Framework_TestCase
 
     public function testGet()
     {
+        $input1 = $this->getFullInputMock('id1', 'image1', Input::IMG_URL);
+        $input2 = $this->getFullInputMock('id2', 'image2', Input::IMG_BASE64);
+
         $this->request->shouldReceive('request')
             ->once()
             ->with(
                 'GET',
                 'inputs'
             )
-            ->andReturn($this->getInputResponse());
+            ->andReturn($this->getInputResponse([$input1, $input2]));
 
         $this->assertEquals(
-            $this->getInputCollectionMock(),
+            [$input1, $input2],
             $this->inputRepository->get()
         );
     }
 
     public function testGetById()
     {
-        $input = $this->getOneInputMock();
+        $input = $input1 = $this->getFullInputMock('id1', 'image1', Input::IMG_URL);;
 
         $this->request->shouldReceive('request')
             ->once()
@@ -166,6 +188,24 @@ class InputRepositoryTest extends \PHPUnit_Framework_TestCase
             $input,
             $this->inputRepository->getById($input->getId())
         );
+    }
+
+    /**
+     * @expectedException \Exception
+     */
+    public function testGetByIdException()
+    {
+        $input = $input1 = $this->getFullInputMock('id1', 'image1', Input::IMG_URL);;
+
+        $this->request->shouldReceive('request')
+            ->once()
+            ->with(
+                'GET',
+                'inputs/' . $input->getId()
+            )
+            ->andReturn('data');
+
+        $this->inputRepository->getById($input->getId());
     }
 
     public function testGetStatus()
@@ -199,6 +239,22 @@ class InputRepositoryTest extends \PHPUnit_Framework_TestCase
             ],
             $this->inputRepository->getStatus()
         );
+    }
+
+    /**
+     * @expectedException \Exception
+     */
+    public function testGetStatusException()
+    {
+        $this->request->shouldReceive('request')
+            ->once()
+            ->with(
+                'GET',
+                'inputs/status'
+            )
+            ->andReturn('data');
+
+        $this->inputRepository->getStatus();
     }
 
     public function testDeleteById()
@@ -257,7 +313,7 @@ class InputRepositoryTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function deleteAll()
+    public function testDeleteAll()
     {
         $this->request->shouldReceive('request')
             ->once()
@@ -284,136 +340,54 @@ class InputRepositoryTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function getInputResponse()
+    /**
+     * Gets Input response
+     *
+     * @param array|Input $inputs
+     *
+     * @return array
+     */
+    public function getInputResponse($inputs)
     {
-        return [
+        $data = [
             'status' => [
                 'code' => '1000',
                 'description' => 'Ok',
             ],
-            'inputs' => [
-                [
-                    'id' => 'f1a03eb89ad04b99b88431e3466c56ac',
-                    'created_at' => '2017 - 02 - 24T15:34:10.944953Z',
-                    'data' => [
-                        'image' => [
-                            'url' => 'http://www.chicco.com.ua/thumbs/d04efbc9ae8b518fcbe3997fe5fbbf46c1e4b90f_130x130.jpeg',
-                        ],
-                        'metadata' => [
-                            'first' => 'value1',
-                            'second' => 'value2',
-                        ],
-                    ],
-                    'status' => [
-                        'code' => '30001',
-                        'description' => 'Download pending',
-                    ],
-                ],
-                [
-                    'id' => '1234567',
-                    'created_at' => '2017 - 02 - 24T15:34:10.944942Z',
-                    'data' => [
-                        'image' => [
-                            'url' => 'http://www.chicco.com.ua/thumbs/online_games_chicco_rus_130X80_130x130.jpg',
-                            'crop' => ['0.2', '0.4', '0.3', '0.6'],
-                        ],
-                    ],
-                    'status' => [
-                        'code' => '30001',
-                        'description' => 'Download pending',
-                    ],
-                ],
-                [
-                    'id' => '3',
-                    'created_at' => '2017 - 02 - 24T15:36:10.944942Z',
-                    'data' => [
-                        'image' => [
-                            'base64' => 'hash',
-                        ],
-                    ],
-                    'status' => [
-                        'code' => '30001',
-                        'description' => 'Download pending',
-                    ],
-                ],
-            ],
+
         ];
-    }
 
-    /**
-     * Output data for Add Request
-     *
-     * @return array
-     */
-    public function getAddRequest()
-    {
-        return [
-            'inputs' => [
+        if (is_array($inputs)) {
+            foreach ($inputs as $input) {
+                $data['inputs'][] = $this->getInputConstructData(
+                    $input->getId(),
+                    $input->getImage(),
+                    $input->getImageMethod(),
+                    [
+                        'concepts' => $this->getConceptsRawData($input->getConcepts()),
+                        'crop' => $input->getCrop(),
+                        'created_at' => $input->getCreatedAt(),
+                        'metadata' => $input->getMetaData(),
+                        'status' => $input->getStatus(),
+                    ]
+                );
+            }
+        } else {
+            $data['inputs'][] = $this->getInputConstructData(
+                $inputs->getId(),
+                $inputs->getImage(),
+                $inputs->getImageMethod(),
                 [
-                    'id' => 'f1a03eb89ad04b99b88431e3466c56ac',
-                    'data' => [
-                        'image' => [
-                            'url' => 'http://www.chicco.com.ua/thumbs/d04efbc9ae8b518fcbe3997fe5fbbf46c1e4b90f_130x130.jpeg',
-                        ],
-                        'metadata' => [
-                            'first' => 'value1',
-                            'second' => 'value2',
-                        ],
-                    ],
-                ],
-                [
-                    'id' => '1234567',
-                    'data' => [
-                        'image' => [
-                            'url' => 'http://www.chicco.com.ua/thumbs/online_games_chicco_rus_130X80_130x130.jpg',
-                            'crop' => ['0.2', '0.4', '0.3', '0.6'],
-                        ],
-                    ],
-                ],
-                [
-                    'id' => '3',
-                    'data' => [
-                        'image' => [
-                            'base64' => 'hash',
-                        ],
-                    ],
-                ],
-            ],
-        ];
-    }
+                    'concepts' => $this->getConceptsRawData($inputs->getConcepts()),
+                    'crop' => $inputs->getCrop(),
+                    'created_at' => $inputs->getCreatedAt(),
+                    'metadata' => $inputs->getMetaData(),
+                    'status' => $inputs->getStatus(),
+                ]
+            );
+        }
 
-    /**
-     * Array of Test Inputs
-     *
-     * @return array
-     */
-    public function getInputCollectionMock()
-    {
-
-        $input1 = new Input();
-        $input1->setId('f1a03eb89ad04b99b88431e3466c56ac')
-            ->setImage('http://www.chicco.com.ua/thumbs/d04efbc9ae8b518fcbe3997fe5fbbf46c1e4b90f_130x130.jpeg')
-            ->isUrl()
-            ->setMetaData(['first' => 'value1', 'second' => 'value2'])
-            ->setStatus('30001', 'Download pending')
-            ->setCreatedAt('2017 - 02 - 24T15:34:10.944953Z');
-
-        $input2 = new Input();
-        $input2->setId('1234567')
-            ->setImage('http://www.chicco.com.ua/thumbs/online_games_chicco_rus_130X80_130x130.jpg')
-            ->isUrl()
-            ->setCrop([0.2, 0.4, 0.3, 0.6])
-            ->setStatus('30001', 'Download pending')
-            ->setCreatedAt('2017 - 02 - 24T15:34:10.944942Z');
-
-        $input3 = new Input();
-        $input3->setId('3')
-            ->setImage('hash')
-            ->isEncoded()
-            ->setStatus('30001', 'Download pending')
-            ->setCreatedAt('2017 - 02 - 24T15:36:10.944942Z');
-
-        return [$input1, $input2, $input3];
+        return $data;
     }
 
     /**
@@ -425,39 +399,66 @@ class InputRepositoryTest extends \PHPUnit_Framework_TestCase
      */
     public function getOneInputResponse(Input $input)
     {
-        return [
+        $data = [
             'status' => [
                 'code' => '1000',
                 'description' => 'Ok',
             ],
-            'input' => [
-                'id' => $input->getId(),
-                'created_at' => $input->getCreatedAt(),
-                'data' => [
-                    'image' => [
-                        'url' => $input->getImage(),
-                    ],
-                ],
-                'status' => $input->getStatus(),
-
-            ],
         ];
+
+        $data['input'] = $this->getInputConstructData(
+            $input->getId(),
+            $input->getImage(),
+            $input->getImageMethod(),
+            [
+                'concepts' => $this->getConceptsRawData($input->getConcepts()),
+                'crop' => $input->getCrop(),
+                'metadata' => $input->getMetaData(),
+                'status' => $input->getStatus(),
+                'created_at' => $input->getCreatedAt(),
+            ]
+        );
+
+        return $data;
     }
 
     /**
-     * One Input Entity
+     * Output data for Add Request
      *
-     * @return Input
+     * @param array|Input $inputs
+     *
+     * @return array $data
      */
-    public function getOneInputMock()
+    public function getAddRequest($inputs)
     {
-        $input = new Input();
-        $input->setId('1234567')
-            ->setImage('http://www.chicco.com.ua/thumbs/online_games_chicco_rus_130X80_130x130.jpg')
-            ->isUrl()
-            ->setStatus('30001', 'Download pending')
-            ->setCreatedAt('2017 - 02 - 24T15:34:10.944942Z');
+        $data['inputs'] = [];
 
-        return $input;
+        if (is_array($inputs)) {
+            foreach ($inputs as $input) {
+                $data['inputs'][] = $this->getInputConstructData(
+                    $input->getId(),
+                    $input->getImage(),
+                    $input->getImageMethod(),
+                    [
+                        'concepts' => $this->getConceptsRawData($input->getConcepts()),
+                        'crop' => $input->getCrop(),
+                        'metadata' => $input->getMetaData(),
+                    ]
+                );
+            }
+        } else {
+            $data['inputs'][] = $this->getInputConstructData(
+                $inputs->getId(),
+                $inputs->getImage(),
+                $inputs->getImageMethod(),
+                [
+                    'concepts' => $this->getConceptsRawData($inputs->getConcepts()),
+                    'crop' => $inputs->getCrop(),
+                    'metadata' => $inputs->getMetaData(),
+                ]
+            );
+        }
+
+        return $data;
     }
 }

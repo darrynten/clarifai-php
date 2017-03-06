@@ -169,7 +169,7 @@ class Concept
 
     /**
      * @param bool $value
-     * 
+     *
      * @return $this
      */
     public function setValue($value)
@@ -189,13 +189,13 @@ class Concept
 
     /**
      * @param array $rawData
-     * 
+     *
      * @return $this
      */
     public function setRawData(array $rawData)
     {
         $this->rawData = $rawData;
-        
+
         return $this;
     }
 
@@ -208,7 +208,7 @@ class Concept
     {
         $rawData = [
             'id' => $this->getId(),
-            'value' => $this->getValue()
+            'value' => $this->getValue(),
         ];
 
         return $rawData;
