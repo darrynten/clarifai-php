@@ -174,7 +174,7 @@ class InputRepositoryTest extends \PHPUnit_Framework_TestCase
 
     public function testGetById()
     {
-        $input = $input1 = $this->getFullInputMock('id1', 'image1', Input::IMG_URL);;
+        $input = $input1 = $this->getFullInputMock('id1', 'image1', Input::IMG_URL);
 
         $this->request->shouldReceive('request')
             ->once()
@@ -195,7 +195,7 @@ class InputRepositoryTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetByIdException()
     {
-        $input = $input1 = $this->getFullInputMock('id1', 'image1', Input::IMG_URL);;
+        $input = $input1 = $this->getFullInputMock('id1', 'image1', Input::IMG_URL);
 
         $this->request->shouldReceive('request')
             ->once()
@@ -340,6 +340,128 @@ class InputRepositoryTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public function testMergeInputConcepts()
+    {
+
+        $input1 = $this->getFullInputMock('id1', 'image1', Input::IMG_URL);
+        $input1->setConcepts([]);
+
+        $this->assertEquals(
+            [],
+            $input1->getConcepts()
+        );
+
+        $input2 = $this->getFullInputMock('id2', 'image2', Input::IMG_URL);
+
+        $concept1 = $this->getConceptEntity('id1', true);
+        $concept2 = $this->getConceptEntity('id2', false);
+        $concept3 = $this->getConceptEntity('id3', true);
+
+        $input2Concepts = $input2->getConcepts();
+        $input2Concepts[] = $concept3;
+
+        $this->request->shouldReceive('request')
+            ->once()
+            ->with(
+                'PATCH',
+                'inputs',
+                $this->getUpdateConceptRequest(
+                    [
+                        $input1->getId() => [$concept1, $concept2],
+                        $input2->getId() => [$concept3],
+                    ],
+                    InputRepository::CONCEPTS_MERGE_ACTION
+                )
+
+            )
+            ->andReturn(
+                $this->getUpdateConceptResponse(
+                    [
+                        $input1->setConcepts([$concept1, $concept2]),
+                        $input2->setConcepts($input2Concepts),
+                    ]
+                )
+            );
+
+        $this->assertEquals(
+            [$input1, $input2],
+            $this->inputRepository->mergeInputConcepts(
+                [
+                    $input1->getId() => [$concept1, $concept2],
+                    $input2->getId() => [$concept3],
+                ]
+            )
+        );
+    }
+
+    public function testDeleteInputConcepts()
+    {
+
+        $input1 = $this->getFullInputMock('id1', 'image1', Input::IMG_URL);
+        $input1->setConcepts([]);
+
+        $this->assertEquals(
+            [],
+            $input1->getConcepts()
+        );
+
+        $input2 = $this->getFullInputMock('id2', 'image2', Input::IMG_URL);
+
+        $input2->setConcepts([]);
+
+        $this->assertEquals(
+            [],
+            $input2->getConcepts()
+        );
+
+        $concept1 = $this->getConceptEntity('id1', true);
+        $concept2 = $this->getConceptEntity('id2', false);
+        $concept3 = $this->getConceptEntity('id3', true);
+
+        $input1->setConcepts([$concept1, $concept3]);
+        $input2->setConcepts([$concept2, $concept3]);
+
+        $this->request->shouldReceive('request')
+            ->once()
+            ->with(
+                'PATCH',
+                'inputs',
+                $this->getUpdateConceptRequest(
+                    [
+                        $input1->getId() => [$concept1, $concept3],
+                        $input2->getId() => [$concept3],
+                    ],
+                    InputRepository::CONCEPTS_REMOVE_ACTION
+                )
+
+            )
+            ->andReturn(
+                $this->getUpdateConceptResponse(
+                    [
+                        $input1->setConcepts([]),
+                        $input2->setConcepts([$concept2]),
+                    ]
+                )
+            );
+
+        $this->assertEquals(
+            [$input1, $input2],
+            $this->inputRepository->deleteInputConcepts(
+                [
+                    $input1->getId() => [$concept1, $concept3],
+                    $input2->getId() => [$concept3],
+                ]
+            )
+        );
+    }
+
+    /**
+     * @expectedException \Exception
+     */
+    public function testGetInputsFromResultException(){
+        $this->inputRepository->getInputsFromResult([]);
+    }
+
     /**
      * Gets Input response
      *
@@ -458,6 +580,66 @@ class InputRepositoryTest extends \PHPUnit_Framework_TestCase
                 ]
             );
         }
+
+        return $data;
+    }
+
+    /**
+     * Get Update Concept Request
+     *
+     * @param $inputs
+     * @param $action
+     *
+     * @return mixed
+     */
+
+    public function getUpdateConceptRequest($inputs, $action)
+    {
+        $data['inputs'] = [];
+
+        foreach ($inputs as $inputId => $concepts) {
+            $input['id'] = $inputId;
+            $input['data']['concepts'] = $this->getConceptsRawData($concepts);
+
+            $data['inputs'][] = $input;
+        }
+        $data['action'] = $action;
+
+        return $data;
+    }
+
+    /**
+     * Output data for GetById Response
+     *
+     * @param array $inputs
+     *
+     * @return array
+     */
+    public function getUpdateConceptResponse($inputs)
+    {
+        $data = [
+            'status' => [
+                'code' => '1000',
+                'description' => 'Ok',
+            ],
+
+        ];
+
+        foreach ($inputs as $input) {
+            $data['inputs'][] = $this->getInputConstructData(
+                $input->getId(),
+                $input->getImage(),
+                $input->getImageMethod(),
+                [
+                    'concepts' => $this->getConceptsRawData($input->getConcepts()),
+                    'crop' => $input->getCrop(),
+                    'created_at' => $input->getCreatedAt(),
+                    'metadata' => $input->getMetaData(),
+                    'status' => $input->getStatus(),
+                ]
+            );
+        }
+
 
         return $data;
     }

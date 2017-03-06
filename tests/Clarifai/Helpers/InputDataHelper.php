@@ -108,14 +108,12 @@ trait InputDataHelper
      *
      * @return Input
      */
-    public function getInputMock(string $id, string $image, string $method, array $options)
+    public function getInputMock(string $id, string $image, string $method, array $options = null)
     {
         $input = new Input();
-        $input->setId('1234567')
-            ->setImage('http://www.chicco.com.ua/thumbs/online_games_chicco_rus_130X80_130x130.jpg')
-            ->isUrl()
-            ->setStatus('30001', 'Download pending')
-            ->setCreatedAt('2017 - 02 - 24T15:34:10.944942Z');
+        $input->setId($id)
+            ->setImage($image)
+            ->setImageMethod($method);
 
         return $input;
     }

@@ -338,7 +338,6 @@ class InputRepository extends BaseRepository
         }
         $data['action'] = $action;
 
-
         $updateResult = $this->getRequest()->request(
             'PATCH',
             'inputs',
@@ -385,7 +384,7 @@ class InputRepository extends BaseRepository
     {
         $input_array = [];
 
-        if ($inputResult['inputs']) {
+        if (isset($inputResult['inputs'])) {
             foreach ($inputResult['inputs'] as $rawInput) {
                 $input = new Input($rawInput);
                 $input_array[] = $input;
