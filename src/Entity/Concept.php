@@ -40,9 +40,9 @@ class Concept
     /**
      * The value
      *
-     * @var string|null $value
+     * @var bool $value
      */
-    private $value = null;
+    private $value;
 
     /**
      * The raw data
@@ -163,7 +163,7 @@ class Concept
     }
 
     /**
-     * @return null|string
+     * @return null|bool
      */
     public function getValue()
     {
@@ -171,7 +171,7 @@ class Concept
     }
 
     /**
-     * @param null|string $value
+     * @param bool $value
      * 
      * @return $this
      */
@@ -200,5 +200,20 @@ class Concept
         $this->rawData = $rawData;
         
         return $this;
+    }
+
+    /**
+     * Generates rawData from Concept
+     *
+     * @return array
+     */
+    public function generateRawData()
+    {
+        $rawData = [
+            'id' => $this->getId(),
+            'value' => $this->getValue()
+        ];
+
+        return $rawData;
     }
 }

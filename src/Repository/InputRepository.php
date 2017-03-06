@@ -23,6 +23,16 @@ use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 class InputRepository extends BaseRepository
 {
     /**
+     * Action type for Input Concepts Update
+     */
+    const CONCEPTS_MERGE_ACTION = 'merge';
+
+    /**
+     * Action type for Input Concepts Update
+     */
+    const CONCEPTS_REMOVE_ACTION = 'remove';
+
+    /**
      * InputRepository constructor.
      *
      * @param RequestHandler $request
@@ -59,18 +69,7 @@ class InputRepository extends BaseRepository
             $data
         );
 
-        $input_array = [];
-
-        if ($inputResult['inputs']) {
-            foreach ($inputResult['inputs'] as $input) {
-                $image = new Input($input);
-                $input_array[] = $image;
-            }
-        } else {
-            throw new \Exception('Inputs Not Found');
-        }
-
-        return $input_array;
+        return $this->getInputsFromResult($inputResult);
     }
 
     /**
@@ -95,10 +94,10 @@ class InputRepository extends BaseRepository
         if ($image->getCrop()) {
             $data['data']['image'] = $this->addImageCrop($data['data']['image'], $image->getCrop());
         }
-// TODO: Implement Concept Entity
-//        if ($image->getConcepts()) {
-//            $data['data'] = $this->addImageConcepts($data['data'], $image->getConcepts());
-//        }
+
+        if ($image->getConcepts()) {
+            $data['data'] = $this->addImageConcepts($data['data'], $image->getConcepts());
+        }
 
         if ($image->getMetaData()) {
             $data['data'] = $this->addImageMetadata($data['data'], $image->getMetaData());
@@ -172,8 +171,8 @@ class InputRepository extends BaseRepository
     {
         $data['concepts'] = [];
 
-        foreach ($concepts as $concept_id => $value) {
-            $data['concepts'][] = ['id' => $concept_id, 'value' => $value];
+        foreach ($concepts as $concept) {
+            $data['concepts'][] = $concept->generateRawData();
         }
 
         return $data;
@@ -213,18 +212,7 @@ class InputRepository extends BaseRepository
             'inputs'
         );
 
-        $input_array = [];
-
-        if ($inputResult['inputs']) {
-            foreach ($inputResult['inputs'] as $input) {
-                $image = new Input($input);
-                $input_array[] = $image;
-            }
-        } else {
-            throw new \Exception('Inputs Not Found');
-        }
-
-        return $input_array;
+        return $this->getInputsFromResult($inputResult);
     }
 
     /**
@@ -328,9 +316,84 @@ class InputRepository extends BaseRepository
         return $deleteResult['status'];
     }
 
-    // mergeConcepts
-    // deleteConcepts
-    // overwriteConcepts
-    //
-    // update
+    /**
+     * Common Input's Concepts Update Method
+     *
+     * @param  array $conceptsArray
+     * @param $action
+     *
+     * @return array
+     */
+    public function updateInputConcepts(array $conceptsArray, $action)
+    {
+        $data['inputs'] = [];
+
+        foreach ($conceptsArray as $inputId => $inputConcepts) {
+            $input = [];
+            $input['id'] = $inputId;
+            $input['data'] = [];
+            $input['data'] = $this->addImageConcepts($input['data'], $inputConcepts);
+
+            $data['inputs'][] = $input;
+        }
+        $data['action'] = $action;
+
+
+        $updateResult = $this->getRequest()->request(
+            'PATCH',
+            'inputs',
+            $data
+        );
+
+        return $this->getInputsFromResult($updateResult);
+    }
+
+    /**
+     * Merges Concepts of Inputs
+     *
+     * @param  array $conceptsArray
+     *
+     * @return array
+     */
+    public function mergeInputConcepts(array $conceptsArray)
+    {
+        return $this->updateInputConcepts($conceptsArray, self::CONCEPTS_MERGE_ACTION);
+    }
+
+    /**
+     * Deletes Concepts of Inputs
+     *
+     * @param  array $conceptsArray
+     *
+     * @return array
+     */
+    public function deleteInputConcepts(array $conceptsArray)
+    {
+        return $this->updateInputConcepts($conceptsArray, self::CONCEPTS_REMOVE_ACTION);
+    }
+
+    /**
+     * Parses Request Result and gets Inputs
+     *
+     * @param $inputResult
+     *
+     * @return array
+     *
+     * @throws \Exception
+     */
+    public function getInputsFromResult($inputResult)
+    {
+        $input_array = [];
+
+        if ($inputResult['inputs']) {
+            foreach ($inputResult['inputs'] as $rawInput) {
+                $input = new Input($rawInput);
+                $input_array[] = $input;
+            }
+        } else {
+            throw new \Exception('Inputs Not Found');
+        }
+
+        return $input_array;
+    }
 }

@@ -2,6 +2,7 @@
 
 namespace DarrynTen\Clarifai\Tests\Clarifai\Repository;
 
+use DarrynTen\Clarifai\Entity\Concept;
 use DarrynTen\Clarifai\Entity\Input;
 use DarrynTen\Clarifai\Repository\BaseRepository;
 use DarrynTen\Clarifai\Repository\InputRepository;
@@ -103,8 +104,11 @@ class InputRepositoryTest extends \PHPUnit_Framework_TestCase
 
     public function testAddImageConcepts()
     {
-
-        $concepts = ['first' => true, 'second' => false];
+        $concept1 = new Concept();
+        $concept1->setId('first')->setValue(true);
+        $concept2 = new Concept();
+        $concept2->setId('second')->setValue(false);
+        $concepts = [$concept1, $concept2];
 
         $this->assertEquals(
             [
