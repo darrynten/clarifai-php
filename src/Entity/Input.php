@@ -2,7 +2,7 @@
 
 namespace DarrynTen\Clarifai\Entity;
 
-use DarrynTen\Clarifai\Repository\Concepts;
+use DarrynTen\Clarifai\Entity\Concept;
 
 /**
  * Single Clarifai Input
@@ -57,9 +57,9 @@ class Input
     /**
      * The concepts associated with this input
      *
-     * @var Concepts[] $concepts
+     * @var Concept[] $concepts
      */
-    private $concepts;
+    private $concepts = [];
 
     /**
      * Image crop
@@ -219,7 +219,7 @@ class Input
     }
 
     /**
-     * @return Concepts[]
+     * @return Concept[]|[]
      */
     public function getConcepts()
     {
@@ -227,7 +227,7 @@ class Input
     }
 
     /**
-     * @param Concepts[] $concepts
+     * @param Concept[] $concepts
      *
      * @return $this
      */

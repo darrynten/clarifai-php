@@ -3,9 +3,12 @@
 namespace DarrynTen\Clarifai\Tests\Clarifai\Repository;
 
 use DarrynTen\Clarifai\Entity\Concept;
+use DarrynTen\Clarifai\Tests\Clarifai\Helpers\ConceptDataHelper;
 
 class ConceptTest extends \PHPUnit_Framework_TestCase
 {
+    use ConceptDataHelper;
+
     /**
      * @var Concept
      */
@@ -101,26 +104,4 @@ class ConceptTest extends \PHPUnit_Framework_TestCase
             $this->concept->getRawData()
         );
     }
-
-    /**
-     * Gets RawData for Concept Constructor
-     *
-     * @param $id
-     * @param $name
-     * @param $appId
-     * @param $value
-     *
-     * @return array
-     */
-    public function getConceptConstructData($id, $name, $appId, $value)
-    {
-        return [
-            'id' => $id,
-            'name' => $name,
-            'app_id' => $appId,
-            'value' => $value,
-        ];
-    }
-
-
 }

@@ -2,10 +2,15 @@
 
 namespace DarrynTen\Clarifai\Tests\Clarifai\Repository;
 
+use DarrynTen\Clarifai\Entity\Concept;
 use DarrynTen\Clarifai\Entity\Input;
+use DarrynTen\Clarifai\Tests\Clarifai\Helpers\ConceptDataHelper;
+use DarrynTen\Clarifai\Tests\Clarifai\Helpers\InputDataHelper;
 
 class InputTest extends \PHPUnit_Framework_TestCase
 {
+    use InputDataHelper, ConceptDataHelper;
+
     /**
      * @var Input
      */
@@ -28,7 +33,6 @@ class InputTest extends \PHPUnit_Framework_TestCase
             ['ImageMethod', Input::IMG_BASE64],
             ['ImageMethod', Input::IMG_URL],
             ['ImageMethod', Input::IMG_PATH],
-            ['Concepts', []],
             ['Crop', [0.2, 0.4, 0.3, 0.6]],
             ['MetaData', ['first' => 'value1', 'second' => 'value2']],
 
@@ -93,7 +97,10 @@ class InputTest extends \PHPUnit_Framework_TestCase
 
     public function testConstructor()
     {
-        $data = $this->getInputConstructData();
+        $conceptData1 = $this->getConceptConstructData('id1', 'name1', 'appId1', true);
+        $conceptData2 = $this->getConceptConstructData('id2', 'name2', 'appId2', false);
+
+        $data = $this->getInputConstructData([$conceptData1, $conceptData2]);
 
         $this->input = new Input($data);
 
@@ -125,6 +132,10 @@ class InputTest extends \PHPUnit_Framework_TestCase
             $data['data']['metadata'],
             $this->input->getMetaData()
         );
+        $this->assertEquals(
+            [new Concept($conceptData1), new Concept($conceptData2)],
+            $this->input->getConcepts()
+        );
 
     }
 
@@ -151,33 +162,59 @@ class InputTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * Returns data for Input construct
-     *
-     * @return array
-     */
-    public function getInputConstructData()
+    public function testSetConcepts()
     {
-        return [
-            'id' => 'f1a03eb89ad04b99b88431e3466c56ac',
-            'created_at' => '2017 - 02 - 24T15:34:10.944942Z',
-            'status' => [
-                'code' => '300000',
-                'description' => 'Ok',
-            ],
-            'data' => [
-                'image' => [
-                    'url' => 'https://samples.clarifai.com/metro-north.jpg',
-                    'crop' => [0.2, 0.4, 0.3, 0.6],
-                ],
-                'metadata' => [
-                    'first' => 'value1',
-                    'second' => 'value2',
-                ],
-            ],
+        $this->assertEquals(
+            [],
+            $this->input->getConcepts()
+        );
+        $concept1 = $this->getConceptEntity('id1', true);
+        $concept2 = $this->getConceptEntity('id2', false);
+        $this->assertSame(
+            $this->input,
+            $this->input->setConcepts([$concept1, $concept2])
+        );
+        $this->assertEquals(
+            [$concept1, $concept2],
+            $this->input->getConcepts()
+        );
 
-        ];
     }
 
+    public function testSetRawConcepts()
+    {
+        $this->assertEquals(
+            [],
+            $this->input->getConcepts()
+        );
+        $data1 = $this->getConceptConstructData('id1', 'name1', 'appId1', true);
+        $data2 = $this->getConceptConstructData('id2', 'name2', 'appId2', false);
 
+        $this->assertSame(
+            $this->input,
+            $this->input->setRawConcepts([$data1, $data2])
+        );
+        $this->assertEquals(
+            [new Concept($data1), new Concept($data2)],
+            $this->input->getConcepts()
+        );
+    }
+
+    public function testSetRawData()
+    {
+        $this->assertEquals(
+            [],
+            $this->input->getRawData()
+        );
+        $data = $this->getInputConstructData();
+        $this->assertSame(
+            $this->input,
+            $this->input->setRawData($data)
+        );
+        $this->assertEquals(
+            $data,
+            $this->input->getRawData()
+        );
+
+    }
 }
