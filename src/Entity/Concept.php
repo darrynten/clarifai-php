@@ -63,11 +63,8 @@ class Concept
             if (isset($rawData['id'])) {
                 $this->setId($rawData['id']);
             }
-            if (isset($Concept['name'])) {
+            if (isset($rawData['name'])) {
                 $this->setName($rawData['name']);
-            }
-            if (isset($rawData['created_at'])) {
-                $this->setCreatedAt($rawData['created_at']);
             }
             if (isset($rawData['app_id'])) {
                 $this->setAppId($rawData['app_id']);

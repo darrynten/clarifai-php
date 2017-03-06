@@ -71,28 +71,6 @@ class Clarifai
      * @param $config
      * @param $data
      *
-     * @return Repository\Concept
-     */
-    public function getConcept($config, $data)
-    {
-        return new Repository\Concept($this->getRequest(), $config, $data);
-    }
-
-    /**
-     * @param $config
-     * @param $data
-     *
-     * @return Repository\Concepts
-     */
-    public function getConcepts($config, $data)
-    {
-        return new Repository\Concepts($this->getRequest(), $config, $data);
-    }
-
-    /**
-     * @param $config
-     * @param $data
-     *
      * @return Repository\InputRepository
      */
     public function getInputRepository($config = null, $data = null)
