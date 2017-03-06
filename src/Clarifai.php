@@ -77,15 +77,4 @@ class Clarifai
     {
         return new Repository\InputRepository($this->getRequest(), $config, $data);
     }
-
-    /**
-     * @param $config
-     * @param $data
-     *
-     * @return Repository\InputsRepository
-     */
-    public function getInputsRepository($config, $data)
-    {
-        return new Repository\InputsRepository($this->getRequest(), $config, $data);
-    }
 }

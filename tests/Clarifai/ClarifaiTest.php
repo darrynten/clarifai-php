@@ -28,7 +28,6 @@ class ClarifayTest extends \PHPUnit_Framework_TestCase
     {
         return [
             [Repository\InputRepository::class, 'getInputRepository', $this->getInputData()],
-            [Repository\InputsRepository::class, 'getInputsRepository', []],
             [Repository\ModelRepository::class, 'getModelRepository', $this->getModelData()],
             [Repository\Models::class, 'getModels', []],
         ];
