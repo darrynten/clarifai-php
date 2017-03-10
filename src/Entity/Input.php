@@ -2,8 +2,6 @@
 
 namespace DarrynTen\Clarifai\Entity;
 
-use DarrynTen\Clarifai\Entity\Concept;
-
 /**
  * Single Clarifai Input
  *
@@ -248,7 +246,7 @@ class Input
     public function setRawConcepts(array $rawConcepts)
     {
         $concepts = [];
-        foreach($rawConcepts as $rawConcept){
+        foreach ($rawConcepts as $rawConcept) {
             $concept = new Concept($rawConcept);
             $concepts[] = $concept;
         }

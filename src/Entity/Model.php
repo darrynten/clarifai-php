@@ -38,13 +38,6 @@ class Model
     private $appId;
 
     /**
-     * outputInfo
-     *
-     * @var array $outputInfo
-     */
-    private $outputInfo;
-
-    /**
      * modelVersion
      *
      * @var ModelVersion
@@ -52,11 +45,28 @@ class Model
     private $modelVersion;
 
     /**
-     * Output Config
-     *
-     * @var array $outputConfig
+     * @var bool $conceptsMutuallyExclusive
      */
-    private $outputConfig = ['concepts_mutually_exclusive' => '', 'closed_environment' => ''];
+    private $conceptsMutuallyExclusive;
+
+    /**
+     * @var bool $closedEnvironment
+     */
+    private $closedEnvironment;
+
+    /**
+     * The concepts associated with this input
+     *
+     * @var Concept[] $concepts
+     */
+    private $concepts = [];
+
+    /**
+     * The raw data
+     *
+     * @var array $rawData
+     */
+    private $rawData = [];
 
     /**
      * Model constructor.
@@ -66,6 +76,7 @@ class Model
     public function __construct(array $model = null)
     {
         if ($model) {
+            $this->setRawData($model);
             if (isset($model['id'])) {
                 $this->setId($model['id']);
             }
@@ -79,18 +90,23 @@ class Model
                 $this->setAppId($model['app_id']);
             }
             if (isset($model['output_info'])) {
-                $this->setOutputInfo($model['output_info']);
+                if (isset($model['output_info']['data']) && isset($model['output_info']['data']['concepts'])) {
+                    $this->setRawConcepts($model['output_info']['data']['concepts']);
+                }
+                if (isset($model['output_info']['output_config'])) {
+                    if (isset($model['output_info']['output_config']['concepts_mutually_exclusive'])) {
+                        $this->setConceptsMutuallyExclusive(
+                            $model['output_info']['output_config']['concepts_mutually_exclusive']
+                        );
+                    }
+                    if (isset($model['output_info']['output_config']['closed_environment'])) {
+                        $this->setClosedEnvironment($model['output_info']['output_config']['closed_environment']);
+                    }
+                }
             }
             if (isset($model['model_version'])) {
                 $this->setModelVersion(new ModelVersion($model['model_version']));
             }
-            if (isset($model['output_config'])) {
-                $this->setOutputConfig($model['output_info']['concepts_mutually_exclusive'], $model['output_info']['closed_environment']);
-            }
-//          TODO: Implement Concept Entity
-//            if (property_exists($input->data, 'concepts')) {
-//                $this->setConcepts($input->data->concepts);
-//            }
         }
     }
 
@@ -179,26 +195,6 @@ class Model
     }
 
     /**
-     * @return array
-     */
-    public function getOutputInfo()
-    {
-        return $this->outputInfo;
-    }
-
-    /**
-     * @param array $outputInfo
-     *
-     * @return $this
-     */
-    public function setOutputInfo(array $outputInfo)
-    {
-        $this->outputInfo = $outputInfo;
-
-        return $this;
-    }
-
-    /**
      * @return modelVersion
      */
     public function getModelVersion()
@@ -219,23 +215,111 @@ class Model
     }
 
     /**
+     * @return bool
+     */
+    public function isConceptsMutuallyExclusive()
+    {
+        return $this->conceptsMutuallyExclusive;
+    }
+
+    /**
+     * @param bool $conceptsMutuallyExclusive
+     *
+     * @return $this
+     */
+    public function setConceptsMutuallyExclusive($conceptsMutuallyExclusive)
+    {
+        $this->conceptsMutuallyExclusive = $conceptsMutuallyExclusive;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isClosedEnvironment()
+    {
+        return $this->closedEnvironment;
+    }
+
+    /**
+     * @param bool $closedEnvironment
+     *
+     * @return $this
+     */
+    public function setClosedEnvironment( $closedEnvironment)
+    {
+        $this->closedEnvironment = $closedEnvironment;
+
+        return $this;
+    }
+
+    /**
      * @return array
      */
     public function getOutputConfig()
     {
-        return $this->outputConfig;
+        return [
+            'concepts_mutually_exclusive' => $this->isConceptsMutuallyExclusive(),
+            'closed_environment' => $this->isClosedEnvironment(),
+        ];
     }
 
     /**
-     * @param null $concepts_mutually_exclusive
-     * @param null $closed_environment
+     * @return Concept[]|[]
+     */
+    public function getConcepts()
+    {
+        return $this->concepts;
+    }
+
+    /**
+     * @param Concept[] $concepts
      *
      * @return $this
      */
-    public function setOutputConfig($concepts_mutually_exclusive = null, $closed_environment = null)
+    public function setConcepts(array $concepts)
     {
-        $this->outputConfig['concepts_mutually_exclusive'] = $concepts_mutually_exclusive;
-        $this->outputConfig['description'] = $closed_environment;
+        $this->concepts = $concepts;
+
+        return $this;
+    }
+
+    /**
+     * Sets concepts from Raw Data
+     *
+     * @param array $rawConcepts
+     *
+     * @return $this
+     */
+    public function setRawConcepts(array $rawConcepts)
+    {
+        $concepts = [];
+        foreach ($rawConcepts as $rawConcept) {
+            $concept = new Concept($rawConcept);
+            $concepts[] = $concept;
+        }
+        $this->concepts = $concepts;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getRawData()
+    {
+        return $this->rawData;
+    }
+
+    /**
+     * @param array $rawData
+     *
+     * @return $this
+     */
+    public function setRawData(array $rawData)
+    {
+        $this->rawData = $rawData;
 
         return $this;
     }

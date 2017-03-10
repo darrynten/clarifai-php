@@ -103,81 +103,23 @@ class ModelRepository extends BaseRepository
     const CELEBRITY = 'e466caa0619f444ab97497640cefc4dc';
 
     /**
-     * The ID of the model
-     *
-     * @var string $modelId
+     * Action type for Model Concepts Update
      */
-    private $modelId;
+    const CONCEPTS_MERGE_ACTION = 'merge';
 
     /**
-     * The name of the model
-     *
-     * @var string $modelName
+     * Action type for Model Concepts Update
      */
-    private $modelName;
-
-    /**
-     * The date the model was created at
-     *
-     * @var string $createdAt
-     */
-    private $createdAt;
-
-    /**
-     * The app ID
-     *
-     * @var string $appId
-     */
-    private $appId;
-
-    /**
-     * The output info
-     *
-     * @var string $outputInfo
-     */
-    private $outputInfo;
-
-    /**
-     * The model version
-     *
-     * @var string $modelVersion
-     */
-    private $modelVersion;
-
-    /**
-     * The config
-     *
-     * @var object $config
-     */
-    private $config;
-
-    /**
-     * The raw data
-     *
-     * @var array $rawData
-     */
-    private $rawData;
+    const CONCEPTS_REMOVE_ACTION = 'remove';
 
     /**
      * Constructor
      *
      * @param RequestHandler $request
-     * @param array $config The config for the model
-     * @param array $data The data for the model
      */
-    public function __construct(RequestHandler $request, $config = null, $data = null)
+    public function __construct(RequestHandler $request)
     {
         parent::__construct($request);
-        if (!empty($data)) {
-            $this->modelId = $data['id'];
-            $this->modelName = $data['name'];
-            $this->createdAt = $data['createdAt'];
-            $this->appId = $data['appId'];
-            $this->value = $data['value'] || null;
-        }
-
-        $this->config = $config;
-        $this->rawData = $data;
     }
 
     /**
@@ -309,14 +251,14 @@ class ModelRepository extends BaseRepository
     {
         $data['model'] = $this->createModelData($model);
 
-        $inputResult = $this->getRequest()->request(
+        $modelResult = $this->getRequest()->request(
             'POST',
             'models',
             $data
         );
 
-        if ($inputResult['model']) {
-            $model = new Model($inputResult['model']);
+        if ($modelResult['model']) {
+            $model = new Model($modelResult['model']);
         } else {
             throw new \Exception('Model Not Found');
         }
@@ -354,23 +296,12 @@ class ModelRepository extends BaseRepository
      */
     public function get()
     {
-        $inputResult = $this->getRequest()->request(
+        $modelResult = $this->getRequest()->request(
             'GET',
             'models'
         );
-
-        $modelsArray = [];
-
-        if ($inputResult['models']) {
-            foreach ($inputResult['models'] as $model) {
-                $model = new Model($model);
-                $modelsArray[] = $model;
-            }
-        } else {
-            throw new \Exception('Models Not Found');
-        }
-
-        return $modelsArray;
+        
+        return $this->getModelsFromResult($modelResult);
     }
 
     /**
@@ -384,13 +315,13 @@ class ModelRepository extends BaseRepository
      */
     public function getById($id)
     {
-        $inputResult = $this->getRequest()->request(
+        $modelResult = $this->getRequest()->request(
             'GET',
             sprintf('models/%s', $id)
         );
 
-        if ($inputResult['model']) {
-            $model = new Model($inputResult['model']);
+        if ($modelResult['model']) {
+            $model = new Model($modelResult['model']);
         } else {
             throw new \Exception('Model Not Found');
         }
@@ -409,14 +340,14 @@ class ModelRepository extends BaseRepository
      */
     public function getOutputInfoById($id)
     {
-        $inputResult = $this->getRequest()->request(
+        $modelResult = $this->getRequest()->request(
             'GET',
             sprintf('models/%s/output_info', $id)
         );
 
         //TODO: Figure out why it returns full Model Entity instead of only [output_info] part
 
-        return $inputResult;
+        return $modelResult;
     }
 
     /**
@@ -430,15 +361,15 @@ class ModelRepository extends BaseRepository
      */
     public function getModelVersions($id)
     {
-        $inputResult = $this->getRequest()->request(
+        $modelResult = $this->getRequest()->request(
             'GET',
             sprintf('models/%s/versions', $id)
         );
 
         $modelVersions = [];
 
-        if ($inputResult['model_versions']) {
-            foreach ($inputResult['model_versions'] as $version) {
+        if ($modelResult['model_versions']) {
+            foreach ($modelResult['model_versions'] as $version) {
                 $modelVersion = new ModelVersion($version);
                 $modelVersions[] = $modelVersion;
             }
@@ -461,13 +392,13 @@ class ModelRepository extends BaseRepository
      */
     public function getModelVersionById($model_id, $version_id)
     {
-        $inputResult = $this->getRequest()->request(
+        $modelResult = $this->getRequest()->request(
             'GET',
             sprintf('models/%s/versions/%s', $model_id, $version_id)
         );
 
-        if ($inputResult['model_version']) {
-            $modelVersion = new ModelVersion($inputResult['model_version']);
+        if ($modelResult['model_version']) {
+            $modelVersion = new ModelVersion($modelResult['model_version']);
         } else {
             throw new \Exception('Model Versions Not Found');
         }
@@ -475,13 +406,153 @@ class ModelRepository extends BaseRepository
         return $modelVersion;
     }
 
+    /**
+     * Common Model's Concepts Update Method
+     *
+     * @param  array $modelsArray
+     * @param $action
+     *
+     * @return array
+     */
+    public function updateModelConcepts(array $modelsArray, $action)
+    {
+        $data['models'] = [];
 
-    // mergeConcepts
-    // deleteConcepts
-    // overwriteConcepts
-    //
-    // getVersion
-    // getVersions
-    // getOutputInfo
-    // getInputs
+        foreach ($modelsArray as $modelId => $modelConcepts) {
+            $model = [];
+            $model['id'] = $modelId;
+            $model['output_info'] = [];
+            $model['output_info']['data'] = [];
+            $model['output_info']['data'] = $this->addModelConcepts($model['output_info']['data'], $modelConcepts);
+
+            $data['models'][] = $model;
+        }
+        $data['action'] = $action;
+
+        print_r($data);
+        $updateResult = $this->getRequest()->request(
+            'PATCH',
+            'models',
+            $data
+        );
+
+        return $this->getModelsFromResult($updateResult);
+    }
+
+    /**
+     * Merges Concepts of Model
+     *
+     * @param  array $modelsArray
+     *
+     * @return array
+     */
+    public function mergeModelConcepts(array $modelsArray)
+    {
+        return $this->updateModelConcepts($modelsArray, self::CONCEPTS_MERGE_ACTION);
+    }
+
+    /**
+     * Deletes Concepts of Model
+     *
+     * @param  array $modelsArray
+     *
+     * @return array
+     */
+    public function deleteModelConcepts(array $modelsArray)
+    {
+        return $this->updateModelConcepts($modelsArray, self::CONCEPTS_REMOVE_ACTION);
+    }
+
+    /**
+     * Parses Request Result and gets Models
+     *
+     * @param $modelResult
+     *
+     * @return array
+     *
+     * @throws \Exception
+     */
+    public function getModelsFromResult($modelResult)
+    {
+        $modelsArray = [];
+
+        if ($modelResult['models']) {
+            foreach ($modelResult['models'] as $model) {
+                $model = new Model($model);
+                $modelsArray[] = $model;
+            }
+        } else {
+            throw new \Exception('Models Not Found');
+        }
+
+        return $modelsArray;
+    }
+
+    /**
+     * Adds Model's Concepts to Model's Data
+     *
+     * @param array $data
+     * @param array $concepts
+     *
+     * @return array
+     */
+    public function addModelConcepts(array $data, array $concepts)
+    {
+        $data['concepts'] = [];
+
+        foreach ($concepts as $concept) {
+            $data['concepts'][] = $concept->generateRawData();
+        }
+
+        return $data;
+    }
+
+    /**
+     * Delete Model By Id
+     *
+     * @param string $modelId
+     *
+     * @return array
+     */
+    public function deleteById(string $modelId){
+        $deleteResult = $this->getRequest()->request(
+            'DELETE',
+            sprintf('models/%s', $modelId)
+        );
+
+        return $deleteResult['status'];
+    }
+
+    /**
+     * Delete Model Version By Id
+     *
+     * @param string $modelId
+     * @param string $versionId
+     *
+     * @return array
+     */
+    public function deleteVersionById(string $modelId, string $versionId){
+        $deleteResult = $this->getRequest()->request(
+            'DELETE',
+            sprintf('models/%s/versions/%s', $modelId, $versionId)
+        );
+
+        return $deleteResult['status'];
+    }
+
+    /**
+     * Deletes All Models
+     *
+     * @return array
+     */
+    public function deleteAll()
+    {
+        $deleteResult = $this->getRequest()->request(
+            'DELETE',
+            'models',
+            ['delete_all' => true]
+        );
+
+        return $deleteResult['status'];
+    }
 }
