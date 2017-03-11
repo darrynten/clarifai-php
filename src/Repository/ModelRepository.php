@@ -11,6 +11,7 @@
 
 namespace DarrynTen\Clarifai\Repository;
 
+use DarrynTen\Clarifai\Entity\Input;
 use DarrynTen\Clarifai\Entity\Model;
 use DarrynTen\Clarifai\Entity\ModelVersion;
 use DarrynTen\Clarifai\Request\RequestHandler;
@@ -584,5 +585,65 @@ class ModelRepository extends BaseRepository
         );
 
         return $deleteResult['status'];
+    }
+
+    /**
+     * Get Model Training Inputs By Model Id
+     *
+     * @param string $modelId
+     *
+     * @return array
+     */
+    public function getTrainingInputsById(string $modelId)
+    {
+        $inputResult = $this->getRequest()->request(
+            'GET',
+            sprintf('models/%s/inputs', $modelId)
+        );
+
+        return $this->getInputsFromResult($inputResult);
+    }
+
+    /**
+     * Get Model Training Inputs By Model Id
+     *
+     * @param string $modelId
+     * @param string $versionId
+     *
+     * @return array
+     */
+    public function getTrainingInputsByVersion(string $modelId, string $versionId)
+    {
+        $inputResult = $this->getRequest()->request(
+            'GET',
+            sprintf('models/%s/versions/%s/inputs', $modelId, $versionId)
+        );
+
+        return $this->getInputsFromResult($inputResult);
+    }
+
+    /**
+     * Parses Request Result and gets Inputs
+     *
+     * @param $inputResult
+     *
+     * @return array
+     *
+     * @throws \Exception
+     */
+    public function getInputsFromResult($inputResult)
+    {
+        $input_array = [];
+
+        if (isset($inputResult['inputs'])) {
+            foreach ($inputResult['inputs'] as $rawInput) {
+                $input = new Input($rawInput);
+                $input_array[] = $input;
+            }
+        } else {
+            throw new \Exception('Inputs Not Found');
+        }
+
+        return $input_array;
     }
 }
