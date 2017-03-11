@@ -216,16 +216,21 @@ class ModelRepository extends BaseRepository
         );
     }
 
-    // This comes later, after predict
-
     /**
      * Train the model
      *
-     * @return void
+     * @param string $id
+     *
+     * @return Model
      */
-    public function train()
+    public function train(string $id)
     {
-        //
+        $modelResult = $this->getRequest()->request(
+            'POST',
+            sprintf('models/%s/versions', $id)
+        );
+
+        return $this->getModelFromResult($modelResult);
     }
 
     /**
