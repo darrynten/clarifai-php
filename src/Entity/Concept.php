@@ -31,6 +31,13 @@ class Concept
     private $createdAt;
 
     /**
+     * The date the Concept was created at
+     *
+     * @var string $updatedAt
+     */
+    private $updatedAt;
+
+    /**
      * The app ID
      *
      * @var string $appId
@@ -43,6 +50,13 @@ class Concept
      * @var bool $value
      */
     private $value;
+
+    /**
+     * The Concept language
+     *
+     * @var string $name
+     */
+    private $language;
 
     /**
      * The raw data
@@ -71,6 +85,15 @@ class Concept
             }
             if (isset($rawData['value'])) {
                 $this->setValue($rawData['value']);
+            }
+            if (isset($rawData['created_at'])) {
+                $this->setCreatedAt($rawData['created_at']);
+            }
+            if (isset($rawData['updated_at'])) {
+                $this->setUpdatedAt($rawData['updated_at']);
+            }
+            if (isset($rawData['language'])) {
+                $this->setLanguage($rawData['language']);
             }
         }
     }
@@ -175,6 +198,46 @@ class Concept
     public function setValue($value)
     {
         $this->value = $value;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
+    }
+
+    /**
+     * @param string $updatedAt
+     *
+     * @return $this
+     */
+    public function setUpdatedAt(string $updatedAt)
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLanguage()
+    {
+        return $this->language;
+    }
+
+    /**
+     * @param string $language
+     *
+     * @return $this
+     */
+    public function setLanguage(string $language)
+    {
+        $this->language = $language;
 
         return $this;
     }

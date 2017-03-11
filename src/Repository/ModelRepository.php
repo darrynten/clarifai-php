@@ -229,16 +229,6 @@ class ModelRepository extends BaseRepository
     }
 
     /**
-     * Update the model
-     *
-     * @return void
-     */
-    public function update()
-    {
-        //
-    }
-
-    /**
      * Create new Model
      *
      * @param Model $model
@@ -257,17 +247,33 @@ class ModelRepository extends BaseRepository
             $data
         );
 
-        if ($modelResult['model']) {
-            $model = new Model($modelResult['model']);
-        } else {
-            throw new \Exception('Model Not Found');
-        }
-
-        return $model;
+        return $this->getModelFromResult($modelResult);
     }
 
     /**
-     * Create new Model
+     * Update the model
+     *
+     * @param Model $model
+     *
+     * @return Model[]
+     */
+    public function update(Model $model)
+    {
+        $data['models'] = [];
+        $data['models'][] = $this->createModelData($model);
+        $data['action'] = 'merge';
+
+        $modelResult = $this->getRequest()->request(
+            'PATCH',
+            'models',
+            $data
+        );
+
+        return $this->getModelsFromResult($modelResult);
+    }
+
+    /**
+     * Create Model data for Request
      *
      * @param Model $model
      *
@@ -277,12 +283,17 @@ class ModelRepository extends BaseRepository
     {
         $data = [];
 
-        if($model->getId()){
+        if ($model->getId()) {
             $data['id'] = $model->getId();
         }
-        if($model->getName()){
+        if ($model->getName()) {
             $data['name'] = $model->getName();
         }
+        if ($model->getConcepts()) {
+            $data['output_info']['data'] = [];
+            $data['output_info']['data'] = $this->addModelConcepts($data['output_info']['data'], $model->getConcepts());
+        }
+        $data['output_info']['output_config'] = $model->getOutputConfig();
 
         return $data;
     }
@@ -300,7 +311,7 @@ class ModelRepository extends BaseRepository
             'GET',
             'models'
         );
-        
+
         return $this->getModelsFromResult($modelResult);
     }
 
@@ -320,13 +331,7 @@ class ModelRepository extends BaseRepository
             sprintf('models/%s', $id)
         );
 
-        if ($modelResult['model']) {
-            $model = new Model($modelResult['model']);
-        } else {
-            throw new \Exception('Model Not Found');
-        }
-
-        return $model;
+        return $this->getModelFromResult($modelResult);
     }
 
     /**
@@ -334,7 +339,7 @@ class ModelRepository extends BaseRepository
      *
      * @param $id
      *
-     * @return array
+     * @return Model
      *
      * @throws \Exception
      */
@@ -345,9 +350,7 @@ class ModelRepository extends BaseRepository
             sprintf('models/%s/output_info', $id)
         );
 
-        //TODO: Figure out why it returns full Model Entity instead of only [output_info] part
-
-        return $modelResult;
+        return $this->getModelFromResult($modelResult);
     }
 
     /**
@@ -468,7 +471,7 @@ class ModelRepository extends BaseRepository
      *
      * @param $modelResult
      *
-     * @return array
+     * @return Model[]
      *
      * @throws \Exception
      */
@@ -486,6 +489,26 @@ class ModelRepository extends BaseRepository
         }
 
         return $modelsArray;
+    }
+
+    /**
+     * Parses Request Result and gets Model
+     *
+     * @param $modelResult
+     *
+     * @return Model
+     *
+     * @throws \Exception
+     */
+    public function getModelFromResult($modelResult)
+    {
+        if ($modelResult['model']) {
+            $model = new Model($modelResult['model']);
+        } else {
+            throw new \Exception('Model Not Found');
+        }
+
+        return $model;
     }
 
     /**
@@ -514,7 +537,8 @@ class ModelRepository extends BaseRepository
      *
      * @return array
      */
-    public function deleteById(string $modelId){
+    public function deleteById(string $modelId)
+    {
         $deleteResult = $this->getRequest()->request(
             'DELETE',
             sprintf('models/%s', $modelId)
@@ -531,7 +555,8 @@ class ModelRepository extends BaseRepository
      *
      * @return array
      */
-    public function deleteVersionById(string $modelId, string $versionId){
+    public function deleteVersionById(string $modelId, string $versionId)
+    {
         $deleteResult = $this->getRequest()->request(
             'DELETE',
             sprintf('models/%s/versions/%s', $modelId, $versionId)
