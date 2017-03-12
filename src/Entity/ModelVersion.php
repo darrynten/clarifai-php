@@ -2,11 +2,6 @@
 
 namespace DarrynTen\Clarifai\Entity;
 
-/**
- * Single Clarifai Model
- *
- * @package Clarifai
- */
 class ModelVersion
 {
     /**
@@ -113,5 +108,4 @@ class ModelVersion
 
         return $this;
     }
-
 }

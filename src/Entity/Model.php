@@ -247,7 +247,7 @@ class Model
      *
      * @return $this
      */
-    public function setClosedEnvironment( $closedEnvironment)
+    public function setClosedEnvironment($closedEnvironment)
     {
         $this->closedEnvironment = $closedEnvironment;
 
