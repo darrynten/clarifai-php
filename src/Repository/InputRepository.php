@@ -188,7 +188,6 @@ class InputRepository extends BaseRepository
      */
     public function addImageMetadata(array $data, array $metadata)
     {
-
         $data['metadata'] = [];
 
         foreach ($metadata as $meta_name => $meta_value) {

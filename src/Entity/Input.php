@@ -97,7 +97,6 @@ class Input
     public function __construct(array $rawData = null)
     {
         if ($rawData) {
-//            $this->setRawData($rawData);
             if (isset($rawData['id'])) {
                 $this->setId($rawData['id']);
             }
