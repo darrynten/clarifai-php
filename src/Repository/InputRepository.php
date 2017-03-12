@@ -172,7 +172,10 @@ class InputRepository extends BaseRepository
         $data['concepts'] = [];
 
         foreach ($concepts as $concept) {
-            $data['concepts'][] = $concept->generateRawData();
+            $data['concepts'][] = [
+                'id' => $concept->getId(),
+                'value' => $concept->getValue(),
+            ];
         }
 
         return $data;

@@ -27,10 +27,12 @@ class ConceptTest extends \PHPUnit_Framework_TestCase
         return [
             ['Id', 'id'],
             ['CreatedAt', '2017 - 02 - 24T15:34:10.944942Z'],
+            ['UpdatedAt', '2017 - 02 - 24T15:34:10.944942Z'],
             ['Name', 'name'],
             ['AppId', 'appId'],
             ['Value', true],
             ['Value', false],
+            ['Language', 'en'],
         ];
     }
 
@@ -53,57 +55,50 @@ class ConceptTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testRawData()
-    {
-        $this->assertEquals(
-            [],
-            $this->concept->getRawData()
-        );
-        $this->assertEquals(
-            ['id' => null, 'value' => null],
-            $this->concept->generateRawData()
-        );
-        $id = 'id';
-        $value = 1;
-        $name = 'name';
-        $appId = 'appId';
-        $data = $this->getConceptConstructData($id, $name, $appId, $value);
-        $this->concept = new Concept($data);
-        $this->assertEquals(
-            $data,
-            $this->concept->getRawData()
-        );
-        $this->assertEquals(
-            ['id' => $id, 'value' => $value],
-            $this->concept->generateRawData()
-        );
-    }
-
     public function testConstructor()
     {
-        $data = $this->getConceptConstructData('id', 'name', 'appId', 1);
+        $this->assertEquals(
+            ['id' => null],
+            $this->concept->generateRawData()
+        );
 
-        $this->concept = new Concept($data);
+        $this->concept = new Concept($this->getConceptMock()->generateRawData());
 
         $this->assertEquals(
-            $data['id'],
+            $this->getConceptMock()->getId(),
             $this->concept->getId()
         );
         $this->assertEquals(
-            $data['name'],
+            $this->getConceptMock()->getName(),
             $this->concept->getName()
         );
         $this->assertEquals(
-            $data['app_id'],
+            $this->getConceptMock()->getAppId(),
             $this->concept->getAppId()
         );
         $this->assertEquals(
-            $data['value'],
+            $this->getConceptMock()->getValue(),
             $this->concept->getValue()
         );
         $this->assertEquals(
-            $data,
+            $this->getConceptMock()->getCreatedAt(),
+            $this->concept->getCreatedAt()
+        );
+        $this->assertEquals(
+            $this->getConceptMock()->getUpdatedAt(),
+            $this->concept->getUpdatedAt()
+        );
+        $this->assertEquals(
+            $this->getConceptMock()->getLanguage(),
+            $this->concept->getLanguage()
+        );
+        $this->assertEquals(
+            $this->getConceptMock()->generateRawData(),
             $this->concept->getRawData()
+        );
+        $this->assertEquals(
+            $this->getConceptMock()->generateRawData(),
+            $this->concept->generateRawData()
         );
     }
 }

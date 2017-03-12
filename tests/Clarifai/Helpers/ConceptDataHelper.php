@@ -79,4 +79,23 @@ trait ConceptDataHelper
 
         return $data;
     }
+
+    /**
+     * Gets Full One Concept Entity
+     *
+     * @return Concept
+     */
+    public function getConceptMock()
+    {
+        $concept = new Concept();
+        $concept->setId('id')
+            ->setName('name')
+            ->setAppId('appId')
+            ->setValue(1)
+            ->setCreatedAt('createdAt')
+            ->setUpdatedAt('updatedAt')
+            ->setLanguage('en');
+
+        return $concept;
+    }
 }
