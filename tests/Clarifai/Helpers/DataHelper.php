@@ -2,6 +2,8 @@
 
 namespace DarrynTen\Clarifai\Tests\Clarifai\Helpers;
 
+use DarrynTen\Clarifai\Entity\ModelVersion;
+
 trait DataHelper
 {
     /**
@@ -32,7 +34,7 @@ trait DataHelper
             'createdAt' => 'createdAt',
             'imageUrl' => 'imageUrl',
             'score' => 'score',
-            'metaData' => 'metaData'
+            'metaData' => 'metaData',
         ];
     }
 
@@ -42,5 +44,21 @@ trait DataHelper
     public function getRequestMock()
     {
         return \Mockery::mock('DarrynTen\Clarifai\Request\RequestHandler');
+    }
+
+    /**
+     * Returns ModelVersion Entity
+     *
+     * @return ModelVersion
+     */
+    public function getModelVersionEntity()
+    {
+        $modelVersion = new ModelVersion();
+        $modelVersion->setId('id')
+            ->setCreatedAt('createdAt')
+            ->setStatusCode(1000)
+            ->setStatusDescription('OK');
+
+        return $modelVersion;
     }
 }

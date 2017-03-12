@@ -19,11 +19,18 @@ class ModelVersion
     private $createdAt;
 
     /**
-     * Status
+     * The modelVersion status code
      *
-     * @var array $status
+     * @var string $statusCode
      */
-    private $status = ['code' => '', 'description' => ''];
+    private $statusCode;
+
+    /**
+     * The modelVersion status description
+     *
+     * @var string $statusDescription
+     */
+    private $statusDescription;
 
     /**
      * ModelVersion constructor.
@@ -39,8 +46,11 @@ class ModelVersion
             if (isset($modelVersion['created_at'])) {
                 $this->setCreatedAt($modelVersion['created_at']);
             }
-            if (isset($modelVersion['status'])) {
-                $this->setStatus($modelVersion['status']['code'], $modelVersion['status']['description']);
+            if (isset($modelVersion['status']) && isset($modelVersion['status']['code'])) {
+                $this->setStatusCode($modelVersion['status']['code']);
+            }
+            if (isset($modelVersion['status']) && isset($modelVersion['status']['description'])) {
+                $this->setStatusDescription($modelVersion['status']['description']);
             }
         }
     }
@@ -92,20 +102,65 @@ class ModelVersion
      */
     public function getStatus()
     {
-        return $this->status;
+        return ['code' => $this->getStatusCode(), 'description' => $this->getStatusDescription()];
     }
 
     /**
-     * @param null $code
-     * @param null $description
+     * @return string
+     */
+    public function getStatusCode()
+    {
+        return $this->statusCode;
+    }
+
+    /**
+     * @param string $statusCode
      *
      * @return $this
      */
-    public function setStatus($code = null, $description = null)
+    public function setStatusCode(string $statusCode)
     {
-        $this->status['code'] = $code;
-        $this->status['description'] = $description;
+        $this->statusCode = $statusCode;
 
         return $this;
     }
+
+    /**
+     * @return string
+     */
+    public function getStatusDescription()
+    {
+        return $this->statusDescription;
+    }
+
+    /**
+     * @param string $statusDescription
+     *
+     * @return $this
+     */
+    public function setStatusDescription(string $statusDescription)
+    {
+        $this->statusDescription = $statusDescription;
+
+        return $this;
+    }
+
+    /**
+     * Generates rawData from modelVersion
+     *
+     * @return array
+     */
+    public function generateRawData()
+    {
+        $rawData = ['id' => $this->getId()];
+        if ($this->getCreatedAt()) {
+            $rawData['created_at'] = $this->getCreatedAt();
+        }
+        if ($this->getStatusDescription() || $this->getStatusCode()) {
+            $rawData['status'] = $this->getStatus();
+        }
+
+        return $rawData;
+    }
+
 }
