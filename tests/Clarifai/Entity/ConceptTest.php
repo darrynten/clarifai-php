@@ -1,6 +1,6 @@
 <?php
 
-namespace DarrynTen\Clarifai\Tests\Clarifai\Repository;
+namespace DarrynTen\Clarifai\Tests\Clarifai\Entity;
 
 use DarrynTen\Clarifai\Entity\Concept;
 use DarrynTen\Clarifai\Tests\Clarifai\Helpers\ConceptDataHelper;

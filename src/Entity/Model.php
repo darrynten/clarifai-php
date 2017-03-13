@@ -217,7 +217,7 @@ class Model
     /**
      * @return bool
      */
-    public function isConceptsMutuallyExclusive()
+    public function isConceptsMutuallyExclusive(): bool
     {
         return $this->conceptsMutuallyExclusive;
     }
@@ -227,7 +227,7 @@ class Model
      *
      * @return $this
      */
-    public function setConceptsMutuallyExclusive($conceptsMutuallyExclusive)
+    public function setConceptsMutuallyExclusive(bool $conceptsMutuallyExclusive)
     {
         $this->conceptsMutuallyExclusive = $conceptsMutuallyExclusive;
 
@@ -237,7 +237,7 @@ class Model
     /**
      * @return bool
      */
-    public function isClosedEnvironment()
+    public function isClosedEnvironment(): bool
     {
         return $this->closedEnvironment;
     }
@@ -247,7 +247,7 @@ class Model
      *
      * @return $this
      */
-    public function setClosedEnvironment($closedEnvironment)
+    public function setClosedEnvironment(bool $closedEnvironment)
     {
         $this->closedEnvironment = $closedEnvironment;
 
