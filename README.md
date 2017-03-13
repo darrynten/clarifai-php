@@ -202,9 +202,9 @@ Checked off bits are complete.
   - [x] Delete All Inpits
 - [ ] Models
   - [x] Create Model
-  - [ ] Create Model With Concepts
-  - [ ] Add Concepts to a Model
-  - [ ] Remove Concept from Model
+  - [x] Create Model With Concepts
+  - [x] Add Concepts to a Model
+  - [x] Remove Concept from Model
   - [ ] Update Model Name and Configuration
   - [ ] Get Models
   - [ ] Geo Model by ID
@@ -424,6 +424,45 @@ When you create a model you give it a name and an id. If you don't supply an id,
     $model = new Model();
     $model->setId('petsID');
     $modelResult = $clarifai->getModelRepository()->create($model);
+```
+
+#### Create Model with Concepts
+
+You can also create a model and initialize it with the concepts it will contain. You can always add and remove concepts later.
+
+```php
+    $concept = new Concept();
+    $concept->setId('boscoe');
+
+    $model= new Model();
+    $model->setId('petsId')
+        ->setConcepts([$concept])
+        ->setConceptsMutuallyExclusive(false)
+        ->setClosedEnvironment(false);
+
+    $modelResult = $clarifai->getModelRepository()->create($model);
+```
+
+#### Add Concepts To A Model
+
+You can add concepts to a model at any point. As you add concepts to inputs, you may want to add them to your model.
+
+```php
+    $concept = new Concept();
+    $concept->setId('dogs');
+
+    $modelResult = $clarifai->getModelRepository()->mergeModelConcepts([$model_id => [$concept]]);
+```
+
+#### Remove Concepts From A Model
+
+Conversely, if you'd like to remove concepts from a model, you can also do that.
+
+```php
+    $concept = new Concept();
+    $concept->setId('dogs');
+
+    $modelResult = $clarifai->getModelRepository()->deleteModelConcepts([$model_id => [$concept]]);
 ```
 
 # Roadmap

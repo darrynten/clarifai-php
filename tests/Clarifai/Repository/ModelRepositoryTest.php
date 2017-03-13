@@ -153,4 +153,82 @@ class ModelRepositoryTest extends \PHPUnit_Framework_TestCase
             $this->modelRepository->create($model)
         );
     }
+
+    public function testMergeModelConcepts()
+    {
+        $model = $this->getModelEntity();
+        $model->setRawData($model->generateRawData());
+        $concept1 = $this->getFullConceptEntity('id1');
+        $concept2 = $this->getFullConceptEntity('id2');
+
+        $this->request->shouldReceive('request')
+            ->once()
+            ->with(
+                'PATCH',
+                'models',
+                [
+                    'models' => [
+                        [
+                            'id' => $model->getId(),
+                            'output_info' => [
+                                'data' => [
+                                    'concepts' => [
+                                        ['id' => $concept1->getId()],
+                                        ['id' => $concept2->getId()],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'action' => 'merge',
+                ]
+            )
+            ->andReturn(
+                ['status' => $this->getStatusResult(), 'models' => [$model->generateRawData()]]
+            );
+
+        $this->assertEquals(
+            [$model],
+            $this->modelRepository->mergeModelConcepts([$model->getId() => [$concept1, $concept2]])
+        );
+    }
+
+    public function testDeleteModelConcepts()
+    {
+        $model = $this->getModelEntity();
+        $model->setRawData($model->generateRawData());
+        $concept1 = $this->getFullConceptEntity('id1');
+        $concept2 = $this->getFullConceptEntity('id2');
+
+        $this->request->shouldReceive('request')
+            ->once()
+            ->with(
+                'PATCH',
+                'models',
+                [
+                    'models' => [
+                        [
+                            'id' => $model->getId(),
+                            'output_info' => [
+                                'data' => [
+                                    'concepts' => [
+                                        ['id' => $concept1->getId()],
+                                        ['id' => $concept2->getId()],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'action' => 'remove',
+                ]
+            )
+            ->andReturn(
+                ['status' => $this->getStatusResult(), 'models' => [$model->generateRawData()]]
+            );
+
+        $this->assertEquals(
+            [$model],
+            $this->modelRepository->deleteModelConcepts([$model->getId() => [$concept1, $concept2]])
+        );
+    }
 }

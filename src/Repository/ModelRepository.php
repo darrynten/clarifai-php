@@ -438,7 +438,6 @@ class ModelRepository extends BaseRepository
         }
         $data['action'] = $action;
 
-        print_r($data);
         $updateResult = $this->getRequest()->request(
             'PATCH',
             'models',
