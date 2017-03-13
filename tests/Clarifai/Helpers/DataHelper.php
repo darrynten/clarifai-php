@@ -2,6 +2,8 @@
 
 namespace DarrynTen\Clarifai\Tests\Clarifai\Helpers;
 
+use DarrynTen\Clarifai\Entity\Concept;
+use DarrynTen\Clarifai\Entity\Model;
 use DarrynTen\Clarifai\Entity\ModelVersion;
 
 trait DataHelper
@@ -60,5 +62,54 @@ trait DataHelper
             ->setStatusDescription('OK');
 
         return $modelVersion;
+    }
+
+    /**
+     * Returns Model Entity
+     *
+     * @return Model
+     */
+    public function getModelEntity()
+    {
+        $model = new Model();
+        $model->setId('id')
+            ->setCreatedAt('createdAt')
+            ->setAppId('AppId')
+            ->setName('Name')
+            ->setModelVersion($this->getModelVersionEntity())
+            ->setClosedEnvironment(0)
+            ->setConceptsMutuallyExclusive(1)
+            ->setConcepts(
+                [
+                    $this->getFullConceptEntity('id1'),
+                    $this->getFullConceptEntity('id2'),
+                    $this->getFullConceptEntity('id3'),
+                ]
+            );
+
+        return $model;
+    }
+
+    /**
+     * Gets Full One Concept Entity
+     *
+     * @param string $id
+     * @param string $value
+     *
+     * @return Concept
+     */
+    public function getFullConceptEntity($id, $value = null)
+    {
+        $concept = new Concept();
+        $concept->setId($id)
+            ->setName($id)
+            ->setAppId('appId')
+            ->setValue($value)
+            ->setCreatedAt('createdAt')
+            ->setUpdatedAt('updatedAt')
+            ->setLanguage('en')
+            ->setRawData($concept->generateRawData());
+
+        return $concept;
     }
 }

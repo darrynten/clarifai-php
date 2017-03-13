@@ -89,21 +89,30 @@ class Model
             if (isset($model['app_id'])) {
                 $this->setAppId($model['app_id']);
             }
-            if (isset($model['output_info'])) {
-                if (isset($model['output_info']['data']) && isset($model['output_info']['data']['concepts'])) {
-                    $this->setRawConcepts($model['output_info']['data']['concepts']);
-                }
-                if (isset($model['output_info']['output_config'])) {
-                    if (isset($model['output_info']['output_config']['concepts_mutually_exclusive'])) {
-                        $this->setConceptsMutuallyExclusive(
-                            $model['output_info']['output_config']['concepts_mutually_exclusive']
-                        );
-                    }
-                    if (isset($model['output_info']['output_config']['closed_environment'])) {
-                        $this->setClosedEnvironment($model['output_info']['output_config']['closed_environment']);
-                    }
-                }
+            if (
+                isset($model['output_info'])
+                && isset($model['output_info']['data'])
+                && isset($model['output_info']['data']['concepts'])
+            ) {
+                $this->setRawConcepts($model['output_info']['data']['concepts']);
             }
+            if (
+                isset($model['output_info'])
+                && isset($model['output_info']['output_config'])
+                && isset($model['output_info']['output_config']['concepts_mutually_exclusive'])
+            ) {
+                $this->setConceptsMutuallyExclusive(
+                    $model['output_info']['output_config']['concepts_mutually_exclusive']
+                );
+            }
+            if (
+                isset($model['output_info'])
+                && isset($model['output_info']['output_config'])
+                && isset($model['output_info']['output_config']['closed_environment'])
+            ) {
+                $this->setClosedEnvironment($model['output_info']['output_config']['closed_environment']);
+            }
+
             if (isset($model['model_version'])) {
                 $this->setModelVersion(new ModelVersion($model['model_version']));
             }
@@ -322,5 +331,40 @@ class Model
         $this->rawData = $rawData;
 
         return $this;
+    }
+
+    /**
+     * Generates rawData from Model
+     *
+     * @return array
+     */
+    public function generateRawData()
+    {
+        $rawData = ['id' => $this->getId()];
+        $rawData['output_info'] = [];
+        $rawData['output_info']['data'] = [];
+        if ($this->getName()) {
+            $rawData['name'] = $this->getName();
+        }
+        if ($this->getAppId()) {
+            $rawData['app_id'] = $this->getAppId();
+        }
+        if ($this->getCreatedAt()) {
+            $rawData['created_at'] = $this->getCreatedAt();
+        }
+        if ($this->getConcepts()) {
+            $rawData['output_info']['data']['concepts'] = [];
+            foreach ($this->getConcepts() as $concept) {
+                $rawData['output_info']['data']['concepts'][] = $concept->generateRawData();
+            }
+        }
+        if ($this->isConceptsMutuallyExclusive() || $this->isClosedEnvironment()) {
+            $rawData['output_info']['output_config'] = $this->getOutputConfig();
+        }
+        if ($this->getModelVersion()) {
+            $rawData['model_version'] = $this->getModelVersion()->generateRawData();
+        }
+
+        return $rawData;
     }
 }

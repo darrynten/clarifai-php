@@ -6,7 +6,7 @@ use DarrynTen\Clarifai\Repository\BaseRepository;
 use DarrynTen\Clarifai\Repository\ModelRepository;
 use DarrynTen\Clarifai\Tests\Clarifai\Helpers\DataHelper;
 
-class ModelTest extends \PHPUnit_Framework_TestCase
+class ModelRepositoryTest extends \PHPUnit_Framework_TestCase
 {
     use DataHelper;
 
