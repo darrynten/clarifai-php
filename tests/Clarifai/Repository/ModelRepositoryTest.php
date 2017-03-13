@@ -231,4 +231,109 @@ class ModelRepositoryTest extends \PHPUnit_Framework_TestCase
             $this->modelRepository->deleteModelConcepts([$model->getId() => [$concept1, $concept2]])
         );
     }
+
+    public function testUpdate()
+    {
+        $name = 'app2';
+        $conceptsMutuallyExclusive = true;
+        $closedEnvironment = 0;
+        $model = $this->getModelEntity()->setName($name)
+            ->setConceptsMutuallyExclusive($conceptsMutuallyExclusive)
+            ->setClosedEnvironment($closedEnvironment)
+            ->setConcepts([]);
+        $model->setRawData($model->generateRawData());
+
+        $this->request->shouldReceive('request')
+            ->once()
+            ->with(
+                'PATCH',
+                'models',
+                [
+                    'models' => [
+                        [
+                            'id' => $model->getId(),
+                            'name' => $model->getName(),
+                            'output_info' => [
+                                'output_config' => [
+                                    'concepts_mutually_exclusive' => $model->isConceptsMutuallyExclusive(),
+                                    'closed_environment' => $model->isClosedEnvironment(),
+                                ],
+                            ],
+                        ],
+                    ],
+                    'action' => 'merge',
+                ]
+            )
+            ->andReturn(
+                ['status' => $this->getStatusResult(), 'models' => [$model->generateRawData()]]
+            );
+
+        $this->assertEquals(
+            [$model],
+            $this->modelRepository->update($model)
+        );
+        $this->assertEquals(
+            $name,
+            $model->getName()
+        );
+        $this->assertEquals(
+            $conceptsMutuallyExclusive,
+            $model->isConceptsMutuallyExclusive()
+        );
+        $this->assertEquals(
+            $closedEnvironment,
+            $model->isClosedEnvironment()
+        );
+    }
+
+    public function testGet()
+    {
+        $model1 = $this->getModelEntity();
+        $model1->setRawData($model1->generateRawData());
+
+        $model2 = $this->getModelEntity()->setId('id2');
+        $model2->setRawData($model2->generateRawData());
+
+        $this->request->shouldReceive('request')
+            ->once()
+            ->with(
+                'GET',
+                'models'
+            )
+            ->andReturn(
+                [
+                    'status' => $this->getStatusResult(),
+                    'models' => [$model1->generateRawData(), $model2->generateRawData(),],
+                ]
+            );
+
+        $this->assertEquals(
+            [$model1, $model2],
+            $this->modelRepository->get()
+        );
+    }
+
+    public function testGetById()
+    {
+        $model = $this->getModelEntity();
+        $model->setRawData($model->generateRawData());
+
+        $this->request->shouldReceive('request')
+            ->once()
+            ->with(
+                'GET',
+                sprintf('models/%s', $model->getId())
+            )
+            ->andReturn(
+                [
+                    'status' => $this->getStatusResult(),
+                    'model' => $model->generateRawData(),
+                ]
+            );
+
+        $this->assertEquals(
+            $model,
+            $this->modelRepository->getById($model->getId())
+        );
+    }
 }

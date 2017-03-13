@@ -451,7 +451,7 @@ You can add concepts to a model at any point. As you add concepts to inputs, you
     $concept = new Concept();
     $concept->setId('dogs');
 
-    $modelResult = $clarifai->getModelRepository()->mergeModelConcepts([$model_id => [$concept]]);
+    $modelResult = $clarifai->getModelRepository()->mergeModelConcepts([$modelId => [$concept]]);
 ```
 
 #### Remove Concepts From A Model
@@ -462,7 +462,35 @@ Conversely, if you'd like to remove concepts from a model, you can also do that.
     $concept = new Concept();
     $concept->setId('dogs');
 
-    $modelResult = $clarifai->getModelRepository()->deleteModelConcepts([$model_id => [$concept]]);
+    $modelResult = $clarifai->getModelRepository()->deleteModelConcepts([$modelId => [$concept]]);
+```
+
+#### Update Model Name and Configuration
+
+Here we will change the model name to 'newname' and the model's configuration to have concepts_mutually_exclusive=true and closed_environment=true.
+
+```php
+    $model->setName('newname')
+        ->setClosedEnvironment(true)
+        ->setConceptsMutuallyExclusive(true);
+
+    $modelResult = $clarifai->getModelRepository()->update($model);
+```
+
+#### Get Models
+
+To get a list of all models including models you've created as well as public models
+
+```php
+    $modelResult = $clarifai->getModelRepository()->get();
+```
+
+#### Get Model By Id
+
+All models have unique Ids. You can get a specific model by its id:
+
+```php
+    $modelResult = $clarifai->getModelRepository()->getById($modelId);
 ```
 
 # Roadmap
