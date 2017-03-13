@@ -3,9 +3,10 @@
 namespace DarrynTen\Clarifai\Tests\Clarifai\Repository;
 
 use DarrynTen\Clarifai\Entity\Concept;
+use DarrynTen\Clarifai\Tests\Clarifai\Entity\EntityTest;
 use DarrynTen\Clarifai\Tests\Clarifai\Helpers\ConceptDataHelper;
 
-class ConceptTest extends \PHPUnit_Framework_TestCase
+class ConceptTest extends EntityTest
 {
     use ConceptDataHelper;
 
@@ -16,13 +17,14 @@ class ConceptTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        $this->entity = new Concept();
         $this->concept = new Concept();
     }
 
     /**
      * @return array
      */
-    public function conceptProvider()
+    public function setterGetterProvider()
     {
         return [
             ['Id', 'id'],
@@ -34,25 +36,6 @@ class ConceptTest extends \PHPUnit_Framework_TestCase
             ['Value', false],
             ['Language', 'en'],
         ];
-    }
-
-    /**
-     * @dataProvider conceptProvider
-     *
-     * @param string $method Entity method
-     * @param array $mockData Data needed for target class creation
-     */
-    public function testGettersAndSetters($method, $mockData)
-    {
-        $this->assertNull($this->concept->{'get' . $method}());
-        $this->assertSame(
-            $this->concept,
-            $this->concept->{'set' . $method}($mockData)
-        );
-        $this->assertEquals(
-            $mockData,
-            $this->concept->{'get' . $method}()
-        );
     }
 
     public function testConstructor()

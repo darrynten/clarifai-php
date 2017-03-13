@@ -3,9 +3,10 @@
 namespace DarrynTen\Clarifai\Tests\Clarifai\Repository;
 
 use DarrynTen\Clarifai\Entity\ModelVersion;
+use DarrynTen\Clarifai\Tests\Clarifai\Entity\EntityTest;
 use DarrynTen\Clarifai\Tests\Clarifai\Helpers\DataHelper;
 
-class modelVersionTest extends \PHPUnit_Framework_TestCase
+class modelVersionTest extends EntityTest
 {
     use DataHelper;
 
@@ -17,12 +18,13 @@ class modelVersionTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->modelVersion = new ModelVersion();
+        $this->entity = new ModelVersion();
     }
 
     /**
      * @return array
      */
-    public function modelVersionProvider()
+    public function setterGetterProvider()
     {
         return [
             ['Id', 'id'],
@@ -30,25 +32,6 @@ class modelVersionTest extends \PHPUnit_Framework_TestCase
             ['StatusCode', '1000'],
             ['StatusDescription', 'OK'],
         ];
-    }
-
-    /**
-     * @dataProvider modelVersionProvider
-     *
-     * @param string $method Entity method
-     * @param array $mockData Data needed for target class creation
-     */
-    public function testGettersAndSetters($method, $mockData)
-    {
-        $this->assertNull($this->modelVersion->{'get' . $method}());
-        $this->assertSame(
-            $this->modelVersion,
-            $this->modelVersion->{'set' . $method}($mockData)
-        );
-        $this->assertEquals(
-            $mockData,
-            $this->modelVersion->{'get' . $method}()
-        );
     }
 
     public function testConstructor()

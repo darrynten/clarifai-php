@@ -5,6 +5,11 @@ namespace DarrynTen\Clarifai\Tests\Clarifai\Entity;
 abstract class EntityTest extends \PHPUnit_Framework_TestCase
 {
     /**
+     * @var Object
+     */
+    protected $entity;
+
+    /**
      * @dataProvider setterGetterProvider
      *
      * @param string $method Entity method
@@ -14,9 +19,9 @@ abstract class EntityTest extends \PHPUnit_Framework_TestCase
     public function testGettersAndSetters($method, $mockData, $isArray = false)
     {
         if ($isArray) {
-            $this->assertEmpty($this->entity->{'get'.$method}());
+            $this->assertEmpty($this->entity->{'get' . $method}());
         } else {
-            $this->assertNull($this->entity->{'get'.$method}());
+            $this->assertNull($this->entity->{'get' . $method}());
         }
 
         $this->assertSame(
