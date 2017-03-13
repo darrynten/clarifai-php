@@ -1,30 +1,30 @@
 <?php
 
-namespace DarrynTen\Clarifai\Tests\Clarifai\Repository;
+namespace DarrynTen\Clarifai\Tests\Clarifai\Entity;
 
 use DarrynTen\Clarifai\Entity\Concept;
 use DarrynTen\Clarifai\Entity\Input;
 use DarrynTen\Clarifai\Tests\Clarifai\Helpers\ConceptDataHelper;
 use DarrynTen\Clarifai\Tests\Clarifai\Helpers\InputDataHelper;
 
-class InputTest extends \PHPUnit_Framework_TestCase
+class InputTest extends EntityTest
 {
     use InputDataHelper, ConceptDataHelper;
 
     /**
      * @var Input
      */
-    private $input;
+    protected $entity;
 
     public function setUp()
     {
-        $this->input = new Input();
+        $this->entity = new Input();
     }
 
     /**
      * @return array
      */
-    public function inputProvider()
+    public function setterGetterProvider()
     {
         return [
             ['Id', 'f1a03eb89ad04b99b88431e3466c56ac'],
@@ -39,59 +39,40 @@ class InputTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    /**
-     * @dataProvider inputProvider
-     *
-     * @param string $method Entity method
-     * @param array $mockData Data needed for target class creation
-     */
-    public function testGettersAndSetters($method, $mockData)
-    {
-        $this->assertNull($this->input->{'get' . $method}());
-        $this->assertSame(
-            $this->input,
-            $this->input->{'set' . $method}($mockData)
-        );
-        $this->assertEquals(
-            $mockData,
-            $this->input->{'get' . $method}()
-        );
-    }
-
     public function testStatus()
     {
         $status = ['code' => '3000', 'description' => 'string'];
         $this->assertEquals(
             ['code' => '', 'description' => ''],
-            $this->input->getStatus()
+            $this->entity->getStatus()
         );
         $this->assertSame(
-            $this->input,
-            $this->input->setStatus($status['code'], $status['description'])
+            $this->entity,
+            $this->entity->setStatus($status['code'], $status['description'])
         );
         $this->assertEquals(
             $status,
-            $this->input->getStatus()
+            $this->entity->getStatus()
         );
     }
 
     public function testImageMethods()
     {
-        $this->assertNull($this->input->getImageMethod());
-        $this->input->isPath();
+        $this->assertNull($this->entity->getImageMethod());
+        $this->entity->isPath();
         $this->assertEquals(
             Input::IMG_PATH,
-            $this->input->getImageMethod()
+            $this->entity->getImageMethod()
         );
-        $this->input->isUrl();
+        $this->entity->isUrl();
         $this->assertEquals(
             Input::IMG_URL,
-            $this->input->getImageMethod()
+            $this->entity->getImageMethod()
         );
-        $this->input->isEncoded();
+        $this->entity->isEncoded();
         $this->assertEquals(
             Input::IMG_BASE64,
-            $this->input->getImageMethod()
+            $this->entity->getImageMethod()
         );
     }
 
@@ -107,41 +88,40 @@ class InputTest extends \PHPUnit_Framework_TestCase
         );
         $data['data']['concepts'] = [$conceptData1, $conceptData2];
 
-        $this->input = new Input($data);
+        $this->entity = new Input($data);
 
         $this->assertEquals(
             $data['id'],
-            $this->input->getId()
+            $this->entity->getId()
         );
         $this->assertEquals(
             $data['created_at'],
-            $this->input->getCreatedAt()
+            $this->entity->getCreatedAt()
         );
         $this->assertEquals(
             $data['status'],
-            $this->input->getStatus()
+            $this->entity->getStatus()
         );
         $this->assertEquals(
             $data['data']['image']['url'],
-            $this->input->getImage()
+            $this->entity->getImage()
         );
         $this->assertEquals(
             Input::IMG_URL,
-            $this->input->getImageMethod()
+            $this->entity->getImageMethod()
         );
         $this->assertEquals(
             $data['data']['image']['crop'],
-            $this->input->getCrop()
+            $this->entity->getCrop()
         );
         $this->assertEquals(
             $data['data']['metadata'],
-            $this->input->getMetaData()
+            $this->entity->getMetaData()
         );
         $this->assertEquals(
             [new Concept($conceptData1), new Concept($conceptData2)],
-            $this->input->getConcepts()
+            $this->entity->getConcepts()
         );
-
     }
 
     /**
@@ -149,7 +129,7 @@ class InputTest extends \PHPUnit_Framework_TestCase
      */
     public function testWrongConstructImageMethodException()
     {
-        $this->input = new Input(
+        $this->entity = new Input(
             [
                 'id' => 'f1a03eb89ad04b99b88431e3466c56ac',
                 'created_at' => '2017 - 02 - 24T15:34:10.944942Z',
@@ -171,37 +151,36 @@ class InputTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertEquals(
             [],
-            $this->input->getConcepts()
+            $this->entity->getConcepts()
         );
         $concept1 = $this->getConceptEntity('id1', true);
         $concept2 = $this->getConceptEntity('id2', false);
         $this->assertSame(
-            $this->input,
-            $this->input->setConcepts([$concept1, $concept2])
+            $this->entity,
+            $this->entity->setConcepts([$concept1, $concept2])
         );
         $this->assertEquals(
             [$concept1, $concept2],
-            $this->input->getConcepts()
+            $this->entity->getConcepts()
         );
-
     }
 
     public function testSetRawConcepts()
     {
         $this->assertEquals(
             [],
-            $this->input->getConcepts()
+            $this->entity->getConcepts()
         );
         $data1 = $this->getConceptConstructData('id1', 'name1', 'appId1', true);
         $data2 = $this->getConceptConstructData('id2', 'name2', 'appId2', false);
 
         $this->assertSame(
-            $this->input,
-            $this->input->setRawConcepts([$data1, $data2])
+            $this->entity,
+            $this->entity->setRawConcepts([$data1, $data2])
         );
         $this->assertEquals(
             [new Concept($data1), new Concept($data2)],
-            $this->input->getConcepts()
+            $this->entity->getConcepts()
         );
     }
 
@@ -209,17 +188,16 @@ class InputTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertEquals(
             [],
-            $this->input->getRawData()
+            $this->entity->getRawData()
         );
         $data = $this->getInputFullConstructData('id', 'image', Input::IMG_URL);
         $this->assertSame(
-            $this->input,
-            $this->input->setRawData($data)
+            $this->entity,
+            $this->entity->setRawData($data)
         );
         $this->assertEquals(
             $data,
-            $this->input->getRawData()
+            $this->entity->getRawData()
         );
-
     }
 }
