@@ -377,7 +377,7 @@ class ModelRepository extends BaseRepository
 
         $modelVersions = [];
 
-        if ($modelResult['model_versions']) {
+        if (isset($modelResult['model_versions'])) {
             foreach ($modelResult['model_versions'] as $version) {
                 $modelVersion = new ModelVersion($version);
                 $modelVersions[] = $modelVersion;
@@ -392,21 +392,21 @@ class ModelRepository extends BaseRepository
     /**
      * Gets Model Version By Id
      *
-     * @param string $model_id
-     * @param string $version_id
+     * @param string $modelId
+     * @param string $versionId
      *
      * @return ModelVersion
      *
      * @throws \Exception
      */
-    public function getModelVersionById($model_id, $version_id)
+    public function getModelVersionById($modelId, $versionId)
     {
         $modelResult = $this->getRequest()->request(
             'GET',
-            sprintf('models/%s/versions/%s', $model_id, $version_id)
+            sprintf('models/%s/versions/%s', $modelId, $versionId)
         );
 
-        if ($modelResult['model_version']) {
+        if (isset($modelResult['model_version'])) {
             $modelVersion = new ModelVersion($modelResult['model_version']);
         } else {
             throw new \Exception('Model Versions Not Found');

@@ -336,4 +336,142 @@ class ModelRepositoryTest extends \PHPUnit_Framework_TestCase
             $this->modelRepository->getById($model->getId())
         );
     }
+
+    public function testGetOutputInfoById()
+    {
+        $model = $this->getModelEntity();
+        $model->setRawData($model->generateRawData());
+
+        $this->request->shouldReceive('request')
+            ->once()
+            ->with(
+                'GET',
+                sprintf('models/%s/output_info', $model->getId())
+            )
+            ->andReturn(
+                [
+                    'status' => $this->getStatusResult(),
+                    'model' => $model->generateRawData(),
+                ]
+            );
+
+        $this->assertEquals(
+            $model,
+            $this->modelRepository->getOutputInfoById($model->getId())
+        );
+    }
+
+    public function testGetModelVersions()
+    {
+        $id = 'model_id';
+        $version1 = $this->getModelVersionEntity();
+        $version2 = $this->getModelVersionEntity()->setId('id2');
+
+        $this->request->shouldReceive('request')
+            ->once()
+            ->with(
+                'GET',
+                sprintf('models/%s/versions', $id)
+            )
+            ->andReturn(
+                [
+                    'status' => $this->getStatusResult(),
+                    'model_versions' => [
+                        $version1->generateRawData(),
+                        $version2->generateRawData(),
+                    ],
+                ]
+            );
+
+        $this->assertEquals(
+            [$version1, $version2],
+            $this->modelRepository->getModelVersions($id)
+        );
+    }
+
+    /**
+     * @expectedException \Exception
+     */
+    public function testGetModelVersionsException()
+    {
+        $id = 'model_id';
+        $version1 = $this->getModelVersionEntity();
+        $version2 = $this->getModelVersionEntity()->setId('id2');
+
+        $this->request->shouldReceive('request')
+            ->once()
+            ->with(
+                'GET',
+                sprintf('models/%s/versions', $id)
+            )
+            ->andReturn(
+                [
+                    'status' => $this->getStatusResult(),
+                    'wrong_data' => [
+                        $version1->generateRawData(),
+                        $version2->generateRawData(),
+                    ],
+                ]
+            );
+
+        $this->assertEquals(
+            [$version1, $version2],
+            $this->modelRepository->getModelVersions($id)
+        );
+    }
+
+    public function testGetModelVersionById()
+    {
+        $id = 'model_id';
+        $version = $this->getModelVersionEntity();
+
+        $this->request->shouldReceive('request')
+            ->once()
+            ->with(
+                'GET',
+                sprintf('models/%s/versions/%s', $id, $version->getId())
+            )
+            ->andReturn(
+                [
+                    'status' => $this->getStatusResult(),
+                    'model_version' =>
+                        $version->generateRawData(),
+
+                ]
+            );
+
+        $this->assertEquals(
+            $version,
+            $this->modelRepository->getModelVersionById($id, $version->getId())
+        );
+    }
+
+    /**
+     * @expectedException \Exception
+     */
+    public function testGetModelVersionByIdException()
+    {
+        $id = 'model_id';
+        $version = $this->getModelVersionEntity();
+
+        $this->request->shouldReceive('request')
+            ->once()
+            ->with(
+                'GET',
+                sprintf('models/%s/versions/%s', $id, $version->getId())
+            )
+            ->andReturn(
+                [
+                    'status' => $this->getStatusResult(),
+                    'wrong_data' =>
+                        $version->generateRawData(),
+
+                ]
+            );
+
+        $this->assertEquals(
+            $version,
+            $this->modelRepository->getModelVersionById($id, $version->getId())
+        );
+    }
 }

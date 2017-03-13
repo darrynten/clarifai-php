@@ -205,12 +205,12 @@ Checked off bits are complete.
   - [x] Create Model With Concepts
   - [x] Add Concepts to a Model
   - [x] Remove Concept from Model
-  - [ ] Update Model Name and Configuration
-  - [ ] Get Models
-  - [ ] Geo Model by ID
-  - [ ] Get Model Output Info by ID
-  - [ ] List Model Versions
-  - [ ] Get Model Version by ID
+  - [x] Update Model Name and Configuration
+  - [x] Get Models
+  - [x] Get Model by ID
+  - [x] Get Model Output Info by ID
+  - [x] List Model Versions
+  - [x] Get Model Version by ID
   - [ ] Get Model Training Inputs
   - [ ] Get Model Training Inputs by Version
   - [ ] Delete Model
@@ -491,6 +491,30 @@ All models have unique Ids. You can get a specific model by its id:
 
 ```php
     $modelResult = $clarifai->getModelRepository()->getById($modelId);
+```
+
+#### Get Model Output Info By Id
+
+The output info of a model lists what concepts it contains.
+
+```php
+    $modelResult = $clarifai->getModelRepository()->getOutputInfoById($modelId);
+```
+
+#### List Model Versions
+
+Every time you train a model, it creates a new version. You can list all the versions created.
+
+```php
+    $modelResult = $clarifai->getModelRepository()->getModelVersions($modelId);
+```
+
+#### Get Model Version By Id
+
+To get a specific model version, you must provide the modelId as well as the versionId. You can inspect the model version status to determine if your model is trained or still training.
+
+```php
+    $modelResult = $clarifai->getModelRepository()->getModelVersionById($modelId, $versionId);
 ```
 
 # Roadmap
