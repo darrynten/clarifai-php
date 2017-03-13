@@ -60,17 +60,6 @@ class Clarifai
      * @param $config
      * @param $data
      *
-     * @return Repository\Models
-     */
-    public function getModels($config, $data)
-    {
-        return new Repository\Models($this->getRequest(), $config, $data);
-    }
-
-    /**
-     * @param $config
-     * @param $data
-     *
      * @return Repository\InputRepository
      */
     public function getInputRepository($config = null, $data = null)
