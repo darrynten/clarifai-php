@@ -31,6 +31,8 @@ class ConceptTest extends \PHPUnit_Framework_TestCase
             ['AppId', 'appId'],
             ['Value', true],
             ['Value', false],
+            ['Language', 'en'],
+            ['UpdatedAt', '2017 - 02 - 24T15:34:10.944942Z'],
         ];
     }
 
@@ -42,14 +44,14 @@ class ConceptTest extends \PHPUnit_Framework_TestCase
      */
     public function testGettersAndSetters($method, $mockData)
     {
-        $this->assertNull($this->concept->{'get' . $method}());
+        $this->assertNull($this->concept->{'get'.$method}());
         $this->assertSame(
             $this->concept,
-            $this->concept->{'set' . $method}($mockData)
+            $this->concept->{'set'.$method}($mockData)
         );
         $this->assertEquals(
             $mockData,
-            $this->concept->{'get' . $method}()
+            $this->concept->{'get'.$method}()
         );
     }
 
@@ -63,25 +65,34 @@ class ConceptTest extends \PHPUnit_Framework_TestCase
             ['id' => null, 'value' => null],
             $this->concept->generateRawData()
         );
-        $id = 'id';
-        $value = 1;
-        $name = 'name';
-        $appId = 'appId';
-        $data = $this->getConceptConstructData($id, $name, $appId, $value);
+        $data = [
+            'id' => 'id',
+            'value' => 1,
+            'name' => 'name',
+            'app_id' => 'appId',
+            'created_at' => 'createdAt',
+            'updated_at' => 'updatedAt',
+            'language' => 'language',
+        ];
         $this->concept = new Concept($data);
         $this->assertEquals(
             $data,
             $this->concept->getRawData()
         );
         $this->assertEquals(
-            ['id' => $id, 'value' => $value],
+            ['id' => $data['id'], 'value' => $data['value']],
             $this->concept->generateRawData()
         );
     }
 
     public function testConstructor()
     {
-        $data = $this->getConceptConstructData('id', 'name', 'appId', 1);
+        $data = [
+            'id' => 'id',
+            'name' => 'name',
+            'app_id' => 'appId',
+            'value' => 1,
+        ];
 
         $this->concept = new Concept($data);
 

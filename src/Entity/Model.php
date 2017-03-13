@@ -90,7 +90,7 @@ class Model
                 $this->setAppId($model['app_id']);
             }
             if (isset($model['output_info'])) {
-                if (isset($model['output_info']['data']) && isset($model['output_info']['data']['concepts'])) {
+                if (!empty($model['output_info']['data']['concepts'])) {
                     $this->setRawConcepts($model['output_info']['data']['concepts']);
                 }
                 if (isset($model['output_info']['output_config'])) {
