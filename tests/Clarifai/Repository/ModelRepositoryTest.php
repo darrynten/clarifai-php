@@ -57,7 +57,7 @@ class ModelRepositoryTest extends \PHPUnit_Framework_TestCase
                     ],
                     'model' => [
                         'output_info' => [
-                            'output_config' =>[
+                            'output_config' => [
                                 'language' => $lang,
                             ],
                         ],
@@ -91,7 +91,7 @@ class ModelRepositoryTest extends \PHPUnit_Framework_TestCase
 
         $this->setRequestMock(
             [
-                'base64' => base64_encode(file_get_contents($file))
+                'base64' => base64_encode(file_get_contents($file)),
             ],
             $modelType,
             $lang,
@@ -121,7 +121,7 @@ class ModelRepositoryTest extends \PHPUnit_Framework_TestCase
 
         $this->setRequestMock(
             [
-                'base64' => $hash
+                'base64' => $hash,
             ],
             $modelType,
             $lang,
@@ -131,6 +131,26 @@ class ModelRepositoryTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(
             $expectedData,
             $this->modelRepository->predictEncoded($hash, $modelType, $lang)
+        );
+    }
+
+    public function testCreate()
+    {
+        $model = $this->getModelEntity();
+        $model->setRawData($model->generateRawData());
+
+        $this->request->shouldReceive('request')
+            ->once()
+            ->with(
+                'POST',
+                'models',
+                ['model' => $this->modelRepository->createModelData($model)]
+            )
+            ->andReturn(['status' => $this->getStatusResult(), 'model' => $model->generateRawData()]);
+
+        $this->assertEquals(
+            $model,
+            $this->modelRepository->create($model)
         );
     }
 }

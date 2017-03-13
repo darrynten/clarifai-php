@@ -201,7 +201,7 @@ Checked off bits are complete.
   - [x] Delete Input List
   - [x] Delete All Inpits
 - [ ] Models
-  - [ ] Create Model
+  - [x] Create Model
   - [ ] Create Model With Concepts
   - [ ] Add Concepts to a Model
   - [ ] Remove Concept from Model
@@ -408,6 +408,22 @@ well. This will happen asynchronously.
 
 ```php
     $inputResult = $clarifai->getInputRepository()->deleteAll();
+```
+
+## Models
+
+There are many methods to work with models.
+
+#### Create Model
+
+You can create your own model and train it with your own images and concepts. Once you train it to see how you would like it to see, you can then use that model to make predictions.
+
+When you create a model you give it a name and an id. If you don't supply an id, one will be created for you. All models must have unique ids.
+
+```php
+    $model = new Model();
+    $model->setId('petsID');
+    $modelResult = $clarifai->getModelRepository()->create($model);
 ```
 
 # Roadmap

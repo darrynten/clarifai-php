@@ -112,4 +112,14 @@ trait DataHelper
 
         return $concept;
     }
+
+    /**
+     * Gets Example of Status Part of the Request Result
+     *
+     * @return array
+     */
+    public function getStatusResult()
+    {
+        return ['code' => '10000', 'description' => 'OK'];
+    }
 }
