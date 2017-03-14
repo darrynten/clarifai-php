@@ -211,8 +211,8 @@ Checked off bits are complete.
   - [x] Get Model Output Info by ID
   - [x] List Model Versions
   - [x] Get Model Version by ID
-  - [ ] Get Model Training Inputs
-  - [ ] Get Model Training Inputs by Version
+  - [x] Get Model Training Inputs
+  - [x] Get Model Training Inputs by Version
   - [ ] Delete Model
   - [ ] Delete Model Version
   - [ ] Delete All Models
@@ -515,6 +515,22 @@ To get a specific model version, you must provide the modelId as well as the ver
 
 ```php
     $modelResult = $clarifai->getModelRepository()->getModelVersionById($modelId, $versionId);
+```
+
+#### Get Model Training Inputs
+
+You can list all the inputs that were used to train the model.
+
+```php
+    $modelResult = $clarifai->getModelRepository()->getTrainingInputsById($modelId);
+```
+
+#### Get Model Training Inputs By Version
+
+You can also list all the inputs that were used to train a specific model version.
+
+```php
+    $modelResult = $clarifai->getModelRepository()->getTrainingInputsByVersion($modelId, $versionId);
 ```
 
 # Roadmap

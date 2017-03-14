@@ -36,25 +36,10 @@ class InputTest extends EntityTest
             ['ImageMethod', Input::IMG_PATH],
             ['Crop', [0.2, 0.4, 0.3, 0.6]],
             ['MetaData', ['first' => 'value1', 'second' => 'value2']],
+            ['StatusCode', '10000'],
+            ['StatusDescription', 'OK'],
 
         ];
-    }
-
-    public function testStatus()
-    {
-        $status = ['code' => '3000', 'description' => 'string'];
-        $this->assertEquals(
-            ['code' => '', 'description' => ''],
-            $this->input->getStatus()
-        );
-        $this->assertSame(
-            $this->input,
-            $this->input->setStatus($status['code'], $status['description'])
-        );
-        $this->assertEquals(
-            $status,
-            $this->input->getStatus()
-        );
     }
 
     public function testImageMethods()

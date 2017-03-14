@@ -474,4 +474,61 @@ class ModelRepositoryTest extends \PHPUnit_Framework_TestCase
             $this->modelRepository->getModelVersionById($id, $version->getId())
         );
     }
+
+    public function testGetTrainingInputsById()
+    {
+        $modelId = 'model_id';
+        $input1 = $this->getFullInputEntity();
+        $input2 = $this->getFullInputEntity()->setId('id2');
+
+        $this->request->shouldReceive('request')
+            ->once()
+            ->with(
+                'GET',
+                sprintf('models/%s/inputs', $modelId)
+            )
+            ->andReturn(
+                [
+                    'status' => $this->getStatusResult(),
+                    'inputs' => [
+                        $input1->generateRawData(),
+                        $input2->generateRawData(),
+                    ],
+                ]
+            );
+
+        $this->assertEquals(
+            [$input1, $input2],
+            $this->modelRepository->getTrainingInputsById($modelId)
+        );
+    }
+
+    public function testGetTrainingInputsByVersion()
+    {
+        $modelId = 'model_id';
+        $versionId = 'versionId';
+        $input1 = $this->getFullInputEntity();
+        $input2 = $this->getFullInputEntity()->setId('id2');
+
+        $this->request->shouldReceive('request')
+            ->once()
+            ->with(
+                'GET',
+                sprintf('models/%s/versions/%s/inputs', $modelId, $versionId)
+            )
+            ->andReturn(
+                [
+                    'status' => $this->getStatusResult(),
+                    'inputs' => [
+                        $input1->generateRawData(),
+                        $input2->generateRawData(),
+                    ],
+                ]
+            );
+
+        $this->assertEquals(
+            [$input1, $input2],
+            $this->modelRepository->getTrainingInputsByVersion($modelId, $versionId)
+        );
+    }
 }

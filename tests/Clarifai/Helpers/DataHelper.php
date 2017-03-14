@@ -3,6 +3,7 @@
 namespace DarrynTen\Clarifai\Tests\Clarifai\Helpers;
 
 use DarrynTen\Clarifai\Entity\Concept;
+use DarrynTen\Clarifai\Entity\Input;
 use DarrynTen\Clarifai\Entity\Model;
 use DarrynTen\Clarifai\Entity\ModelVersion;
 
@@ -121,5 +122,31 @@ trait DataHelper
     public function getStatusResult()
     {
         return ['code' => '10000', 'description' => 'OK'];
+    }
+
+    /**
+     * Get One Full Input Entity
+     *
+     * @return Input
+     */
+    public function getFullInputEntity()
+    {
+        $input = new Input();
+        $input->setId('id')
+            ->setImage('image')
+            ->isUrl()
+            ->setStatusCode('30001')
+            ->setStatusDescription('Download pending')
+            ->setCreatedAt('2017 - 02 - 24T15:34:10.944942Z')
+            ->setCrop([0.2, 0.4, 0.3, 0.6])
+            ->setConcepts(
+                [
+                    $this->getFullConceptEntity('id1', true),
+                    $this->getFullConceptEntity('id2', false),
+                ]
+            )
+            ->setMetaData(['meta1' => 'value1', 'meta2' => 'value2']);
+
+        return $input;
     }
 }

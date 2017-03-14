@@ -73,12 +73,20 @@ class Input
      */
     private $metaData;
 
+
     /**
-     * Status
+     * The status code
      *
-     * @var array $status
+     * @var string $statusCode
      */
-    private $status = ['code' => '', 'description' => ''];
+    private $statusCode;
+
+    /**
+     * The status description
+     *
+     * @var string $statusDescription
+     */
+    private $statusDescription;
 
     /**
      * The raw data
@@ -103,8 +111,11 @@ class Input
             if (isset($rawData['created_at'])) {
                 $this->setCreatedAt($rawData['created_at']);
             }
-            if (isset($rawData['status'])) {
-                $this->setStatus($rawData['status']['code'], $rawData['status']['description']);
+            if (isset($rawData['status']) && isset($rawData['status']['code'])) {
+                $this->setStatusCode($rawData['status']['code']);
+            }
+            if (isset($rawData['status']) && isset($rawData['status']['description'])) {
+                $this->setStatusDescription($rawData['status']['description']);
             }
             if (isset($rawData['data']['image']['url'])) {
                 $this->setImage($rawData['data']['image']['url'])->isUrl();
@@ -319,19 +330,45 @@ class Input
      */
     public function getStatus()
     {
-        return $this->status;
+        return ['code' => $this->getStatusCode(), 'description' => $this->getStatusDescription()];
     }
 
     /**
-     * @param null $code
-     * @param null $description
+     * @return string
+     */
+    public function getStatusCode()
+    {
+        return $this->statusCode;
+    }
+
+    /**
+     * @param string $statusCode
      *
      * @return $this
      */
-    public function setStatus($code = null, $description = null)
+    public function setStatusCode(string $statusCode)
     {
-        $this->status['code'] = $code;
-        $this->status['description'] = $description;
+        $this->statusCode = $statusCode;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStatusDescription()
+    {
+        return $this->statusDescription;
+    }
+
+    /**
+     * @param string $statusDescription
+     *
+     * @return $this
+     */
+    public function setStatusDescription(string $statusDescription)
+    {
+        $this->statusDescription = $statusDescription;
 
         return $this;
     }
@@ -354,5 +391,40 @@ class Input
         $this->rawData = $rawData;
 
         return $this;
+    }
+
+    /**
+     * Generates rawData from Input
+     *
+     * @return array
+     */
+    public function generateRawData()
+    {
+        $rawData = ['id' => $this->getId()];
+        $rawData['data'] = [];
+        $rawData['data']['image'] = [];
+        if ($this->getCreatedAt()) {
+            $rawData['created_at'] = $this->getCreatedAt();
+        }
+        if ($this->getStatusDescription() || $this->getStatusCode()) {
+            $rawData['status'] = $this->getStatus();
+        }
+        if ($this->getImage()) {
+            $rawData['data']['image'][$this->getImageMethod()] = $this->getImage();
+        }
+        if ($this->getCrop()) {
+            $rawData['data']['image']['crop'] = $this->getCrop();
+        }
+        if ($this->getConcepts()) {
+            $rawData['data']['concepts'] = [];
+            foreach ($this->getConcepts() as $concept) {
+                $rawData['data']['concepts'][] = $concept->generateRawData();
+            }
+        }
+        if ($this->getMetaData()) {
+            $rawData['data']['metadata'] = $this->getMetaData();
+        }
+
+        return $rawData;
     }
 }

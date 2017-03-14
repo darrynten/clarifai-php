@@ -133,7 +133,8 @@ trait InputDataHelper
         $input->setId($id)
             ->setImage($image)
             ->setImageMethod($method)
-            ->setStatus('30001', 'Download pending')
+            ->setStatusCode('30001')
+            ->setStatusDescription('Download pending')
             ->setCreatedAt('2017 - 02 - 24T15:34:10.944942Z')
             ->setCrop([0.2, 0.4, 0.3, 0.6])
             ->setConcepts(
