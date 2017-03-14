@@ -63,7 +63,6 @@ class InputTest extends EntityTest
 
     public function testConstructor()
     {
-
         $data = $this->getFullInputEntity()->generateRawData();
 
         $concepts = [];

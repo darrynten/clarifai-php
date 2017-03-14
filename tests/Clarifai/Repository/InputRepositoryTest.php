@@ -108,7 +108,6 @@ class InputRepositoryTest extends \PHPUnit_Framework_TestCase
             ['base64' => $image_hash],
             $this->inputRepository->generateImageAddress($image_hash, 'base64')
         );
-
     }
 
     public function testAddImageId()
@@ -152,7 +151,6 @@ class InputRepositoryTest extends \PHPUnit_Framework_TestCase
 
     public function testAddImageMetadata()
     {
-
         $metadata = ['first' => 'value1', 'second' => 'value2'];
 
         $this->assertEquals(
@@ -365,7 +363,6 @@ class InputRepositoryTest extends \PHPUnit_Framework_TestCase
 
     public function testMergeInputConcepts()
     {
-
         $input1 = $this->getFullInputEntity();
         $input1->setConcepts([]);
 
@@ -419,7 +416,6 @@ class InputRepositoryTest extends \PHPUnit_Framework_TestCase
 
     public function testDeleteInputConcepts()
     {
-
         $input1 = $this->getFullInputEntity();
         $input1->setConcepts([]);
 

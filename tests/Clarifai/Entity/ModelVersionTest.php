@@ -6,7 +6,7 @@ use DarrynTen\Clarifai\Entity\ModelVersion;
 use DarrynTen\Clarifai\Tests\Clarifai\Entity\EntityTest;
 use DarrynTen\Clarifai\Tests\Clarifai\Helpers\DataHelper;
 
-class modelVersionTest extends EntityTest
+class ModelVersionTest extends EntityTest
 {
     use DataHelper;
 
