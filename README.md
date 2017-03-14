@@ -1,5 +1,11 @@
 # clarifai-php
 
+![Travis Build Status](https://travis-ci.org/darrynten/clarifai-php.svg?branch=master)
+![StyleCI Status](https://styleci.io/repos/81687310/shield?branch=master)
+[![codecov](https://codecov.io/gh/darrynten/clarifai-php/branch/master/graph/badge.svg)](https://codecov.io/gh/darrynten/clarifai-php)
+![Packagist Version](https://img.shields.io/packagist/v/darrynten/clarifai-php.svg)
+![MIT License](https://img.shields.io/github/license/darrynten/clarifai-php.svg)
+
 [Clarifai API](https://developer.clarifai.com/docs/) client for PHP
 
 This is a fully unit tested unofficial PHP client for Clarifai
@@ -11,6 +17,8 @@ alike.
 ```bash
 composer require darrynten/clarifai-php
 ```
+
+PHP 7.0+
 
 ## Basic use
 
