@@ -8,6 +8,10 @@ This is a fully unit tested unofficial PHP client for Clarifai
 recognition, solving real-world problems for businesses and developers
 alike.
 
+```bash
+composer require darrynten/clarifai-php
+```
+
 ## Basic use
 
 The API is rather simple, and consists of Inputs, Concepts and Models.
@@ -60,19 +64,21 @@ have covered.
 worry about which framework your package that uses this package is going
 to end up in.
 
-A basic structure is there, and all classes have comments for the methods
-they need to support
+The client is not 100% complete and is a work in progress, details below.
 
 The structure is heavily inspired by [The official JS client](https://github.com/Clarifai/clarifai-javascript)
 
 ### Authentication
 
-Access is currently handled via oauth2.
+Access is handled via oauth2.
 
 You would need to initialise the client with your Client ID and Secret.
 
-### Predict
+```php
+$this->clarifai = new Clarifai('clientId', 'clientSecret');
+```
 
+### Predict
 
 This is a basic library usage example that uses a predict call. The model name is `aaa03c23b3724a16a56b629203edc62c`
 
@@ -178,11 +184,11 @@ or b64 encoded data:
 
 ## Documentation
 
-This will eventually mimic the documentation available on the site.
+This will eventually fully mimic the documentation available on the site.
 https://developer.clarifai.com/guide
 
-Each section must have a short explaination and some example code like on the
-API docs page.
+Each section must have a short explaination and some example code like on
+the API docs page.
 
 Checked off bits are complete.
 
@@ -628,14 +634,13 @@ Note: you can repeat this operation as often as you like. By adding more images 
     $modelResult = $clarifai->getModelRepository()->train($id);
 ```
 
-
 # Roadmap
 
-- [ ] Train
-  - [ ] Add Image with Concepts
-  - [ ] Create a Model
-  - [ ] Train a Model
-  - [ ] Predict with a Model
+- [x] Train
+  - [x] Add Image with Concepts
+  - [x] Create a Model
+  - [x] Train a Model
+  - [x] Predict with a Model
 - [ ] Search
   - [ ] Add Image to Search
   - [ ] Search by Concept
@@ -676,6 +681,9 @@ be optional and initially set to `false` to avoid unexpected behaviour.
 
 There is currently 100% test coverage in the project, please ensure that
 when contributing you update the tests. For more info see CONTRIBUTING.md
+
+We would love help getting decent documentation going, please get in touch
+if you have any ideas.
 
 ## Acknowledgements
 
