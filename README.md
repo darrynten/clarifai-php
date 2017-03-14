@@ -8,7 +8,8 @@
 
 [Clarifai API](https://developer.clarifai.com/docs/) client for PHP
 
-This is a fully unit tested unofficial PHP client for Clarifai
+This is a 100% fully unit tested and (mostly) fully featured unofficial PHP
+client for Clarifai
 
 > Clarifai is an artificial intelligence company that excels in visual
 recognition, solving real-world problems for businesses and developers
