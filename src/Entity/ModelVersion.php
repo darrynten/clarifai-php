@@ -162,5 +162,4 @@ class ModelVersion
 
         return $rawData;
     }
-
 }

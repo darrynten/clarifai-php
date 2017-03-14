@@ -270,22 +270,22 @@ class Concept
     public function generateRawData()
     {
         $rawData = ['id' => $this->getId()];
-        if($this->getValue()){
+        if ($this->getValue()) {
             $rawData['value'] = $this->getValue();
         }
-        if($this->getName()){
+        if ($this->getName()) {
             $rawData['name'] = $this->getName();
         }
-        if($this->getAppId()){
+        if ($this->getAppId()) {
             $rawData['app_id'] = $this->getAppId();
         }
-        if($this->getLanguage()){
+        if ($this->getLanguage()) {
             $rawData['language'] = $this->getLanguage();
         }
-        if($this->getCreatedAt()){
+        if ($this->getCreatedAt()) {
             $rawData['created_at'] = $this->getCreatedAt();
         }
-        if($this->getUpdatedAt()){
+        if ($this->getUpdatedAt()) {
             $rawData['updated_at'] = $this->getUpdatedAt();
         }
 

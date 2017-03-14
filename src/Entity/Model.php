@@ -89,15 +89,13 @@ class Model
             if (isset($model['app_id'])) {
                 $this->setAppId($model['app_id']);
             }
-            if (
-                isset($model['output_info'])
+            if (isset($model['output_info'])
                 && isset($model['output_info']['data'])
                 && isset($model['output_info']['data']['concepts'])
             ) {
                 $this->setRawConcepts($model['output_info']['data']['concepts']);
             }
-            if (
-                isset($model['output_info'])
+            if (isset($model['output_info'])
                 && isset($model['output_info']['output_config'])
                 && isset($model['output_info']['output_config']['concepts_mutually_exclusive'])
             ) {
@@ -105,8 +103,7 @@ class Model
                     $model['output_info']['output_config']['concepts_mutually_exclusive']
                 );
             }
-            if (
-                isset($model['output_info'])
+            if (isset($model['output_info'])
                 && isset($model['output_info']['output_config'])
                 && isset($model['output_info']['output_config']['closed_environment'])
             ) {
