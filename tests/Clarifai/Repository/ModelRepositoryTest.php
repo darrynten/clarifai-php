@@ -531,4 +531,94 @@ class ModelRepositoryTest extends \PHPUnit_Framework_TestCase
             $this->modelRepository->getTrainingInputsByVersion($modelId, $versionId)
         );
     }
+
+    public function testDeleteById()
+    {
+        $modelId = 'model_id';
+
+        $this->request->shouldReceive('request')
+            ->once()
+            ->with(
+                'DELETE',
+                sprintf('models/%s', $modelId)
+            )
+            ->andReturn(
+                [
+                    'status' => $this->getStatusResult(),
+                ]
+            );
+
+        $this->assertEquals(
+            $this->getStatusResult(),
+            $this->modelRepository->deleteById($modelId)
+        );
+    }
+
+    public function testDeleteVersionById()
+    {
+        $modelId = 'model_id';
+        $versionId = 'version_id';
+
+        $this->request->shouldReceive('request')
+            ->once()
+            ->with(
+                'DELETE',
+                sprintf('models/%s/versions/%s', $modelId, $versionId)
+            )
+            ->andReturn(
+                [
+                    'status' => $this->getStatusResult(),
+                ]
+            );
+
+        $this->assertEquals(
+            $this->getStatusResult(),
+            $this->modelRepository->deleteVersionById($modelId, $versionId)
+        );
+    }
+
+    public function testDeleteAll()
+    {
+        $this->request->shouldReceive('request')
+            ->once()
+            ->with(
+                'DELETE',
+                'models',
+                ['delete_all' => true]
+            )
+            ->andReturn(
+                [
+                    'status' => $this->getStatusResult(),
+                ]
+            );
+
+        $this->assertEquals(
+            $this->getStatusResult(),
+            $this->modelRepository->deleteAll()
+        );
+    }
+
+    public function testTrain()
+    {
+        $model = $this->getModelEntity();
+        $model->setRawData($model->generateRawData());
+
+        $this->request->shouldReceive('request')
+            ->once()
+            ->with(
+                'POST',
+                sprintf('models/%s/versions', $model->getId())
+            )
+            ->andReturn(
+                [
+                    'status' => $this->getStatusResult(),
+                    'model' => $model->generateRawData(),
+                ]
+            );
+
+        $this->assertEquals(
+            $model,
+            $this->modelRepository->train($model->getId())
+        );
+    }
 }

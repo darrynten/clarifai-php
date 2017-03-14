@@ -130,7 +130,7 @@ class ModelRepository extends BaseRepository
      * @param $modelType
      * @param string|null $language Language to return results in
      *
-     * @return object
+     * @return array
      */
     private function predict(array $image, $modelType, $language = null)
     {
@@ -166,7 +166,7 @@ class ModelRepository extends BaseRepository
      * @param string $modelType Type of model to predict
      * @param string|null $language Language to return results in
      *
-     * @return object
+     * @return array
      */
     public function predictUrl($url, $modelType, $language = null)
     {
@@ -180,7 +180,7 @@ class ModelRepository extends BaseRepository
      * @param string $modelType Type of model to predict
      * @param string|null $language Language to return results in
      *
-     * @return object
+     * @return array
      */
     public function predictPath($path, $modelType, $language = null)
     {
@@ -204,7 +204,7 @@ class ModelRepository extends BaseRepository
      * @param string $modelType Type of model to predict
      * @param string|null $language Language to return results in
      *
-     * @return object
+     * @return array
      */
     public function predictEncoded($hash, $modelType, $language = null)
     {

@@ -213,13 +213,13 @@ Checked off bits are complete.
   - [x] Get Model Version by ID
   - [x] Get Model Training Inputs
   - [x] Get Model Training Inputs by Version
-  - [ ] Delete Model
-  - [ ] Delete Model Version
-  - [ ] Delete All Models
-  - [ ] Train Model
+  - [x] Delete Model
+  - [x] Delete Model Version
+  - [x] Delete All Models
+  - [x] Train Model
   - [x] Predict With Model
-  - [ ] Search Model by Name and Type
 - [ ] Searches
+  - [ ] Search Model by Name and Type
   - [ ] Search by Predicted Concepts
   - [ ] Search by User Supplied Concept
   - [ ] Search by Custom Metadata
@@ -532,6 +532,41 @@ You can also list all the inputs that were used to train a specific model versio
 ```php
     $modelResult = $clarifai->getModelRepository()->getTrainingInputsByVersion($modelId, $versionId);
 ```
+
+#### Delete A Model
+
+You can delete a model using the modelId.
+
+```php
+    $modelResult = $clarifai->getModelRepository()->deleteById($modelId);
+```
+
+#### Delete A Model Version
+
+You can also delete a specific version of a model with the modelId and versionId.
+
+```php
+    $modelResult = $clarifai->getModelRepository()->deleteVersionById($modelId, $versionId);
+```
+
+#### Delete All Models
+
+If you would like to delete all models associated with an application, you can also do that. Please proceed with caution as these cannot be recovered.
+
+```php
+    $modelResult = $clarifai->getModelRepository()->deleteAll();
+```
+
+#### Train A Model
+
+When you train a model, you are telling the system to look at all the images with concepts you've provided and learn from them. This train operation is asynchronous. It may take a few seconds for your model to be fully trained and ready.
+
+Note: you can repeat this operation as often as you like. By adding more images with concepts and training, you can get the model to predict exactly how you want it to.
+
+```php
+    $modelResult = $clarifai->getModelRepository()->train($id);
+```
+
 
 # Roadmap
 
