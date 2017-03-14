@@ -186,21 +186,21 @@ API docs page.
 
 Checked off bits are complete.
 
-- [ ] Inputs
+- [x] Inputs
   - [x] Add
-  - [ ] Add with Concepts
+  - [x] Add with Concepts
   - [x] Add with Custom Metadata
   - [x] Add with Crop
   - [x] Get Inputs
   - [x] Get Input Status
-  - [ ] Update Input with Concepts
-  - [ ] Delete Concepts from Input
-  - [ ] Bulk Update Inputs with Concepts
-  - [ ] Bulk Delete Concepts from Input List
+  - [x] Update Input with Concepts
+  - [x] Delete Concepts from Input
+  - [x] Bulk Update Inputs with Concepts
+  - [x] Bulk Delete Concepts from Input List
   - [x] Delete Input by ID
   - [x] Delete Input List
   - [x] Delete All Inpits
-- [ ] Models
+- [x] Models
   - [x] Create Model
   - [x] Create Model With Concepts
   - [x] Add Concepts to a Model
@@ -294,7 +294,16 @@ hosting service we recommend using it and adding images via the url parameter.
 
 #### Add inputs with concepts
 
-# (not implemented yet)
+```php
+    $concept = new Concept();
+    $concept->setId('boscoe')->setValue(true);
+
+    $input = new Input();
+    $input->setImage('https://samples.clarifai.com/puppy.jpeg')->isUrl()
+        ->setConcepts([$concept]);
+
+    $inputResult = $clarifai->getInputRepository()->add($input);
+```
 
 #### Add input with metadata
 
@@ -303,8 +312,8 @@ custom metadata. This metadata will then be searchable. Metadata can be any
 arbitrary JSON.
 
 ```php
-    $input1 = new Input();
-    $input1->setImage('https://samples.clarifai.com/metro-north.jpg')->isUrl()
+    $input = new Input();
+    $input->setImage('https://samples.clarifai.com/metro-north.jpg')->isUrl()
         ->setMetaData([['key' => 'value', 'list' => [1, 2, 3]]);
     $inputResult = $clarifai->getInputRepository()->add($input);
 ```
@@ -322,8 +331,8 @@ that starts 30% from the original top edge and a right edge that starts 60% from
 the original left edge.
 
 ```php
-    $input1 = new Input();
-    $input1->setImage('https://samples.clarifai.com/metro-north.jpg')->isUrl()
+    $input = new Input();
+    $input->setImage('https://samples.clarifai.com/metro-north.jpg')->isUrl()
         ->setCrop([0.2, 0.4, 0.3, 0.6]);
     $inputResult = $clarifai->getInputRepository()->add($input);
 ```
@@ -358,31 +367,83 @@ status of all your inputs (processed, to_process and errors) like this:
     $inputResult = $clarifai->getInputRepository()->getStatus();
 ```
 
-# Concept features (Update/Delete/BulkUpdate/BulkDelete) are not implemented yet
-
 #### Update input with concepts
 
 To update an input with a new concept, or to change a concept value from true/false, you can do that:
 
-Not yet implemented
+```php
+    $concept1 = new Concept();
+    $concept1->setId('tree')->setValue(true);
+    
+    $concept2 = new Concept();
+    $concept2->setId('water')->setValue(false);
+
+    $modelResult = $clarifai->getInputRepository()->mergeInputConcepts([$inputId => [$concept1, $concept2]]);
+```
 
 #### Delete concepts from input
 
 To remove concepts that were already added to an input, you can do this:
 
-Not yet implemented
+```php
+    $concept1 = new Concept();
+    $concept1->setId('mattid2')->setValue(true);
+    
+    $concept2 = new Concept();
+    $concept2->setId('ferrari')->setValue(false);
+
+    $modelResult = $clarifai->getInputRepository()->deleteInputConcepts([$inputId => [$concept1, $concept2]]);
+```
 
 #### Bulk update inputs with concepts
 
 You can update an existing input using its Id. This is useful if you'd like to add concepts to an input after its already been added.
 
-Not yet implemented
+```php
+    $concept1 = new Concept();
+    $concept1->setId('tree')->setValue(true);
+    
+    $concept2 = new Concept();
+    $concept2->setId('water')->setValue(false);
+    
+    $concept3 = new Concept();
+    $concept3->setId('mattid2')->setValue(true);
+    
+    $concept4 = new Concept();
+    $concept4->setId('ferrari')->setValue(false);
+
+    $modelResult = $clarifai->getInputRepository()->mergeInputConcepts(
+        [
+            $inputId1 => [$concept1, $concept2],
+            $inputId2 => [$concept3, $concept4],
+        ]
+    );
+```
 
 #### Bulk delete concepts from list of inputs
 
 You can bulk delete multiple concepts from a list of inputs:
 
-Not yet implemented
+```php
+    $concept1 = new Concept();
+    $concept1->setId('tree')->setValue(true);
+    
+    $concept2 = new Concept();
+    $concept2->setId('water')->setValue(false);
+    
+    $concept3 = new Concept();
+    $concept3->setId('mattid2')->setValue(true);
+    
+    $concept4 = new Concept();
+    $concept4->setId('ferrari')->setValue(false);
+
+    $modelResult = $clarifai->getInputRepository()->deleteInputConcepts(
+        [
+            $inputId1 => [$concept1, $concept2],
+            $inputId2 => [$concept3, $concept4],
+        ]
+    );
+```
 
 #### Delete Input By Id
 
