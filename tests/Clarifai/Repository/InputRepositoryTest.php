@@ -366,7 +366,7 @@ class InputRepositoryTest extends \PHPUnit_Framework_TestCase
     public function testMergeInputConcepts()
     {
 
-        $input1 = $this->getFullInputEntity();;
+        $input1 = $this->getFullInputEntity();
         $input1->setConcepts([]);
 
         $this->assertEquals(
@@ -395,7 +395,6 @@ class InputRepositoryTest extends \PHPUnit_Framework_TestCase
                     ],
                     InputRepository::CONCEPTS_MERGE_ACTION
                 )
-
             )
             ->andReturn(
                 [
@@ -405,7 +404,6 @@ class InputRepositoryTest extends \PHPUnit_Framework_TestCase
                         $input2->setConcepts($input2Concepts)->generateRawData(),
                     ],
                 ]
-
             );
 
         $this->assertEquals(
@@ -458,7 +456,6 @@ class InputRepositoryTest extends \PHPUnit_Framework_TestCase
                     ],
                     InputRepository::CONCEPTS_REMOVE_ACTION
                 )
-
             )
             ->andReturn(
                 [
@@ -468,7 +465,6 @@ class InputRepositoryTest extends \PHPUnit_Framework_TestCase
                         $input2->setConcepts([$concept2])->generateRawData(),
                     ],
                 ]
-
             );
 
         $this->assertEquals(
