@@ -7,7 +7,7 @@ use DarrynTen\Clarifai\Repository;
 use DarrynTen\Clarifai\Request\RequestHandler;
 use DarrynTen\Clarifai\Tests\Clarifai\Helpers\DataHelper;
 
-class ClarifayTest extends \PHPUnit_Framework_TestCase
+class ClarifaiTest extends \PHPUnit_Framework_TestCase
 {
     use DataHelper;
 
