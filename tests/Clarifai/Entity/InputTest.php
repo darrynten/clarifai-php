@@ -4,12 +4,11 @@ namespace DarrynTen\Clarifai\Tests\Clarifai\Entity;
 
 use DarrynTen\Clarifai\Entity\Concept;
 use DarrynTen\Clarifai\Entity\Input;
-use DarrynTen\Clarifai\Tests\Clarifai\Helpers\ConceptDataHelper;
-use DarrynTen\Clarifai\Tests\Clarifai\Helpers\InputDataHelper;
+use DarrynTen\Clarifai\Tests\Clarifai\Helpers\DataHelper;
 
 class InputTest extends EntityTest
 {
-    use InputDataHelper, ConceptDataHelper;
+    use DataHelper;
 
     /**
      * @var Input
@@ -64,15 +63,14 @@ class InputTest extends EntityTest
 
     public function testConstructor()
     {
-        $conceptData1 = $this->getConceptConstructData('id1', 'name1', 'appId1', true);
-        $conceptData2 = $this->getConceptConstructData('id2', 'name2', 'appId2', false);
 
-        $data = $this->getInputFullConstructData(
-            'id',
-            'image',
-            Input::IMG_URL
-        );
-        $data['data']['concepts'] = [$conceptData1, $conceptData2];
+        $data = $this->getFullInputEntity()->generateRawData();
+
+        $concepts = [];
+        foreach ($this->getFullInputEntity()->getConcepts() as $concept) {
+            $new_concept = new Concept($concept->generateRawData());
+            $concepts[] = $new_concept;
+        }
 
         $this->input = new Input($data);
 
@@ -105,7 +103,7 @@ class InputTest extends EntityTest
             $this->input->getMetaData()
         );
         $this->assertEquals(
-            [new Concept($conceptData1), new Concept($conceptData2)],
+            $concepts,
             $this->input->getConcepts()
         );
     }
@@ -139,8 +137,8 @@ class InputTest extends EntityTest
             [],
             $this->input->getConcepts()
         );
-        $concept1 = $this->getConceptEntity('id1', true);
-        $concept2 = $this->getConceptEntity('id2', false);
+        $concept1 = $this->getFullConceptEntity('id1', true);
+        $concept2 = $this->getFullConceptEntity('id2', false);
         $this->assertSame(
             $this->input,
             $this->input->setConcepts([$concept1, $concept2])
@@ -157,8 +155,8 @@ class InputTest extends EntityTest
             [],
             $this->input->getConcepts()
         );
-        $data1 = $this->getConceptConstructData('id1', 'name1', 'appId1', true);
-        $data2 = $this->getConceptConstructData('id2', 'name2', 'appId2', false);
+        $data1 = $this->getFullConceptEntity('id1', true)->generateRawData();
+        $data2 = $this->getFullConceptEntity('id2', false)->generateRawData();
 
         $this->assertSame(
             $this->input,
@@ -176,7 +174,7 @@ class InputTest extends EntityTest
             [],
             $this->input->getRawData()
         );
-        $data = $this->getInputFullConstructData('id', 'image', Input::IMG_URL);
+        $data = $this->getFullInputEntity()->generateRawData();
         $this->assertSame(
             $this->input,
             $this->input->setRawData($data)

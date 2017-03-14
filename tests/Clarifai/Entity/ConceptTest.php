@@ -4,11 +4,11 @@ namespace DarrynTen\Clarifai\Tests\Clarifai\Repository;
 
 use DarrynTen\Clarifai\Entity\Concept;
 use DarrynTen\Clarifai\Tests\Clarifai\Entity\EntityTest;
-use DarrynTen\Clarifai\Tests\Clarifai\Helpers\ConceptDataHelper;
+use DarrynTen\Clarifai\Tests\Clarifai\Helpers\DataHelper;
 
 class ConceptTest extends EntityTest
 {
-    use ConceptDataHelper;
+    use DataHelper;
 
     /**
      * @var Concept
@@ -40,47 +40,50 @@ class ConceptTest extends EntityTest
 
     public function testConstructor()
     {
+        $id = 'id';
+        $value = true;
+
         $this->assertEquals(
             ['id' => null],
             $this->concept->generateRawData()
         );
 
-        $this->concept = new Concept($this->getConceptMock()->generateRawData());
+        $this->concept = new Concept($this->getFullConceptEntity($id, $value)->generateRawData());
 
         $this->assertEquals(
-            $this->getConceptMock()->getId(),
+            $this->getFullConceptEntity($id, $value)->getId(),
             $this->concept->getId()
         );
         $this->assertEquals(
-            $this->getConceptMock()->getName(),
+            $this->getFullConceptEntity($id, $value)->getName(),
             $this->concept->getName()
         );
         $this->assertEquals(
-            $this->getConceptMock()->getAppId(),
+            $this->getFullConceptEntity($id, $value)->getAppId(),
             $this->concept->getAppId()
         );
         $this->assertEquals(
-            $this->getConceptMock()->getValue(),
+            $this->getFullConceptEntity($id, $value)->getValue(),
             $this->concept->getValue()
         );
         $this->assertEquals(
-            $this->getConceptMock()->getCreatedAt(),
+            $this->getFullConceptEntity($id, $value)->getCreatedAt(),
             $this->concept->getCreatedAt()
         );
         $this->assertEquals(
-            $this->getConceptMock()->getUpdatedAt(),
+            $this->getFullConceptEntity($id, $value)->getUpdatedAt(),
             $this->concept->getUpdatedAt()
         );
         $this->assertEquals(
-            $this->getConceptMock()->getLanguage(),
+            $this->getFullConceptEntity($id, $value)->getLanguage(),
             $this->concept->getLanguage()
         );
         $this->assertEquals(
-            $this->getConceptMock()->generateRawData(),
+            $this->getFullConceptEntity($id, $value)->generateRawData(),
             $this->concept->getRawData()
         );
         $this->assertEquals(
-            $this->getConceptMock()->generateRawData(),
+            $this->getFullConceptEntity($id, $value)->generateRawData(),
             $this->concept->generateRawData()
         );
     }

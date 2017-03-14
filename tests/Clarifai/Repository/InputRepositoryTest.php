@@ -3,16 +3,13 @@
 namespace DarrynTen\Clarifai\Tests\Clarifai\Repository;
 
 use DarrynTen\Clarifai\Entity\Concept;
-use DarrynTen\Clarifai\Entity\Input;
 use DarrynTen\Clarifai\Repository\BaseRepository;
 use DarrynTen\Clarifai\Repository\InputRepository;
-use DarrynTen\Clarifai\Tests\Clarifai\Helpers\ConceptDataHelper;
 use DarrynTen\Clarifai\Tests\Clarifai\Helpers\DataHelper;
-use DarrynTen\Clarifai\Tests\Clarifai\Helpers\InputDataHelper;
 
 class InputRepositoryTest extends \PHPUnit_Framework_TestCase
 {
-    use DataHelper, InputDataHelper, ConceptDataHelper;
+    use DataHelper;
 
     /**
      * @var InputRepository
@@ -38,17 +35,17 @@ class InputRepositoryTest extends \PHPUnit_Framework_TestCase
 
     public function testAdd()
     {
-        $input1 = $this->getFullInputMock('id1', 'image1', Input::IMG_URL);
-        $input2 = $this->getFullInputMock('id2', 'image2', Input::IMG_BASE64);
+        $input1 = $this->getFullInputEntity();
+        $input2 = $this->getFullInputEntity()->setId('id2')->setImage('image2')->isEncoded();
 
         $this->request->shouldReceive('request')
             ->once()
             ->with(
                 'POST',
                 'inputs',
-                $this->getAddRequest($input1)
+                ['inputs' => [$this->inputRepository->addNewImage($input1)]]
             )
-            ->andReturn($this->getInputResponse($input1));
+            ->andReturn(['status' => $this->getStatusResult(), 'inputs' => [$input1->generateRawData()]]);
 
         $this->assertEquals(
             [$input1],
@@ -60,9 +57,22 @@ class InputRepositoryTest extends \PHPUnit_Framework_TestCase
             ->with(
                 'POST',
                 'inputs',
-                $this->getAddRequest([$input1, $input2])
+                [
+                    'inputs' => [
+                        $this->inputRepository->addNewImage($input1),
+                        $this->inputRepository->addNewImage($input2),
+                    ],
+                ]
             )
-            ->andReturn($this->getInputResponse([$input1, $input2]));
+            ->andReturn(
+                [
+                    'status' => $this->getStatusResult(),
+                    'inputs' => [
+                        $input1->generateRawData(),
+                        $input2->generateRawData(),
+                    ],
+                ]
+            );
 
         $this->assertEquals(
             [$input1, $input2],
@@ -155,8 +165,8 @@ class InputRepositoryTest extends \PHPUnit_Framework_TestCase
 
     public function testGet()
     {
-        $input1 = $this->getFullInputMock('id1', 'image1', Input::IMG_URL);
-        $input2 = $this->getFullInputMock('id2', 'image2', Input::IMG_BASE64);
+        $input1 = $this->getFullInputEntity();
+        $input2 = $this->getFullInputEntity()->setId('id2')->setImage('image2')->isEncoded();
 
         $this->request->shouldReceive('request')
             ->once()
@@ -164,7 +174,15 @@ class InputRepositoryTest extends \PHPUnit_Framework_TestCase
                 'GET',
                 'inputs'
             )
-            ->andReturn($this->getInputResponse([$input1, $input2]));
+            ->andReturn(
+                [
+                    'status' => $this->getStatusResult(),
+                    'inputs' => [
+                        $input1->generateRawData(),
+                        $input2->generateRawData(),
+                    ],
+                ]
+            );
 
         $this->assertEquals(
             [$input1, $input2],
@@ -174,7 +192,7 @@ class InputRepositoryTest extends \PHPUnit_Framework_TestCase
 
     public function testGetById()
     {
-        $input = $input1 = $this->getFullInputMock('id1', 'image1', Input::IMG_URL);
+        $input = $this->getFullInputEntity();
 
         $this->request->shouldReceive('request')
             ->once()
@@ -182,7 +200,12 @@ class InputRepositoryTest extends \PHPUnit_Framework_TestCase
                 'GET',
                 'inputs/' . $input->getId()
             )
-            ->andReturn($this->getOneInputResponse($input));
+            ->andReturn(
+                [
+                    'status' => $this->getStatusResult(),
+                    'input' => $input->generateRawData(),
+                ]
+            );
 
         $this->assertEquals(
             $input,
@@ -195,7 +218,7 @@ class InputRepositoryTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetByIdException()
     {
-        $input = $input1 = $this->getFullInputMock('id1', 'image1', Input::IMG_URL);
+        $input = $this->getFullInputEntity();
 
         $this->request->shouldReceive('request')
             ->once()
@@ -343,7 +366,7 @@ class InputRepositoryTest extends \PHPUnit_Framework_TestCase
     public function testMergeInputConcepts()
     {
 
-        $input1 = $this->getFullInputMock('id1', 'image1', Input::IMG_URL);
+        $input1 = $this->getFullInputEntity();;
         $input1->setConcepts([]);
 
         $this->assertEquals(
@@ -351,11 +374,11 @@ class InputRepositoryTest extends \PHPUnit_Framework_TestCase
             $input1->getConcepts()
         );
 
-        $input2 = $this->getFullInputMock('id2', 'image2', Input::IMG_URL);
+        $input2 = $this->getFullInputEntity()->setId('id2')->setImage('image2');
 
-        $concept1 = $this->getConceptEntity('id1', true);
-        $concept2 = $this->getConceptEntity('id2', false);
-        $concept3 = $this->getConceptEntity('id3', true);
+        $concept1 = $this->getFullConceptEntity('id1', true);
+        $concept2 = $this->getFullConceptEntity('id2', false);
+        $concept3 = $this->getFullConceptEntity('id3', true);
 
         $input2Concepts = $input2->getConcepts();
         $input2Concepts[] = $concept3;
@@ -375,12 +398,14 @@ class InputRepositoryTest extends \PHPUnit_Framework_TestCase
 
             )
             ->andReturn(
-                $this->getUpdateConceptResponse(
-                    [
-                        $input1->setConcepts([$concept1, $concept2]),
-                        $input2->setConcepts($input2Concepts),
-                    ]
-                )
+                [
+                    'status' => $this->getStatusResult(),
+                    'inputs' => [
+                        $input1->setConcepts([$concept1, $concept2])->generateRawData(),
+                        $input2->setConcepts($input2Concepts)->generateRawData(),
+                    ],
+                ]
+
             );
 
         $this->assertEquals(
@@ -397,7 +422,7 @@ class InputRepositoryTest extends \PHPUnit_Framework_TestCase
     public function testDeleteInputConcepts()
     {
 
-        $input1 = $this->getFullInputMock('id1', 'image1', Input::IMG_URL);
+        $input1 = $this->getFullInputEntity();
         $input1->setConcepts([]);
 
         $this->assertEquals(
@@ -405,7 +430,7 @@ class InputRepositoryTest extends \PHPUnit_Framework_TestCase
             $input1->getConcepts()
         );
 
-        $input2 = $this->getFullInputMock('id2', 'image2', Input::IMG_URL);
+        $input2 = $this->getFullInputEntity()->setId('id2')->setImage('image2');
 
         $input2->setConcepts([]);
 
@@ -414,9 +439,9 @@ class InputRepositoryTest extends \PHPUnit_Framework_TestCase
             $input2->getConcepts()
         );
 
-        $concept1 = $this->getConceptEntity('id1', true);
-        $concept2 = $this->getConceptEntity('id2', false);
-        $concept3 = $this->getConceptEntity('id3', true);
+        $concept1 = $this->getFullConceptEntity('id1', true);
+        $concept2 = $this->getFullConceptEntity('id2', false);
+        $concept3 = $this->getFullConceptEntity('id3', true);
 
         $input1->setConcepts([$concept1, $concept3]);
         $input2->setConcepts([$concept2, $concept3]);
@@ -436,12 +461,14 @@ class InputRepositoryTest extends \PHPUnit_Framework_TestCase
 
             )
             ->andReturn(
-                $this->getUpdateConceptResponse(
-                    [
-                        $input1->setConcepts([]),
-                        $input2->setConcepts([$concept2]),
-                    ]
-                )
+                [
+                    'status' => $this->getStatusResult(),
+                    'inputs' => [
+                        $input1->setConcepts([])->generateRawData(),
+                        $input2->setConcepts([$concept2])->generateRawData(),
+                    ],
+                ]
+
             );
 
         $this->assertEquals(
@@ -458,130 +485,9 @@ class InputRepositoryTest extends \PHPUnit_Framework_TestCase
     /**
      * @expectedException \Exception
      */
-    public function testGetInputsFromResultException(){
+    public function testGetInputsFromResultException()
+    {
         $this->inputRepository->getInputsFromResult([]);
-    }
-
-    /**
-     * Gets Input response
-     *
-     * @param array|Input $inputs
-     *
-     * @return array
-     */
-    public function getInputResponse($inputs)
-    {
-        $data = [
-            'status' => [
-                'code' => '1000',
-                'description' => 'Ok',
-            ],
-
-        ];
-
-        if (is_array($inputs)) {
-            foreach ($inputs as $input) {
-                $data['inputs'][] = $this->getInputConstructData(
-                    $input->getId(),
-                    $input->getImage(),
-                    $input->getImageMethod(),
-                    [
-                        'concepts' => $this->getConceptsRawData($input->getConcepts()),
-                        'crop' => $input->getCrop(),
-                        'created_at' => $input->getCreatedAt(),
-                        'metadata' => $input->getMetaData(),
-                        'status' => $input->getStatus(),
-                    ]
-                );
-            }
-        } else {
-            $data['inputs'][] = $this->getInputConstructData(
-                $inputs->getId(),
-                $inputs->getImage(),
-                $inputs->getImageMethod(),
-                [
-                    'concepts' => $this->getConceptsRawData($inputs->getConcepts()),
-                    'crop' => $inputs->getCrop(),
-                    'created_at' => $inputs->getCreatedAt(),
-                    'metadata' => $inputs->getMetaData(),
-                    'status' => $inputs->getStatus(),
-                ]
-            );
-        }
-
-        return $data;
-    }
-
-    /**
-     * Output data for GetById Response
-     *
-     * @param Input $input
-     *
-     * @return array
-     */
-    public function getOneInputResponse(Input $input)
-    {
-        $data = [
-            'status' => [
-                'code' => '1000',
-                'description' => 'Ok',
-            ],
-        ];
-
-        $data['input'] = $this->getInputConstructData(
-            $input->getId(),
-            $input->getImage(),
-            $input->getImageMethod(),
-            [
-                'concepts' => $this->getConceptsRawData($input->getConcepts()),
-                'crop' => $input->getCrop(),
-                'metadata' => $input->getMetaData(),
-                'status' => $input->getStatus(),
-                'created_at' => $input->getCreatedAt(),
-            ]
-        );
-
-        return $data;
-    }
-
-    /**
-     * Output data for Add Request
-     *
-     * @param array|Input $inputs
-     *
-     * @return array $data
-     */
-    public function getAddRequest($inputs)
-    {
-        $data['inputs'] = [];
-
-        if (is_array($inputs)) {
-            foreach ($inputs as $input) {
-                $data['inputs'][] = $this->getInputConstructData(
-                    $input->getId(),
-                    $input->getImage(),
-                    $input->getImageMethod(),
-                    [
-                        'concepts' => $this->getConceptsRawData($input->getConcepts()),
-                        'crop' => $input->getCrop(),
-                        'metadata' => $input->getMetaData(),
-                    ]
-                );
-            }
-        } else {
-            $data['inputs'][] = $this->getInputConstructData(
-                $inputs->getId(),
-                $inputs->getImage(),
-                $inputs->getImageMethod(),
-                [
-                    'concepts' => $this->getConceptsRawData($inputs->getConcepts()),
-                    'crop' => $inputs->getCrop(),
-                    'metadata' => $inputs->getMetaData(),
-                ]
-            );
-        }
-
-        return $data;
     }
 
     /**
@@ -599,47 +505,11 @@ class InputRepositoryTest extends \PHPUnit_Framework_TestCase
 
         foreach ($inputs as $inputId => $concepts) {
             $input['id'] = $inputId;
-            $input['data']['concepts'] = $this->getConceptsRawData($concepts);
-
+            $input['data'] = [];
+            $input['data'] = $this->inputRepository->addImageConcepts($input['data'], $concepts);
             $data['inputs'][] = $input;
         }
         $data['action'] = $action;
-
-        return $data;
-    }
-
-    /**
-     * Output data for GetById Response
-     *
-     * @param array $inputs
-     *
-     * @return array
-     */
-    public function getUpdateConceptResponse($inputs)
-    {
-        $data = [
-            'status' => [
-                'code' => '1000',
-                'description' => 'Ok',
-            ],
-
-        ];
-
-        foreach ($inputs as $input) {
-            $data['inputs'][] = $this->getInputConstructData(
-                $input->getId(),
-                $input->getImage(),
-                $input->getImageMethod(),
-                [
-                    'concepts' => $this->getConceptsRawData($input->getConcepts()),
-                    'crop' => $input->getCrop(),
-                    'created_at' => $input->getCreatedAt(),
-                    'metadata' => $input->getMetaData(),
-                    'status' => $input->getStatus(),
-                ]
-            );
-        }
-
 
         return $data;
     }
