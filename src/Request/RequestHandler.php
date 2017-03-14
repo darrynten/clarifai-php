@@ -182,7 +182,7 @@ class RequestHandler
      * @param string $path The path
      * @param array $parameters The request parameters
      *
-     * @return object
+     * @return []
      *
      * @throws ApiException
      */

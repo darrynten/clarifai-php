@@ -2,7 +2,7 @@
 
 namespace DarrynTen\Clarifai\Tests\Clarifai\Repository;
 
-use DarrynTen\Clarifai\Entity\Input;
+use DarrynTen\Clarifai\Entity\Concept;
 use DarrynTen\Clarifai\Repository\BaseRepository;
 use DarrynTen\Clarifai\Repository\InputRepository;
 use DarrynTen\Clarifai\Tests\Clarifai\Helpers\DataHelper;
@@ -35,18 +35,48 @@ class InputRepositoryTest extends \PHPUnit_Framework_TestCase
 
     public function testAdd()
     {
+        $input1 = $this->getFullInputEntity();
+        $input2 = $this->getFullInputEntity()->setId('id2')->setImage('image2')->isEncoded();
+
         $this->request->shouldReceive('request')
             ->once()
             ->with(
                 'POST',
                 'inputs',
-                $this->getAddRequest()
+                ['inputs' => [$this->inputRepository->addNewImage($input1)]]
             )
-            ->andReturn($this->getInputResponse());
+            ->andReturn(['status' => $this->getStatusResult(), 'inputs' => [$input1->generateRawData()]]);
 
         $this->assertEquals(
-            $this->getInputCollectionMock(),
-            $this->inputRepository->add($this->getInputCollectionMock())
+            [$input1],
+            $this->inputRepository->add($input1)
+        );
+
+        $this->request->shouldReceive('request')
+            ->once()
+            ->with(
+                'POST',
+                'inputs',
+                [
+                    'inputs' => [
+                        $this->inputRepository->addNewImage($input1),
+                        $this->inputRepository->addNewImage($input2),
+                    ],
+                ]
+            )
+            ->andReturn(
+                [
+                    'status' => $this->getStatusResult(),
+                    'inputs' => [
+                        $input1->generateRawData(),
+                        $input2->generateRawData(),
+                    ],
+                ]
+            );
+
+        $this->assertEquals(
+            [$input1, $input2],
+            $this->inputRepository->add([$input1, $input2])
         );
     }
 
@@ -103,8 +133,11 @@ class InputRepositoryTest extends \PHPUnit_Framework_TestCase
 
     public function testAddImageConcepts()
     {
-
-        $concepts = ['first' => true, 'second' => false];
+        $concept1 = new Concept();
+        $concept1->setId('first')->setValue(true);
+        $concept2 = new Concept();
+        $concept2->setId('second')->setValue(false);
+        $concepts = [$concept1, $concept2];
 
         $this->assertEquals(
             [
@@ -132,23 +165,34 @@ class InputRepositoryTest extends \PHPUnit_Framework_TestCase
 
     public function testGet()
     {
+        $input1 = $this->getFullInputEntity();
+        $input2 = $this->getFullInputEntity()->setId('id2')->setImage('image2')->isEncoded();
+
         $this->request->shouldReceive('request')
             ->once()
             ->with(
                 'GET',
                 'inputs'
             )
-            ->andReturn($this->getInputResponse());
+            ->andReturn(
+                [
+                    'status' => $this->getStatusResult(),
+                    'inputs' => [
+                        $input1->generateRawData(),
+                        $input2->generateRawData(),
+                    ],
+                ]
+            );
 
         $this->assertEquals(
-            $this->getInputCollectionMock(),
+            [$input1, $input2],
             $this->inputRepository->get()
         );
     }
 
     public function testGetById()
     {
-        $input = $this->getOneInputMock();
+        $input = $this->getFullInputEntity();
 
         $this->request->shouldReceive('request')
             ->once()
@@ -156,12 +200,35 @@ class InputRepositoryTest extends \PHPUnit_Framework_TestCase
                 'GET',
                 'inputs/' . $input->getId()
             )
-            ->andReturn($this->getOneInputResponse($input));
+            ->andReturn(
+                [
+                    'status' => $this->getStatusResult(),
+                    'input' => $input->generateRawData(),
+                ]
+            );
 
         $this->assertEquals(
             $input,
             $this->inputRepository->getById($input->getId())
         );
+    }
+
+    /**
+     * @expectedException \Exception
+     */
+    public function testGetByIdException()
+    {
+        $input = $this->getFullInputEntity();
+
+        $this->request->shouldReceive('request')
+            ->once()
+            ->with(
+                'GET',
+                'inputs/' . $input->getId()
+            )
+            ->andReturn('data');
+
+        $this->inputRepository->getById($input->getId());
     }
 
     public function testGetStatus()
@@ -195,6 +262,22 @@ class InputRepositoryTest extends \PHPUnit_Framework_TestCase
             ],
             $this->inputRepository->getStatus()
         );
+    }
+
+    /**
+     * @expectedException \Exception
+     */
+    public function testGetStatusException()
+    {
+        $this->request->shouldReceive('request')
+            ->once()
+            ->with(
+                'GET',
+                'inputs/status'
+            )
+            ->andReturn('data');
+
+        $this->inputRepository->getStatus();
     }
 
     public function testDeleteById()
@@ -253,7 +336,7 @@ class InputRepositoryTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function deleteAll()
+    public function testDeleteAll()
     {
         $this->request->shouldReceive('request')
             ->once()
@@ -280,180 +363,154 @@ class InputRepositoryTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function getInputResponse()
+    public function testMergeInputConcepts()
     {
-        return [
-            'status' => [
-                'code' => '1000',
-                'description' => 'Ok',
-            ],
-            'inputs' => [
+
+        $input1 = $this->getFullInputEntity();;
+        $input1->setConcepts([]);
+
+        $this->assertEquals(
+            [],
+            $input1->getConcepts()
+        );
+
+        $input2 = $this->getFullInputEntity()->setId('id2')->setImage('image2');
+
+        $concept1 = $this->getFullConceptEntity('id1', true);
+        $concept2 = $this->getFullConceptEntity('id2', false);
+        $concept3 = $this->getFullConceptEntity('id3', true);
+
+        $input2Concepts = $input2->getConcepts();
+        $input2Concepts[] = $concept3;
+
+        $this->request->shouldReceive('request')
+            ->once()
+            ->with(
+                'PATCH',
+                'inputs',
+                $this->getUpdateConceptRequest(
+                    [
+                        $input1->getId() => [$concept1, $concept2],
+                        $input2->getId() => [$concept3],
+                    ],
+                    InputRepository::CONCEPTS_MERGE_ACTION
+                )
+
+            )
+            ->andReturn(
                 [
-                    'id' => 'f1a03eb89ad04b99b88431e3466c56ac',
-                    'created_at' => '2017 - 02 - 24T15:34:10.944953Z',
-                    'data' => [
-                        'image' => [
-                            'url' => 'http://www.chicco.com.ua/thumbs/d04efbc9ae8b518fcbe3997fe5fbbf46c1e4b90f_130x130.jpeg',
-                        ],
-                        'metadata' => [
-                            'first' => 'value1',
-                            'second' => 'value2',
-                        ],
+                    'status' => $this->getStatusResult(),
+                    'inputs' => [
+                        $input1->setConcepts([$concept1, $concept2])->generateRawData(),
+                        $input2->setConcepts($input2Concepts)->generateRawData(),
                     ],
-                    'status' => [
-                        'code' => '30001',
-                        'description' => 'Download pending',
-                    ],
-                ],
+                ]
+
+            );
+
+        $this->assertEquals(
+            [$input1, $input2],
+            $this->inputRepository->mergeInputConcepts(
                 [
-                    'id' => '1234567',
-                    'created_at' => '2017 - 02 - 24T15:34:10.944942Z',
-                    'data' => [
-                        'image' => [
-                            'url' => 'http://www.chicco.com.ua/thumbs/online_games_chicco_rus_130X80_130x130.jpg',
-                            'crop' => ['0.2', '0.4', '0.3', '0.6'],
-                        ],
+                    $input1->getId() => [$concept1, $concept2],
+                    $input2->getId() => [$concept3],
+                ]
+            )
+        );
+    }
+
+    public function testDeleteInputConcepts()
+    {
+
+        $input1 = $this->getFullInputEntity();
+        $input1->setConcepts([]);
+
+        $this->assertEquals(
+            [],
+            $input1->getConcepts()
+        );
+
+        $input2 = $this->getFullInputEntity()->setId('id2')->setImage('image2');
+
+        $input2->setConcepts([]);
+
+        $this->assertEquals(
+            [],
+            $input2->getConcepts()
+        );
+
+        $concept1 = $this->getFullConceptEntity('id1', true);
+        $concept2 = $this->getFullConceptEntity('id2', false);
+        $concept3 = $this->getFullConceptEntity('id3', true);
+
+        $input1->setConcepts([$concept1, $concept3]);
+        $input2->setConcepts([$concept2, $concept3]);
+
+        $this->request->shouldReceive('request')
+            ->once()
+            ->with(
+                'PATCH',
+                'inputs',
+                $this->getUpdateConceptRequest(
+                    [
+                        $input1->getId() => [$concept1, $concept3],
+                        $input2->getId() => [$concept3],
                     ],
-                    'status' => [
-                        'code' => '30001',
-                        'description' => 'Download pending',
-                    ],
-                ],
+                    InputRepository::CONCEPTS_REMOVE_ACTION
+                )
+
+            )
+            ->andReturn(
                 [
-                    'id' => '3',
-                    'created_at' => '2017 - 02 - 24T15:36:10.944942Z',
-                    'data' => [
-                        'image' => [
-                            'base64' => 'hash',
-                        ],
+                    'status' => $this->getStatusResult(),
+                    'inputs' => [
+                        $input1->setConcepts([])->generateRawData(),
+                        $input2->setConcepts([$concept2])->generateRawData(),
                     ],
-                    'status' => [
-                        'code' => '30001',
-                        'description' => 'Download pending',
-                    ],
-                ],
-            ],
-        ];
+                ]
+
+            );
+
+        $this->assertEquals(
+            [$input1, $input2],
+            $this->inputRepository->deleteInputConcepts(
+                [
+                    $input1->getId() => [$concept1, $concept3],
+                    $input2->getId() => [$concept3],
+                ]
+            )
+        );
     }
 
     /**
-     * Output data for Add Request
-     *
-     * @return array
+     * @expectedException \Exception
      */
-    public function getAddRequest()
+    public function testGetInputsFromResultException()
     {
-        return [
-            'inputs' => [
-                [
-                    'id' => 'f1a03eb89ad04b99b88431e3466c56ac',
-                    'data' => [
-                        'image' => [
-                            'url' => 'http://www.chicco.com.ua/thumbs/d04efbc9ae8b518fcbe3997fe5fbbf46c1e4b90f_130x130.jpeg',
-                        ],
-                        'metadata' => [
-                            'first' => 'value1',
-                            'second' => 'value2',
-                        ],
-                    ],
-                ],
-                [
-                    'id' => '1234567',
-                    'data' => [
-                        'image' => [
-                            'url' => 'http://www.chicco.com.ua/thumbs/online_games_chicco_rus_130X80_130x130.jpg',
-                            'crop' => ['0.2', '0.4', '0.3', '0.6'],
-                        ],
-                    ],
-                ],
-                [
-                    'id' => '3',
-                    'data' => [
-                        'image' => [
-                            'base64' => 'hash',
-                        ],
-                    ],
-                ],
-            ],
-        ];
+        $this->inputRepository->getInputsFromResult([]);
     }
 
     /**
-     * Array of Test Inputs
+     * Get Update Concept Request
      *
-     * @return array
+     * @param $inputs
+     * @param $action
+     *
+     * @return mixed
      */
-    public function getInputCollectionMock()
+
+    public function getUpdateConceptRequest($inputs, $action)
     {
+        $data['inputs'] = [];
 
-        $input1 = new Input();
-        $input1->setId('f1a03eb89ad04b99b88431e3466c56ac')
-            ->setImage('http://www.chicco.com.ua/thumbs/d04efbc9ae8b518fcbe3997fe5fbbf46c1e4b90f_130x130.jpeg')
-            ->isUrl()
-            ->setMetaData(['first' => 'value1', 'second' => 'value2'])
-            ->setStatus('30001', 'Download pending')
-            ->setCreatedAt('2017 - 02 - 24T15:34:10.944953Z');
+        foreach ($inputs as $inputId => $concepts) {
+            $input['id'] = $inputId;
+            $input['data'] = [];
+            $input['data'] = $this->inputRepository->addImageConcepts($input['data'], $concepts);
+            $data['inputs'][] = $input;
+        }
+        $data['action'] = $action;
 
-        $input2 = new Input();
-        $input2->setId('1234567')
-            ->setImage('http://www.chicco.com.ua/thumbs/online_games_chicco_rus_130X80_130x130.jpg')
-            ->isUrl()
-            ->setCrop([0.2, 0.4, 0.3, 0.6])
-            ->setStatus('30001', 'Download pending')
-            ->setCreatedAt('2017 - 02 - 24T15:34:10.944942Z');
-
-        $input3 = new Input();
-        $input3->setId('3')
-            ->setImage('hash')
-            ->isEncoded()
-            ->setStatus('30001', 'Download pending')
-            ->setCreatedAt('2017 - 02 - 24T15:36:10.944942Z');
-
-        return [$input1, $input2, $input3];
-    }
-
-    /**
-     * Output data for GetById Response
-     *
-     * @param Input $input
-     *
-     * @return array
-     */
-    public function getOneInputResponse(Input $input)
-    {
-        return [
-            'status' => [
-                'code' => '1000',
-                'description' => 'Ok',
-            ],
-            'input' => [
-                'id' => $input->getId(),
-                'created_at' => $input->getCreatedAt(),
-                'data' => [
-                    'image' => [
-                        'url' => $input->getImage(),
-                    ],
-                ],
-                'status' => $input->getStatus(),
-
-            ],
-        ];
-    }
-
-    /**
-     * One Input Entity
-     *
-     * @return Input
-     */
-    public function getOneInputMock()
-    {
-        $input = new Input();
-        $input->setId('1234567')
-            ->setImage('http://www.chicco.com.ua/thumbs/online_games_chicco_rus_130X80_130x130.jpg')
-            ->isUrl()
-            ->setStatus('30001', 'Download pending')
-            ->setCreatedAt('2017 - 02 - 24T15:34:10.944942Z');
-
-        return $input;
+        return $data;
     }
 }

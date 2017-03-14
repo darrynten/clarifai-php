@@ -49,44 +49,11 @@ class Clarifai
      * @param array|null $config
      * @param array|null $data
      *
-     * @return Repository\Model
+     * @return Repository\ModelRepository
      */
-    public function getModel($config = null, $data = null)
+    public function getModelRepository($config = null, $data = null)
     {
-        return new Repository\Model($this->getRequest(), $config, $data);
-    }
-
-    /**
-     * @param $config
-     * @param $data
-     *
-     * @return Repository\Models
-     */
-    public function getModels($config, $data)
-    {
-        return new Repository\Models($this->getRequest(), $config, $data);
-    }
-
-    /**
-     * @param $config
-     * @param $data
-     *
-     * @return Repository\Concept
-     */
-    public function getConcept($config, $data)
-    {
-        return new Repository\Concept($this->getRequest(), $config, $data);
-    }
-
-    /**
-     * @param $config
-     * @param $data
-     *
-     * @return Repository\Concepts
-     */
-    public function getConcepts($config, $data)
-    {
-        return new Repository\Concepts($this->getRequest(), $config, $data);
+        return new Repository\ModelRepository($this->getRequest(), $config, $data);
     }
 
     /**
@@ -98,16 +65,5 @@ class Clarifai
     public function getInputRepository($config = null, $data = null)
     {
         return new Repository\InputRepository($this->getRequest(), $config, $data);
-    }
-
-    /**
-     * @param $config
-     * @param $data
-     *
-     * @return Repository\InputsRepository
-     */
-    public function getInputsRepository($config, $data)
-    {
-        return new Repository\InputsRepository($this->getRequest(), $config, $data);
     }
 }

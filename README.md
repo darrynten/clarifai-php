@@ -186,40 +186,40 @@ API docs page.
 
 Checked off bits are complete.
 
-- [ ] Inputs
+- [x] Inputs
   - [x] Add
-  - [ ] Add with Concepts
+  - [x] Add with Concepts
   - [x] Add with Custom Metadata
   - [x] Add with Crop
   - [x] Get Inputs
   - [x] Get Input Status
-  - [ ] Update Input with Concepts
-  - [ ] Delete Concepts from Input
-  - [ ] Bulk Update Inputs with Concepts
-  - [ ] Bulk Delete Concepts from Input List
+  - [x] Update Input with Concepts
+  - [x] Delete Concepts from Input
+  - [x] Bulk Update Inputs with Concepts
+  - [x] Bulk Delete Concepts from Input List
   - [x] Delete Input by ID
   - [x] Delete Input List
   - [x] Delete All Inpits
-- [ ] Models
-  - [ ] Create Model
-  - [ ] Create Model With Concepts
-  - [ ] Add Concepts to a Model
-  - [ ] Remove Concept from Model
-  - [ ] Update Model Name and Configuration
-  - [ ] Get Models
-  - [ ] Geo Model by ID
-  - [ ] Get Model Output Info by ID
-  - [ ] List Model Versions
-  - [ ] Get Model Version by ID
-  - [ ] Get Model Training Inputs
-  - [ ] Get Model Training Inputs by Version
-  - [ ] Delete Model
-  - [ ] Delete Model Version
-  - [ ] Delete All Models
-  - [ ] Train Model
+- [x] Models
+  - [x] Create Model
+  - [x] Create Model With Concepts
+  - [x] Add Concepts to a Model
+  - [x] Remove Concept from Model
+  - [x] Update Model Name and Configuration
+  - [x] Get Models
+  - [x] Get Model by ID
+  - [x] Get Model Output Info by ID
+  - [x] List Model Versions
+  - [x] Get Model Version by ID
+  - [x] Get Model Training Inputs
+  - [x] Get Model Training Inputs by Version
+  - [x] Delete Model
+  - [x] Delete Model Version
+  - [x] Delete All Models
+  - [x] Train Model
   - [x] Predict With Model
-  - [ ] Search Model by Name and Type
 - [ ] Searches
+  - [ ] Search Model by Name and Type
   - [ ] Search by Predicted Concepts
   - [ ] Search by User Supplied Concept
   - [ ] Search by Custom Metadata
@@ -294,7 +294,16 @@ hosting service we recommend using it and adding images via the url parameter.
 
 #### Add inputs with concepts
 
-# (not implemented yet)
+```php
+    $concept = new Concept();
+    $concept->setId('boscoe')->setValue(true);
+
+    $input = new Input();
+    $input->setImage('https://samples.clarifai.com/puppy.jpeg')->isUrl()
+        ->setConcepts([$concept]);
+
+    $inputResult = $clarifai->getInputRepository()->add($input);
+```
 
 #### Add input with metadata
 
@@ -303,8 +312,8 @@ custom metadata. This metadata will then be searchable. Metadata can be any
 arbitrary JSON.
 
 ```php
-    $input1 = new Input();
-    $input1->setImage('https://samples.clarifai.com/metro-north.jpg')->isUrl()
+    $input = new Input();
+    $input->setImage('https://samples.clarifai.com/metro-north.jpg')->isUrl()
         ->setMetaData([['key' => 'value', 'list' => [1, 2, 3]]);
     $inputResult = $clarifai->getInputRepository()->add($input);
 ```
@@ -322,8 +331,8 @@ that starts 30% from the original top edge and a right edge that starts 60% from
 the original left edge.
 
 ```php
-    $input1 = new Input();
-    $input1->setImage('https://samples.clarifai.com/metro-north.jpg')->isUrl()
+    $input = new Input();
+    $input->setImage('https://samples.clarifai.com/metro-north.jpg')->isUrl()
         ->setCrop([0.2, 0.4, 0.3, 0.6]);
     $inputResult = $clarifai->getInputRepository()->add($input);
 ```
@@ -358,31 +367,83 @@ status of all your inputs (processed, to_process and errors) like this:
     $inputResult = $clarifai->getInputRepository()->getStatus();
 ```
 
-# Concept features (Update/Delete/BulkUpdate/BulkDelete) are not implemented yet
-
 #### Update input with concepts
 
 To update an input with a new concept, or to change a concept value from true/false, you can do that:
 
-Not yet implemented
+```php
+    $concept1 = new Concept();
+    $concept1->setId('tree')->setValue(true);
+    
+    $concept2 = new Concept();
+    $concept2->setId('water')->setValue(false);
+
+    $modelResult = $clarifai->getInputRepository()->mergeInputConcepts([$inputId => [$concept1, $concept2]]);
+```
 
 #### Delete concepts from input
 
 To remove concepts that were already added to an input, you can do this:
 
-Not yet implemented
+```php
+    $concept1 = new Concept();
+    $concept1->setId('mattid2')->setValue(true);
+    
+    $concept2 = new Concept();
+    $concept2->setId('ferrari')->setValue(false);
+
+    $modelResult = $clarifai->getInputRepository()->deleteInputConcepts([$inputId => [$concept1, $concept2]]);
+```
 
 #### Bulk update inputs with concepts
 
 You can update an existing input using its Id. This is useful if you'd like to add concepts to an input after its already been added.
 
-Not yet implemented
+```php
+    $concept1 = new Concept();
+    $concept1->setId('tree')->setValue(true);
+    
+    $concept2 = new Concept();
+    $concept2->setId('water')->setValue(false);
+    
+    $concept3 = new Concept();
+    $concept3->setId('mattid2')->setValue(true);
+    
+    $concept4 = new Concept();
+    $concept4->setId('ferrari')->setValue(false);
+
+    $modelResult = $clarifai->getInputRepository()->mergeInputConcepts(
+        [
+            $inputId1 => [$concept1, $concept2],
+            $inputId2 => [$concept3, $concept4],
+        ]
+    );
+```
 
 #### Bulk delete concepts from list of inputs
 
 You can bulk delete multiple concepts from a list of inputs:
 
-Not yet implemented
+```php
+    $concept1 = new Concept();
+    $concept1->setId('tree')->setValue(true);
+    
+    $concept2 = new Concept();
+    $concept2->setId('water')->setValue(false);
+    
+    $concept3 = new Concept();
+    $concept3->setId('mattid2')->setValue(true);
+    
+    $concept4 = new Concept();
+    $concept4->setId('ferrari')->setValue(false);
+
+    $modelResult = $clarifai->getInputRepository()->deleteInputConcepts(
+        [
+            $inputId1 => [$concept1, $concept2],
+            $inputId2 => [$concept3, $concept4],
+        ]
+    );
+```
 
 #### Delete Input By Id
 
@@ -409,6 +470,164 @@ well. This will happen asynchronously.
 ```php
     $inputResult = $clarifai->getInputRepository()->deleteAll();
 ```
+
+## Models
+
+There are many methods to work with models.
+
+#### Create Model
+
+You can create your own model and train it with your own images and concepts. Once you train it to see how you would like it to see, you can then use that model to make predictions.
+
+When you create a model you give it a name and an id. If you don't supply an id, one will be created for you. All models must have unique ids.
+
+```php
+    $model = new Model();
+    $model->setId('petsID');
+    $modelResult = $clarifai->getModelRepository()->create($model);
+```
+
+#### Create Model with Concepts
+
+You can also create a model and initialize it with the concepts it will contain. You can always add and remove concepts later.
+
+```php
+    $concept = new Concept();
+    $concept->setId('boscoe');
+
+    $model= new Model();
+    $model->setId('petsId')
+        ->setConcepts([$concept])
+        ->setConceptsMutuallyExclusive(false)
+        ->setClosedEnvironment(false);
+
+    $modelResult = $clarifai->getModelRepository()->create($model);
+```
+
+#### Add Concepts To A Model
+
+You can add concepts to a model at any point. As you add concepts to inputs, you may want to add them to your model.
+
+```php
+    $concept = new Concept();
+    $concept->setId('dogs');
+
+    $modelResult = $clarifai->getModelRepository()->mergeModelConcepts([$modelId => [$concept]]);
+```
+
+#### Remove Concepts From A Model
+
+Conversely, if you'd like to remove concepts from a model, you can also do that.
+
+```php
+    $concept = new Concept();
+    $concept->setId('dogs');
+
+    $modelResult = $clarifai->getModelRepository()->deleteModelConcepts([$modelId => [$concept]]);
+```
+
+#### Update Model Name and Configuration
+
+Here we will change the model name to 'newname' and the model's configuration to have concepts_mutually_exclusive=true and closed_environment=true.
+
+```php
+    $model->setName('newname')
+        ->setClosedEnvironment(true)
+        ->setConceptsMutuallyExclusive(true);
+
+    $modelResult = $clarifai->getModelRepository()->update($model);
+```
+
+#### Get Models
+
+To get a list of all models including models you've created as well as public models
+
+```php
+    $modelResult = $clarifai->getModelRepository()->get();
+```
+
+#### Get Model By Id
+
+All models have unique Ids. You can get a specific model by its id:
+
+```php
+    $modelResult = $clarifai->getModelRepository()->getById($modelId);
+```
+
+#### Get Model Output Info By Id
+
+The output info of a model lists what concepts it contains.
+
+```php
+    $modelResult = $clarifai->getModelRepository()->getOutputInfoById($modelId);
+```
+
+#### List Model Versions
+
+Every time you train a model, it creates a new version. You can list all the versions created.
+
+```php
+    $modelResult = $clarifai->getModelRepository()->getModelVersions($modelId);
+```
+
+#### Get Model Version By Id
+
+To get a specific model version, you must provide the modelId as well as the versionId. You can inspect the model version status to determine if your model is trained or still training.
+
+```php
+    $modelResult = $clarifai->getModelRepository()->getModelVersionById($modelId, $versionId);
+```
+
+#### Get Model Training Inputs
+
+You can list all the inputs that were used to train the model.
+
+```php
+    $modelResult = $clarifai->getModelRepository()->getTrainingInputsById($modelId);
+```
+
+#### Get Model Training Inputs By Version
+
+You can also list all the inputs that were used to train a specific model version.
+
+```php
+    $modelResult = $clarifai->getModelRepository()->getTrainingInputsByVersion($modelId, $versionId);
+```
+
+#### Delete A Model
+
+You can delete a model using the modelId.
+
+```php
+    $modelResult = $clarifai->getModelRepository()->deleteById($modelId);
+```
+
+#### Delete A Model Version
+
+You can also delete a specific version of a model with the modelId and versionId.
+
+```php
+    $modelResult = $clarifai->getModelRepository()->deleteVersionById($modelId, $versionId);
+```
+
+#### Delete All Models
+
+If you would like to delete all models associated with an application, you can also do that. Please proceed with caution as these cannot be recovered.
+
+```php
+    $modelResult = $clarifai->getModelRepository()->deleteAll();
+```
+
+#### Train A Model
+
+When you train a model, you are telling the system to look at all the images with concepts you've provided and learn from them. This train operation is asynchronous. It may take a few seconds for your model to be fully trained and ready.
+
+Note: you can repeat this operation as often as you like. By adding more images with concepts and training, you can get the model to predict exactly how you want it to.
+
+```php
+    $modelResult = $clarifai->getModelRepository()->train($id);
+```
+
 
 # Roadmap
 
