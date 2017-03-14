@@ -9,7 +9,7 @@
  * @link     https://github.com/darrynten/clarifai-php
  */
 
-namespace DarrynTen\Clarifai;
+namespace DarrynTen\Clarifai\Exception;
 
 use Exception;
 
@@ -18,7 +18,7 @@ use Exception;
  *
  * @package Clarifai
  */
-class ClarifaiApiException extends Exception
+class ApiException extends Exception
 {
 
     /**
@@ -29,7 +29,12 @@ class ClarifaiApiException extends Exception
         // Construct message from JSON if required.
         if (preg_match('/^[\[\{]\"/', $message)) {
             $messageObject = json_decode($message);
-            $message = $messageObject->status . ': ' . $messageObject->title . ' - ' . $messageObject->detail;
+            $message = sprintf(
+                '%s: %s - %s',
+                $messageObject->status,
+                $messageObject->title,
+                $messageObject->detail
+            );
             if (!empty($messageObject->errors)) {
                 $message .= ' ' . serialize($messageObject->errors);
             }

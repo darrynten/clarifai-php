@@ -7,7 +7,10 @@ php:
 
 before_script:
   - travis_retry composer self-update --preview
-  - travis_retry composer install --prefer-dist --no-interaction
+  - travis_retry composer install --prefer-dist --no-interaction --dev
 
 script:
-  - bin/phpunit
+  - bin/phpunit --coverage-clover=coverage.xml
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)

@@ -3,71 +3,60 @@
 namespace DarrynTen\Clarifai\Tests\Clarifai;
 
 use DarrynTen\Clarifai\Clarifai;
-use InterNations\Component\HttpMock\PHPUnit\HttpMockTrait;
-use PHPUnit_Framework_TestCase;
+use DarrynTen\Clarifai\Repository;
+use DarrynTen\Clarifai\Request\RequestHandler;
+use DarrynTen\Clarifai\Tests\Clarifai\Helpers\DataHelper;
 
-class ClarifaiTest extends PHPUnit_Framework_TestCase
+class ClarifayTest extends \PHPUnit_Framework_TestCase
 {
-    use HttpMockTrait;
+    use DataHelper;
 
-    public static function setUpBeforeClass()
-    {
-        static::setUpHttpMockBeforeClass('8082', 'localhost');
-    }
-
-    public static function tearDownAfterClass()
-    {
-        static::tearDownHttpMockAfterClass();
-    }
+    /**
+     * @var Clarifai
+     */
+    private $clarifai;
 
     public function setUp()
     {
-        $this->setUpHttpMock();
+        $this->clarifai = new Clarifai('clientId', 'clientSecret');
     }
 
-    public function tearDown()
+    /**
+     * @return array
+     */
+    public function repositoryProvider()
     {
-        $this->tearDownHttpMock();
+        return [
+            [Repository\InputRepository::class, 'getInputRepository', $this->getInputData()],
+            [Repository\ModelRepository::class, 'getModelRepository', $this->getModelData()],
+        ];
     }
 
-    public function testInstanceOf()
+    /**
+     * @dataProvider repositoryProvider
+     *
+     * @param Repository\BaseRepository $expectedClass
+     * @param string $call The Clarifai call
+     * @param array $mockData Data needed for target class creation
+     */
+    public function testExpectedRepositoryCallResult($expectedClass, $call, $mockData)
     {
-        $clarifai = new Clarifai('', '', '');
-        $this->assertInstanceOf(Clarifai::class, $clarifai);
+        $repository = $this->clarifai->{$call}([], $mockData);
+        $this->assertInstanceOf(
+            $expectedClass,
+            $repository
+        );
+        $this->assertInstanceOf(
+            Repository\BaseRepository::class,
+            $repository
+        );
     }
 
-    public function testRequest()
+    public function testRequestGetterResult()
     {
-        $this->http->mock
-            ->when()
-                ->methodIs('GET')
-                ->pathIs('/foo')
-            ->then()
-                ->body('{}')
-            ->end();
-        $this->http->setUp();
-
-        $clarifai = new Clarifai('', '', '');
-
-        $this->assertEquals(json_decode('{}'), $clarifai->handleRequest('GET', 'http://localhost:8082/foo', [], []));
-    }
-
-    public function testRequestEmptyResponse()
-    {
-        $this->http->mock
-            ->when()
-                ->methodIs('GET')
-                ->pathIs('/foo')
-            ->then()
-                ->body('{ value: 1 }')
-            ->end();
-        $this->http->setUp();
-
-        $clarifai = new Clarifai('', '', '');
-
-        $this->assertEquals(
-            json_decode('{ body: { code: 1 } }'),
-            $clarifai->handleRequest('GET', 'http://localhost:8082/foo', [], [])
+        $this->assertInstanceOf(
+            RequestHandler::class,
+            $this->clarifai->getRequest()
         );
     }
 }
