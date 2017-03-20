@@ -27,8 +27,9 @@ class ClarifaiTest extends \PHPUnit_Framework_TestCase
     public function repositoryProvider()
     {
         return [
-            [Repository\InputRepository::class, 'getInputRepository', $this->getInputData()],
-            [Repository\ModelRepository::class, 'getModelRepository', $this->getModelData()],
+            [Repository\InputRepository::class, 'getInputRepository'],
+            [Repository\SearchInputRepository::class, 'getSearchInputRepository'],
+            [Repository\ModelRepository::class, 'getModelRepository'],
         ];
     }
 
@@ -37,11 +38,10 @@ class ClarifaiTest extends \PHPUnit_Framework_TestCase
      *
      * @param Repository\BaseRepository $expectedClass
      * @param string $call The Clarifai call
-     * @param array $mockData Data needed for target class creation
      */
-    public function testExpectedRepositoryCallResult($expectedClass, $call, $mockData)
+    public function testExpectedRepositoryCallResult($expectedClass, $call)
     {
-        $repository = $this->clarifai->{$call}([], $mockData);
+        $repository = $this->clarifai->{$call}();
         $this->assertInstanceOf(
             $expectedClass,
             $repository
