@@ -77,4 +77,15 @@ class Clarifai
     {
         return new Repository\SearchInputRepository($this->getRequest(), $config, $data);
     }
+
+    /**
+     * @param $config
+     * @param $data
+     *
+     * @return Repository\SearchModelRepository
+     */
+    public function getSearchModelRepository($config = null, $data = null)
+    {
+        return new Repository\SearchModelRepository($this->getRequest(), $config, $data);
+    }
 }

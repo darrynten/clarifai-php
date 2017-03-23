@@ -30,6 +30,7 @@ class ClarifaiTest extends \PHPUnit_Framework_TestCase
             [Repository\InputRepository::class, 'getInputRepository'],
             [Repository\SearchInputRepository::class, 'getSearchInputRepository'],
             [Repository\ModelRepository::class, 'getModelRepository'],
+            [Repository\SearchModelRepository::class, 'getSearchModelRepository'],
         ];
     }
 
