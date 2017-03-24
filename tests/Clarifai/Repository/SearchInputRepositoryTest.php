@@ -50,7 +50,14 @@ class SearchInputRepositoryTest extends \PHPUnit_Framework_TestCase
                         'ands' => [
                             [
                                 'output' => [
-                                    'data' => $this->searchInputRepository->addImageConcepts([], [$concept]),
+                                    'data' => [
+                                        'concepts' => [
+                                            [
+                                                'name' => $concept->getName(),
+                                                'value' => $concept->getValue(),
+                                            ],
+                                        ],
+                                    ],
                                 ],
                             ],
                         ],
@@ -61,7 +68,7 @@ class SearchInputRepositoryTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             [$input],
-            $this->searchInputRepository->searchByPredictedConcepts($concept)
+            $this->searchInputRepository->searchByPredictedConcepts([$concept])
         );
     }
 
@@ -82,7 +89,14 @@ class SearchInputRepositoryTest extends \PHPUnit_Framework_TestCase
                         'ands' => [
                             [
                                 'input' => [
-                                    'data' => $this->searchInputRepository->addImageConcepts([], [$concept]),
+                                    'data' => [
+                                        'concepts' => [
+                                            [
+                                                'name' => $concept->getName(),
+                                                'value' => $concept->getValue(),
+                                            ],
+                                        ],
+                                    ],
                                 ],
                             ],
                         ],
@@ -100,14 +114,12 @@ class SearchInputRepositoryTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             [$input1, $input2],
-            $this->searchInputRepository->searchByUserSuppliedConcepts($concept)
+            $this->searchInputRepository->searchByUserSuppliedConcepts([$concept])
         );
     }
 
     public function testSearchByReverseImage()
     {
-        $url = 'image';
-
         $input1 = $this->getFullInputEntity()->setId('id1')->setImage('image');
         $input2 = $this->getFullInputEntity()->setId('id2')->setImage('image');
 
@@ -124,7 +136,7 @@ class SearchInputRepositoryTest extends \PHPUnit_Framework_TestCase
                                     'input' => [
                                         'data' => [
                                             'image' => [
-                                                'url' => $url,
+                                                'url' => $input1->getImage(),
                                             ],
                                         ],
                                     ],
@@ -145,14 +157,12 @@ class SearchInputRepositoryTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             [$input1, $input2],
-            $this->searchInputRepository->searchByReverseImage($url)
+            $this->searchInputRepository->searchByReverseImage([$input1])
         );
     }
 
     public function testSearchByMatchUrl()
     {
-        $url = 'image';
-
         $input1 = $this->getFullInputEntity()->setId('id1')->setImage('image');
         $input2 = $this->getFullInputEntity()->setId('id2')->setImage('image');
 
@@ -168,7 +178,7 @@ class SearchInputRepositoryTest extends \PHPUnit_Framework_TestCase
                                 'input' => [
                                     'data' => [
                                         'image' => [
-                                            'url' => $url,
+                                            'url' => $input1->getImage(),
                                         ],
                                     ],
                                 ],
@@ -189,7 +199,7 @@ class SearchInputRepositoryTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             [$input1, $input2],
-            $this->searchInputRepository->searchByMatchUrl($url)
+            $this->searchInputRepository->searchByMatchUrl([$input1])
         );
     }
 
@@ -231,7 +241,7 @@ class SearchInputRepositoryTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             [$input1, $input2],
-            $this->searchInputRepository->searchByCustomMetadata($metadata)
+            $this->searchInputRepository->searchByCustomMetadata([$metadata])
         );
     }
 
