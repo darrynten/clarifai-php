@@ -47,6 +47,24 @@ class SearchInputRepository extends InputRepository
     const REVERSED_IMAGES = 'reversed_images';
 
     /**
+     * Searches Inputs
+     *
+     * @param array $params
+     *
+     * @return Input[] array
+     */
+    public function search($params)
+    {
+        $searchResult = $this->getRequest()->request(
+            'POST',
+            'searches',
+            $this->getSearchQuery($params)
+        );
+
+        return $this->getInputsFromSearchResult($searchResult);
+    }
+
+    /**
      * @param array $params
      *
      * @return array

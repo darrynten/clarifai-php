@@ -233,15 +233,15 @@ Checked off bits are complete.
   - [x] Delete All Models
   - [x] Train Model
   - [x] Predict With Model
-- [ ] Searches
+- [x] Searches
   - [x] Search Model by Name and Type
   - [x] Search by Predicted Concepts
   - [x] Search by User Supplied Concept
   - [x] Search by Custom Metadata
   - [x] Search by Reverse Image
   - [x] Search Match URL
-  - [ ] Search by Concept and Prediction
-  - [ ] Search ANDing
+  - [x] Search by Concept and Prediction
+  - [x] Search ANDing
 - [ ] Pagination
 - [ ] Patching
   - [ ] Merge
@@ -711,6 +711,51 @@ You can also search for an input by URL.
     $input->setImage('https://samples.clarifai.com/metro-north.jpg');
         
     $inputResult = $clarifai->getSearchInputRepository()->searchByMatchUrl([$input]);
+```
+
+#### Search By Concept And Predictions
+
+You can combine a search to find inputs that have concepts you have supplied as well as predictions from your model.
+
+```php
+    $concept1 = new Concept();
+    $concept1->setName('dog');
+    
+    $concept2 = new Concept();
+    $concept2->setName('cat');
+        
+    $inputResult = $clarifai->getSearchInputRepository()->search(
+        [
+            \DarrynTen\Clarifai\Repository\SearchInputRepository::INPUT_CONCEPTS => [$concept1],
+            \DarrynTen\Clarifai\Repository\SearchInputRepository::OUTPUT_CONCEPTS => [$concept2]
+        ]
+    );
+```
+
+#### Search ANDing
+
+You can also combine searches using AND.
+
+```php
+    $concept1 = new Concept();
+    $concept1->setName('dog');
+    
+    $concept2 = new Concept();
+    $concept2->setName('cat');
+    
+    $input = new Input();
+    $input->setImage('https://samples.clarifai.com/metro-north.jpg');
+    
+    $metadata = ['key' => 'value'];
+        
+    $inputResult = $clarifai->getSearchInputRepository()->search(
+        [
+            SearchInputRepository::INPUT_CONCEPTS => [$concept1],
+            SearchInputRepository::OUTPUT_CONCEPTS => [$concept2],
+            SearchInputRepository::IMAGE => [$input],
+            SearchInputRepository::METADATA => [$metadata],
+        ]
+    );
 ```
 
 # Roadmap

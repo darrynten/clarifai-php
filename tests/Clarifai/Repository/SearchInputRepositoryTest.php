@@ -245,6 +245,90 @@ class SearchInputRepositoryTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public function testSearch()
+    {
+        $input = $this->getFullInputEntity()->setImage('image');
+        $metadata = ['first' => 'second'];
+        $concept1 = $this->getFullConceptEntity('id1', true);
+        $concept2 = $this->getFullConceptEntity('id2', true);
+
+        $concept = $this->getFullConceptEntity('id1', true);
+
+        $this->request->shouldReceive('request')
+            ->once()
+            ->with(
+                'POST',
+                'searches',
+                [
+                    'query' => [
+                        'ands' => [
+                            [
+                                'input' => [
+                                    'data' => [
+                                        'concepts' => [
+                                            [
+                                                'name' => $concept1->getName(),
+                                                'value' => $concept1->getValue(),
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            [
+                                'output' => [
+                                    'data' => [
+                                        'concepts' => [
+                                            [
+                                                'name' => $concept2->getName(),
+                                                'value' => $concept2->getValue(),
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            [
+                                'input' => [
+                                    'data' => [
+                                        'metadata' => $metadata,
+                                    ],
+                                ],
+
+                            ],
+                            [
+                                'input' => [
+                                    'data' => [
+                                        'image' => [
+                                            'url' => $input->getImage(),
+                                        ],
+                                    ],
+                                ],
+
+                            ],
+                        ],
+                    ],
+                ]
+            )
+            ->andReturn(
+                $this->generateInputSearchResult(
+                    [
+                        $input->setConcepts([$concept1, $concept2])->setMetaData($metadata),
+                    ]
+                )
+            );
+
+        $this->assertEquals(
+            [$input],
+            $this->searchInputRepository->search(
+                [
+                    SearchInputRepository::INPUT_CONCEPTS => [$concept1],
+                    SearchInputRepository::OUTPUT_CONCEPTS => [$concept2],
+                    SearchInputRepository::IMAGES => [$input],
+                    SearchInputRepository::METADATA => [$metadata],
+                ]
+            )
+        );
+    }
+
     /**
      * Generates Input Search Result
      *
