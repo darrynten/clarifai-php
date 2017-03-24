@@ -64,7 +64,7 @@ class SearchModelRepositoryTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             [$model1, $model2],
-            $this->searchModelRepository->searchByNameAndType($model1->getName(),'concept')
+            $this->searchModelRepository->searchByNameAndType($model1->getName(), 'concept')
         );
     }
 }
