@@ -48,9 +48,9 @@ class SearchModelRepositoryTest extends \PHPUnit_Framework_TestCase
                 'POST',
                 'models/searches',
                 [
-                    "model_query" => [
-                        "name" => $model1->getName(),
-                        "type" => 'concept',
+                    'model_query' => [
+                        'name' => $model1->getName(),
+                        'type' => 'concept',
                     ],
 
                 ]

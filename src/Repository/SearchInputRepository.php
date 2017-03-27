@@ -107,6 +107,19 @@ class SearchInputRepository extends InputRepository
     }
 
     /**
+     * Returns data Query Part
+     *
+     * @param array $data
+     * @param string $type
+     *
+     * @return array $data
+     */
+    public function setData($data, $type)
+    {
+        return [$type => ['data' => $data]];
+    }
+
+    /**
      * Generates Input Concept search query and adds it to existing data
      *
      * @param $data
@@ -117,18 +130,17 @@ class SearchInputRepository extends InputRepository
     public function generateInputConceptsQuery($data, $concepts)
     {
         foreach ($concepts as $concept) {
-            $data[] = [
-                'input' => [
-                    'data' => [
-                        'concepts' => [
-                            [
-                                'name' => $concept->getName(),
-                                'value' => $concept->getValue(),
-                            ],
+            $data[] = $this->setData(
+                [
+                    'concepts' => [
+                        [
+                            'name' => $concept->getName(),
+                            'value' => $concept->getValue(),
                         ],
                     ],
                 ],
-            ];
+                'input'
+            );
         }
 
         return $data;
@@ -145,18 +157,17 @@ class SearchInputRepository extends InputRepository
     public function generateOutputConceptsQuery($data, $concepts)
     {
         foreach ($concepts as $concept) {
-            $data[] = [
-                'output' => [
-                    'data' => [
-                        'concepts' => [
-                            [
-                                'name' => $concept->getName(),
-                                'value' => $concept->getValue(),
-                            ],
+            $data[] = $this->setData(
+                [
+                    'concepts' => [
+                        [
+                            'name' => $concept->getName(),
+                            'value' => $concept->getValue(),
                         ],
                     ],
                 ],
-            ];
+                'output'
+            );
         }
 
         return $data;
@@ -173,13 +184,7 @@ class SearchInputRepository extends InputRepository
     public function generateMetadataQuery($data, $metadata)
     {
         foreach ($metadata as $searchMetadata) {
-            $data[] = [
-                'input' => [
-                    'data' => [
-                        'metadata' => $searchMetadata,
-                    ],
-                ],
-            ];
+            $data[] = $this->setData(['metadata' => $searchMetadata], 'input');
         }
 
         return $data;
@@ -196,15 +201,7 @@ class SearchInputRepository extends InputRepository
     public function generateImagesQuery($data, $inputs)
     {
         foreach ($inputs as $input) {
-            $data[] = [
-                'input' => [
-                    'data' => [
-                        'image' => [
-                            "url" => $input->getImage(),
-                        ],
-                    ],
-                ],
-            ];
+            $data[] = $this->setData(['image' => ['url' => $input->getImage()]], 'input');
         }
 
         return $data;
@@ -221,17 +218,7 @@ class SearchInputRepository extends InputRepository
     public function generateReverseImagesQuery($data, $inputs)
     {
         foreach ($inputs as $input) {
-            $data[] = [
-                'output' => [
-                    'input' => [
-                        'data' => [
-                            'image' => [
-                                "url" => $input->getImage(),
-                            ],
-                        ],
-                    ],
-                ],
-            ];
+            $data[] = ['output' => $this->setData(['image' => ['url' => $input->getImage()]], 'input')];
         }
 
         return $data;

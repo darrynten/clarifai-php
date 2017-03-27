@@ -34,9 +34,9 @@ class SearchModelRepository extends ModelRepository
             'POST',
             'models/searches',
             [
-                "model_query" => [
-                    "name" => $name,
-                    "type" => $type,
+                'model_query' => [
+                    'name' => $name,
+                    'type' => $type,
                 ],
 
             ]
