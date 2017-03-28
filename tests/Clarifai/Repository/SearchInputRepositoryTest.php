@@ -367,7 +367,7 @@ class SearchInputRepositoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Returns Search Body
-     * 
+     *
      * @return array
      */
     public function getAndsQuery()
