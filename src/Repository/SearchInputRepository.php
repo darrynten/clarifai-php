@@ -329,12 +329,11 @@ class SearchInputRepository extends InputRepository
 
         if (isset($searchResult['hits'])) {
             foreach ($searchResult['hits'] as $hit) {
-                if (isset($hit['input'])) {
-                    $input = new Input($hit['input']);
-                    $input_array[] = $input;
-                } else {
+                if (!isset($hit['input'])) {
                     throw new \Exception('Inputs Not Found');
                 }
+                $input = new Input($hit['input']);
+                $input_array[] = $input;
             }
         } else {
             throw new \Exception('Hits Not Found');
