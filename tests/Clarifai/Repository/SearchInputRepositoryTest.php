@@ -2,6 +2,7 @@
 
 namespace DarrynTen\Clarifai\Tests\Clarifai\Repository;
 
+use DarrynTen\Clarifai\Entity\Concept;
 use DarrynTen\Clarifai\Entity\Input;
 use DarrynTen\Clarifai\Repository\BaseRepository;
 use DarrynTen\Clarifai\Repository\InputRepository;
@@ -40,29 +41,15 @@ class SearchInputRepositoryTest extends \PHPUnit_Framework_TestCase
         $input = $this->getFullInputEntity();
         $concept = $this->getFullConceptEntity('id1', true);
 
+        $data['query']['ands'] = [];
+        $data['query']['ands'] = $this->getOutputConceptsQuery($data['query']['ands'] ,[$concept]);
+
         $this->request->shouldReceive('request')
             ->once()
             ->with(
                 'POST',
                 'searches',
-                [
-                    'query' => [
-                        'ands' => [
-                            [
-                                'output' => [
-                                    'data' => [
-                                        'concepts' => [
-                                            [
-                                                'name' => $concept->getName(),
-                                                'value' => $concept->getValue(),
-                                            ],
-                                        ],
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
-                ]
+                $data
             )
             ->andReturn($this->generateInputSearchResult([$input->setConcepts([$concept])]));
 
@@ -79,29 +66,15 @@ class SearchInputRepositoryTest extends \PHPUnit_Framework_TestCase
 
         $concept = $this->getFullConceptEntity('id1', true);
 
+        $data['query']['ands'] = [];
+        $data['query']['ands'] = $this->getInputConceptsQuery($data['query']['ands'] ,[$concept]);
+
         $this->request->shouldReceive('request')
             ->once()
             ->with(
                 'POST',
                 'searches',
-                [
-                    'query' => [
-                        'ands' => [
-                            [
-                                'input' => [
-                                    'data' => [
-                                        'concepts' => [
-                                            [
-                                                'name' => $concept->getName(),
-                                                'value' => $concept->getValue(),
-                                            ],
-                                        ],
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
-                ]
+                $data
             )
             ->andReturn(
                 $this->generateInputSearchResult(
@@ -120,31 +93,18 @@ class SearchInputRepositoryTest extends \PHPUnit_Framework_TestCase
 
     public function testSearchByReverseImage()
     {
-        $input1 = $this->getFullInputEntity()->setId('id1')->setImage('image');
-        $input2 = $this->getFullInputEntity()->setId('id2')->setImage('image');
+        $input1 = $this->getFullInputEntity()->setId('id1');
+        $input2 = $this->getFullInputEntity()->setId('id2');
+
+        $data['query']['ands'] = [];
+        $data['query']['ands'] = $this->getReverseImagesQuery($data['query']['ands'] ,[$input1]);
 
         $this->request->shouldReceive('request')
             ->once()
             ->with(
                 'POST',
                 'searches',
-                [
-                    'query' => [
-                        'ands' => [
-                            [
-                                'output' => [
-                                    'input' => [
-                                        'data' => [
-                                            'image' => [
-                                                'url' => $input1->getImage(),
-                                            ],
-                                        ],
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
-                ]
+                $data
             )
             ->andReturn(
                 $this->generateInputSearchResult(
@@ -163,30 +123,18 @@ class SearchInputRepositoryTest extends \PHPUnit_Framework_TestCase
 
     public function testSearchByMatchUrl()
     {
-        $input1 = $this->getFullInputEntity()->setId('id1')->setImage('image');
-        $input2 = $this->getFullInputEntity()->setId('id2')->setImage('image');
+        $input1 = $this->getFullInputEntity()->setId('id1');
+        $input2 = $this->getFullInputEntity()->setId('id2');
+
+        $data['query']['ands'] = [];
+        $data['query']['ands'] = $this->getImagesQuery($data['query']['ands'] ,[$input1]);
 
         $this->request->shouldReceive('request')
             ->once()
             ->with(
                 'POST',
                 'searches',
-                [
-                    'query' => [
-                        'ands' => [
-                            [
-                                'input' => [
-                                    'data' => [
-                                        'image' => [
-                                            'url' => $input1->getImage(),
-                                        ],
-                                    ],
-                                ],
-
-                            ],
-                        ],
-                    ],
-                ]
+                $data
             )
             ->andReturn(
                 $this->generateInputSearchResult(
@@ -210,25 +158,15 @@ class SearchInputRepositoryTest extends \PHPUnit_Framework_TestCase
         $input1 = $this->getFullInputEntity()->setId('id1')->setMetaData($metadata);
         $input2 = $this->getFullInputEntity()->setId('id2')->setMetaData($metadata);
 
+        $data['query']['ands'] = [];
+        $data['query']['ands'] = $this->getMetadataQuery($data['query']['ands'] ,[$metadata]);
+
         $this->request->shouldReceive('request')
             ->once()
             ->with(
                 'POST',
                 'searches',
-                [
-                    'query' => [
-                        'ands' => [
-                            [
-                                'input' => [
-                                    'data' => [
-                                        'metadata' => $metadata,
-                                    ],
-                                ],
-
-                            ],
-                        ],
-                    ],
-                ]
+                $data
             )
             ->andReturn(
                 $this->generateInputSearchResult(
@@ -247,66 +185,23 @@ class SearchInputRepositoryTest extends \PHPUnit_Framework_TestCase
 
     public function testSearch()
     {
-        $input = $this->getFullInputEntity()->setImage('image');
+        $input = $this->getFullInputEntity();
         $metadata = ['first' => 'second'];
         $concept1 = $this->getFullConceptEntity('id1', true);
         $concept2 = $this->getFullConceptEntity('id2', true);
 
-        $concept = $this->getFullConceptEntity('id1', true);
+        $data['query']['ands'] = [];
+        $data['query']['ands'] = $this->getInputConceptsQuery($data['query']['ands'] ,[$concept1]);
+        $data['query']['ands'] = $this->getOutputConceptsQuery($data['query']['ands'] ,[$concept2]);
+        $data['query']['ands'] = $this->getMetadataQuery($data['query']['ands'] ,[$metadata]);
+        $data['query']['ands'] = $this->getImagesQuery($data['query']['ands'] ,[$input]);
 
         $this->request->shouldReceive('request')
             ->once()
             ->with(
                 'POST',
                 'searches',
-                [
-                    'query' => [
-                        'ands' => [
-                            [
-                                'input' => [
-                                    'data' => [
-                                        'concepts' => [
-                                            [
-                                                'name' => $concept1->getName(),
-                                                'value' => $concept1->getValue(),
-                                            ],
-                                        ],
-                                    ],
-                                ],
-                            ],
-                            [
-                                'output' => [
-                                    'data' => [
-                                        'concepts' => [
-                                            [
-                                                'name' => $concept2->getName(),
-                                                'value' => $concept2->getValue(),
-                                            ],
-                                        ],
-                                    ],
-                                ],
-                            ],
-                            [
-                                'input' => [
-                                    'data' => [
-                                        'metadata' => $metadata,
-                                    ],
-                                ],
-
-                            ],
-                            [
-                                'input' => [
-                                    'data' => [
-                                        'image' => [
-                                            'url' => $input->getImage(),
-                                        ],
-                                    ],
-                                ],
-
-                            ],
-                        ],
-                    ],
-                ]
+                $data
             )
             ->andReturn(
                 $this->generateInputSearchResult(
@@ -351,4 +246,128 @@ class SearchInputRepositoryTest extends \PHPUnit_Framework_TestCase
 
         return $data;
     }
+
+    /**
+     * Returns data Query Part
+     *
+     * @param array $data
+     * @param string $type
+     *
+     * @return array $data
+     */
+    public function setData($data, $type)
+    {
+        return [$type => ['data' => $data]];
+    }
+
+    /**
+     * Generates Input Concept search query and adds it to existing data
+     *
+     * @param $data
+     * @param Concept[] $concepts
+     *
+     * @return array $data
+     */
+    public function getInputConceptsQuery($data, $concepts)
+    {
+        foreach ($concepts as $concept) {
+            $data[] = $this->setData(
+                [
+                    'concepts' => [
+                        [
+                            'name' => $concept->getName(),
+                            'value' => $concept->getValue(),
+                        ],
+                    ],
+                ],
+                'input'
+            );
+        }
+
+        return $data;
+    }
+
+    /**
+     * Generates Output Concept search query and adds it to existing data
+     *
+     * @param $data
+     * @param Concept[] $concepts
+     *
+     * @return array $data
+     */
+    public function getOutputConceptsQuery($data, $concepts)
+    {
+        foreach ($concepts as $concept) {
+            $data[] = $this->setData(
+                [
+                    'concepts' => [
+                        [
+                            'name' => $concept->getName(),
+                            'value' => $concept->getValue(),
+                        ],
+                    ],
+                ],
+                'output'
+            );
+        }
+
+        return $data;
+    }
+
+    /**
+     * Generates Metadata search query and adds it to existing data
+     *
+     * @param $data
+     * @param array $metadata
+     *
+     * @return array $data
+     */
+    public function getMetadataQuery($data, $metadata)
+    {
+        foreach ($metadata as $searchMetadata) {
+            $data[] = $this->setData(['metadata' => $searchMetadata], 'input');
+        }
+
+        return $data;
+    }
+
+    /**
+     * Generates Image search query and adds it to existing data
+     *
+     * @param $data
+     * @param Input[] $inputs
+     *
+     * @return array $data
+     */
+    public function getImagesQuery($data, $inputs)
+    {
+        foreach ($inputs as $input) {
+            $data[] = $this->setData(['image' => ['url' => $input->getImage()]], 'input');
+        }
+
+        return $data;
+    }
+
+    /**
+     * Generates Reverse Image search query and adds it to existing data
+     *
+     * @param $data
+     * @param Input[] $inputs
+     *
+     * @return array $data
+     */
+    public function getReverseImagesQuery($data, $inputs)
+    {
+        foreach ($inputs as $input) {
+            $data[] = ['output' => $this->setData(['image' => ['url' => $input->getImage()]], 'input')];
+        }
+
+        return $data;
+    }
+
+    public function getAndsQuery()
+    {
+        return ['query' => ['ands' => []]];
+    }
+
 }

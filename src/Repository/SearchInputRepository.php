@@ -75,29 +75,29 @@ class SearchInputRepository extends InputRepository
         $data['query']['ands'] = [];
 
         if (isset($params[self::INPUT_CONCEPTS])) {
-            $data['query']['ands'] = $this->generateInputConceptsQuery(
+            $data['query']['ands'] = $this->getInputConceptsQuery(
                 $data['query']['ands'],
                 $params[self::INPUT_CONCEPTS]
             );
         }
 
         if (isset($params[self::OUTPUT_CONCEPTS])) {
-            $data['query']['ands'] = $this->generateOutputConceptsQuery(
+            $data['query']['ands'] = $this->getOutputConceptsQuery(
                 $data['query']['ands'],
                 $params[self::OUTPUT_CONCEPTS]
             );
         }
 
         if (isset($params[self::METADATA])) {
-            $data['query']['ands'] = $this->generateMetadataQuery($data['query']['ands'], $params[self::METADATA]);
+            $data['query']['ands'] = $this->getMetadataQuery($data['query']['ands'], $params[self::METADATA]);
         }
 
         if (isset($params[self::IMAGES])) {
-            $data['query']['ands'] = $this->generateImagesQuery($data['query']['ands'], $params[self::IMAGES]);
+            $data['query']['ands'] = $this->getImagesQuery($data['query']['ands'], $params[self::IMAGES]);
         }
 
         if (isset($params[self::REVERSED_IMAGES])) {
-            $data['query']['ands'] = $this->generateReverseImagesQuery(
+            $data['query']['ands'] = $this->getReverseImagesQuery(
                 $data['query']['ands'],
                 $params[self::REVERSED_IMAGES]
             );
@@ -127,7 +127,7 @@ class SearchInputRepository extends InputRepository
      *
      * @return array $data
      */
-    public function generateInputConceptsQuery($data, $concepts)
+    public function getInputConceptsQuery($data, $concepts)
     {
         foreach ($concepts as $concept) {
             $data[] = $this->setData(
@@ -154,7 +154,7 @@ class SearchInputRepository extends InputRepository
      *
      * @return array $data
      */
-    public function generateOutputConceptsQuery($data, $concepts)
+    public function getOutputConceptsQuery($data, $concepts)
     {
         foreach ($concepts as $concept) {
             $data[] = $this->setData(
@@ -181,7 +181,7 @@ class SearchInputRepository extends InputRepository
      *
      * @return array $data
      */
-    public function generateMetadataQuery($data, $metadata)
+    public function getMetadataQuery($data, $metadata)
     {
         foreach ($metadata as $searchMetadata) {
             $data[] = $this->setData(['metadata' => $searchMetadata], 'input');
@@ -198,7 +198,7 @@ class SearchInputRepository extends InputRepository
      *
      * @return array $data
      */
-    public function generateImagesQuery($data, $inputs)
+    public function getImagesQuery($data, $inputs)
     {
         foreach ($inputs as $input) {
             $data[] = $this->setData(['image' => ['url' => $input->getImage()]], 'input');
@@ -215,7 +215,7 @@ class SearchInputRepository extends InputRepository
      *
      * @return array $data
      */
-    public function generateReverseImagesQuery($data, $inputs)
+    public function getReverseImagesQuery($data, $inputs)
     {
         foreach ($inputs as $input) {
             $data[] = ['output' => $this->setData(['image' => ['url' => $input->getImage()]], 'input')];
