@@ -365,9 +365,13 @@ class SearchInputRepositoryTest extends \PHPUnit_Framework_TestCase
         return $data;
     }
 
+    /**
+     * Returns Search Body
+     * 
+     * @return array
+     */
     public function getAndsQuery()
     {
         return ['query' => ['ands' => []]];
     }
-
 }
