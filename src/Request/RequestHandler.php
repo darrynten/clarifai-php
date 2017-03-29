@@ -5,7 +5,7 @@
  * @category Library
  * @package  Clarifai
  * @author   Darryn Ten <darrynten@github.com>
- * @license  MIT <https://github.com/darrynten/clarifai-php/LICENSE>
+ * @license  MIT <https://github.com/darrynten/clarifai-php/blob/master/LICENSE>
  * @link     https://github.com/darrynten/clarifai-php
  */
 
@@ -21,7 +21,7 @@ use GuzzleHttp\Exception\RequestException;
  * @category Library
  * @package  Clarifai
  * @author   Darryn Ten <darrynten@github.com>
- * @license  MIT <https://github.com/darrynten/clarifai-php/LICENSE>
+ * @license  MIT <https://github.com/darrynten/clarifai-php/blob/master/LICENSE>
  * @link     https://github.com/darrynten/clarifai-php
  */
 class RequestHandler
