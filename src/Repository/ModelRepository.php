@@ -154,7 +154,7 @@ class ModelRepository extends BaseRepository
 
         return $this->getRequest()->request(
             'POST',
-            sprintf('models/%s/outputs', $modelType),
+            $this->getRequestUrl(sprintf('models/%s/outputs', $modelType)),
             $data
         );
     }
@@ -228,7 +228,7 @@ class ModelRepository extends BaseRepository
     {
         $modelResult = $this->getRequest()->request(
             'POST',
-            sprintf('models/%s/versions', $id)
+            $this->getRequestUrl(sprintf('models/%s/versions', $id))
         );
 
         return $this->getModelFromResult($modelResult);
@@ -249,7 +249,7 @@ class ModelRepository extends BaseRepository
 
         $modelResult = $this->getRequest()->request(
             'POST',
-            'models',
+            $this->getRequestUrl('models'),
             $data
         );
 
@@ -271,7 +271,7 @@ class ModelRepository extends BaseRepository
 
         $modelResult = $this->getRequest()->request(
             'PATCH',
-            'models',
+            $this->getRequestUrl('models'),
             $data
         );
 
@@ -315,7 +315,7 @@ class ModelRepository extends BaseRepository
     {
         $modelResult = $this->getRequest()->request(
             'GET',
-            'models'
+            $this->getRequestUrl('models')
         );
 
         return $this->getModelsFromResult($modelResult);
@@ -334,7 +334,7 @@ class ModelRepository extends BaseRepository
     {
         $modelResult = $this->getRequest()->request(
             'GET',
-            sprintf('models/%s', $id)
+            $this->getRequestUrl(sprintf('models/%s', $id))
         );
 
         return $this->getModelFromResult($modelResult);
@@ -353,7 +353,7 @@ class ModelRepository extends BaseRepository
     {
         $modelResult = $this->getRequest()->request(
             'GET',
-            sprintf('models/%s/output_info', $id)
+            $this->getRequestUrl(sprintf('models/%s/output_info', $id))
         );
 
         return $this->getModelFromResult($modelResult);
@@ -372,7 +372,7 @@ class ModelRepository extends BaseRepository
     {
         $modelResult = $this->getRequest()->request(
             'GET',
-            sprintf('models/%s/versions', $id)
+            $this->getRequestUrl(sprintf('models/%s/versions', $id))
         );
 
         $modelVersions = [];
@@ -403,7 +403,7 @@ class ModelRepository extends BaseRepository
     {
         $modelResult = $this->getRequest()->request(
             'GET',
-            sprintf('models/%s/versions/%s', $modelId, $versionId)
+            $this->getRequestUrl(sprintf('models/%s/versions/%s', $modelId, $versionId))
         );
 
         if (isset($modelResult['model_version'])) {
@@ -440,7 +440,7 @@ class ModelRepository extends BaseRepository
 
         $updateResult = $this->getRequest()->request(
             'PATCH',
-            'models',
+            $this->getRequestUrl('models'),
             $data
         );
 
@@ -548,7 +548,7 @@ class ModelRepository extends BaseRepository
     {
         $deleteResult = $this->getRequest()->request(
             'DELETE',
-            sprintf('models/%s', $modelId)
+            $this->getRequestUrl(sprintf('models/%s', $modelId))
         );
 
         return $deleteResult['status'];
@@ -566,7 +566,7 @@ class ModelRepository extends BaseRepository
     {
         $deleteResult = $this->getRequest()->request(
             'DELETE',
-            sprintf('models/%s/versions/%s', $modelId, $versionId)
+            $this->getRequestUrl(sprintf('models/%s/versions/%s', $modelId, $versionId))
         );
 
         return $deleteResult['status'];
@@ -581,7 +581,7 @@ class ModelRepository extends BaseRepository
     {
         $deleteResult = $this->getRequest()->request(
             'DELETE',
-            'models',
+            $this->getRequestUrl('models'),
             ['delete_all' => true]
         );
 
@@ -599,7 +599,7 @@ class ModelRepository extends BaseRepository
     {
         $inputResult = $this->getRequest()->request(
             'GET',
-            sprintf('models/%s/inputs', $modelId)
+            $this->getRequestUrl(sprintf('models/%s/inputs', $modelId))
         );
 
         return $this->getInputsFromResult($inputResult);
@@ -617,7 +617,7 @@ class ModelRepository extends BaseRepository
     {
         $inputResult = $this->getRequest()->request(
             'GET',
-            sprintf('models/%s/versions/%s/inputs', $modelId, $versionId)
+            $this->getRequestUrl(sprintf('models/%s/versions/%s/inputs', $modelId, $versionId))
         );
 
         return $this->getInputsFromResult($inputResult);
