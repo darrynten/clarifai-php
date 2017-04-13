@@ -110,7 +110,7 @@ abstract class BaseRepository
      *
      * @return string
      */
-    protected function getRequestUrl($url)
+    public function getRequestUrl($url)
     {
         if ($this->getPerPage() && $this->getPage()) {
             return $url . $this->getRequestPageInfo();

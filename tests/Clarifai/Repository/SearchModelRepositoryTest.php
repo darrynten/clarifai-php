@@ -5,9 +5,10 @@ namespace DarrynTen\Clarifai\Tests\Clarifai\Repository;
 use DarrynTen\Clarifai\Repository\BaseRepository;
 use DarrynTen\Clarifai\Repository\ModelRepository;
 use DarrynTen\Clarifai\Repository\SearchModelRepository;
+use DarrynTen\Clarifai\Tests\Clarifai\Entity\EntityTest;
 use DarrynTen\Clarifai\Tests\Clarifai\Helpers\DataHelper;
 
-class SearchModelRepositoryTest extends \PHPUnit_Framework_TestCase
+class SearchModelRepositoryTest extends EntityTest
 {
     use DataHelper;
 
@@ -25,6 +26,7 @@ class SearchModelRepositoryTest extends \PHPUnit_Framework_TestCase
     {
         $this->request = $this->getRequestMock();
         $this->searchModelRepository = new SearchModelRepository($this->request, [], []);
+        $this->entity = new SearchModelRepository($this->request, [], []);
     }
 
     public function testInstanceOfModel()
@@ -65,6 +67,58 @@ class SearchModelRepositoryTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(
             [$model1, $model2],
             $this->searchModelRepository->searchByNameAndType($model1->getName(), 'concept')
+        );
+    }
+
+    /**
+     * BaseRepository's property Test
+     *
+     * @return array
+     */
+    public function setterGetterProvider()
+    {
+        return [
+            ['Page', '2'],
+            ['PerPage', '2'],
+        ];
+    }
+
+    /**
+     * BaseRepository's Method Test
+     */
+    public function testGetRequestPageInfo()
+    {
+        $perPage = 20;
+        $page = 10;
+
+        $this->assertEquals(
+            '?page=&per_page=',
+            $this->entity->getRequestPageInfo()
+        );
+
+        $this->assertEquals(
+            '?page=' . $page . '&per_page=' . $perPage,
+            $this->entity->setPerPage($perPage)->setPage($page)->getRequestPageInfo()
+        );
+    }
+
+    /**
+     * BaseRepository's Method Test
+     */
+    public function testGetRequestUrl()
+    {
+        $url = 'some_url';
+        $perPage = 20;
+        $page = 10;
+
+        $this->assertEquals(
+            $url,
+            $this->entity->getRequestUrl($url)
+        );
+
+        $this->assertEquals(
+            $url . '?page=' . $page . '&per_page=' . $perPage,
+            $this->entity->setPerPage($perPage)->setPage($page)->getRequestUrl($url)
         );
     }
 }
