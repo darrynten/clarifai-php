@@ -32,7 +32,7 @@ class SearchModelRepository extends ModelRepository
     {
         $searchResult = $this->getRequest()->request(
             'POST',
-            'models/searches',
+            $this->getRequestUrl('models/searches'),
             [
                 'model_query' => [
                     'name' => $name,
