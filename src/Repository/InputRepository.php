@@ -332,7 +332,7 @@ class InputRepository extends BaseRepository
 
         foreach ($conceptsArray as $inputId => $inputConcepts) {
             $input = [];
-            $input['id'] = $inputId;
+            $input['id'] = (string)$inputId;
             $input['data'] = [];
             $input['data'] = $this->addImageConcepts($input['data'], $inputConcepts);
 
