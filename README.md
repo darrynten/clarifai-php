@@ -100,9 +100,9 @@ $clarifai = new \DarrynTen\Clarifai\Clarifai(
     CLIENT_SECRET
 );
 
-$modelResult = $clarifai->getModel()->predictUrl(
+$modelResult = $clarifai->getModelRepository()->predictUrl(
     'https://samples.clarifai.com/metro-north.jpg',
-    \DarrynTen\Clarifai\Repository\Model::GENERAL
+    \DarrynTen\Clarifai\Repository\ModelRepository::GENERAL
 );
 
 echo json_encode($modelResult);
@@ -176,18 +176,18 @@ The response (abridged) would be:
 This can happen either with an image URL:
 
 ```php
-    $modelResult = $clarifai->getModel()->predictPath(
+    $modelResult = $clarifai->getModelRepository()->predictPath(
         '/user/images/image.png',
-        \DarrynTen\Clarifai\Repository\Model::GENERAL
+        \DarrynTen\Clarifai\Repository\ModelRepository::GENERAL
     );
 ```
 
 or b64 encoded data:
 
 ```php
-    $modelResult = $clarifai->getModel()->predictEncoded(
+    $modelResult = $clarifai->getModelRepository()->predictEncoded(
         ENCODED_IMAGE_HASH,
-        \DarrynTen\Clarifai\Repository\Model::GENERAL
+        \DarrynTen\Clarifai\Repository\ModelRepository::GENERAL
     );
 ```
 

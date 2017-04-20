@@ -429,7 +429,7 @@ class ModelRepository extends BaseRepository
 
         foreach ($modelsArray as $modelId => $modelConcepts) {
             $model = [];
-            $model['id'] = $modelId;
+            $model['id'] = (string)$modelId;
             $model['output_info'] = [];
             $model['output_info']['data'] = [];
             $model['output_info']['data'] = $this->addModelConcepts($model['output_info']['data'], $modelConcepts);
