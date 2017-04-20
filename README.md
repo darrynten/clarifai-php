@@ -100,9 +100,9 @@ $clarifai = new \DarrynTen\Clarifai\Clarifai(
     CLIENT_SECRET
 );
 
-$modelResult = $clarifai->getModel()->predictUrl(
+$modelResult = $clarifai->getModelRepository()->predictUrl(
     'https://samples.clarifai.com/metro-north.jpg',
-    \DarrynTen\Clarifai\Repository\Model::GENERAL
+    \DarrynTen\Clarifai\Repository\ModelRepository::GENERAL
 );
 
 echo json_encode($modelResult);
@@ -176,18 +176,18 @@ The response (abridged) would be:
 This can happen either with an image URL:
 
 ```php
-    $modelResult = $clarifai->getModel()->predictPath(
+    $modelResult = $clarifai->getModelRepository()->predictPath(
         '/user/images/image.png',
-        \DarrynTen\Clarifai\Repository\Model::GENERAL
+        \DarrynTen\Clarifai\Repository\ModelRepository::GENERAL
     );
 ```
 
 or b64 encoded data:
 
 ```php
-    $modelResult = $clarifai->getModel()->predictEncoded(
+    $modelResult = $clarifai->getModelRepository()->predictEncoded(
         ENCODED_IMAGE_HASH,
-        \DarrynTen\Clarifai\Repository\Model::GENERAL
+        \DarrynTen\Clarifai\Repository\ModelRepository::GENERAL
     );
 ```
 
@@ -233,16 +233,16 @@ Checked off bits are complete.
   - [x] Delete All Models
   - [x] Train Model
   - [x] Predict With Model
-- [ ] Searches
-  - [ ] Search Model by Name and Type
-  - [ ] Search by Predicted Concepts
-  - [ ] Search by User Supplied Concept
-  - [ ] Search by Custom Metadata
-  - [ ] Search by Reverse Image
-  - [ ] Search Match URL
-  - [ ] Search by Concept and Prediction
-  - [ ] Search ANDing
-- [ ] Pagination
+- [x] Searches
+  - [x] Search Model by Name and Type
+  - [x] Search by Predicted Concepts
+  - [x] Search by User Supplied Concept
+  - [x] Search by Custom Metadata
+  - [x] Search by Reverse Image
+  - [x] Search Match URL
+  - [x] Search by Concept and Prediction
+  - [x] Search ANDing
+- [x] Pagination
 - [ ] Patching
   - [ ] Merge
   - [ ] Remove
@@ -358,8 +358,6 @@ You can list all the inputs (images) you have previously added either for search
 or train.
 
 If you added inputs with concepts, they will be returned in the response as well.
-
-# This request is implemented but is not yet paginated
 
 ```php
     $inputResult = $clarifai->getInputRepository()->get();
@@ -641,6 +639,129 @@ Note: you can repeat this operation as often as you like. By adding more images 
 
 ```php
     $modelResult = $clarifai->getModelRepository()->train($id);
+```
+
+#### Search Models By Name And Type
+
+You can search all your models by name and type of model.
+
+```php
+    $modelResult = $clarifai->getSearchModelRepository()->searchByNameAndType($modelName, 'concept');
+```
+
+## Searches
+
+#### Search By Predicted Concepts
+
+When you add an input, it automatically gets predictions from the general model. You can search for those predictions.
+
+```php
+    $concept1 = new Concept();
+    $concept1->setName('dog')->setValue(true);
+    
+    $concept2 = new Concept();
+    $concept2->setName('cat');
+        
+    $inputResult = $clarifai->getSearchInputRepository()->searchByPredictedConcepts([$concept1, $concept2]);
+```
+
+#### Search By User Supplied Concept
+
+After you have added inputs with concepts, you can search by those concepts.
+
+```php
+    $concept1 = new Concept();
+    $concept1->setName('dog');
+    
+    $concept2 = new Concept();
+    $concept2->setName('cat');
+        
+    $inputResult = $clarifai->getSearchInputRepository()->searchByUserSuppliedConcepts([$concept1, $concept2]);
+```
+
+#### Search By Custom Metadata
+
+After you have added inputs with custom metadata, you can search by that metadata.
+
+```php
+    $metadata = ['key'=> 'value'];
+
+    $inputResult = $clarifai->getSearchInputRepository()->searchByCustomMetadata([$metadata]);
+```
+
+#### Search By Reverse Image
+
+You can use images to do reverse image search on your collection. The API will return ranked results based on how similar the results are to the image you provided in your query.
+
+```php
+    $input = new Input();
+    $input->setImage('https://samples.clarifai.com/metro-north.jpg');
+        
+    $inputResult = $clarifai->getSearchInputRepository()->searchByReversedImage([$input]);
+```
+
+#### Search Match Url
+
+You can also search for an input by URL.
+
+```php
+    $input = new Input();
+    $input->setImage('https://samples.clarifai.com/metro-north.jpg');
+        
+    $inputResult = $clarifai->getSearchInputRepository()->searchByMatchUrl([$input]);
+```
+
+#### Search By Concept And Predictions
+
+You can combine a search to find inputs that have concepts you have supplied as well as predictions from your model.
+
+```php
+    $concept1 = new Concept();
+    $concept1->setName('dog');
+    
+    $concept2 = new Concept();
+    $concept2->setName('cat');
+        
+    $inputResult = $clarifai->getSearchInputRepository()->search(
+        [
+            \DarrynTen\Clarifai\Repository\SearchInputRepository::INPUT_CONCEPTS => [$concept1],
+            \DarrynTen\Clarifai\Repository\SearchInputRepository::OUTPUT_CONCEPTS => [$concept2]
+        ]
+    );
+```
+
+#### Search ANDing
+
+You can also combine searches using AND.
+
+```php
+    $concept1 = new Concept();
+    $concept1->setName('dog');
+    
+    $concept2 = new Concept();
+    $concept2->setName('cat');
+    
+    $input = new Input();
+    $input->setImage('https://samples.clarifai.com/metro-north.jpg');
+    
+    $metadata = ['key' => 'value'];
+        
+    $inputResult = $clarifai->getSearchInputRepository()->search(
+        [
+            SearchInputRepository::INPUT_CONCEPTS => [$concept1],
+            SearchInputRepository::OUTPUT_CONCEPTS => [$concept2],
+            SearchInputRepository::IMAGE => [$input],
+            SearchInputRepository::METADATA => [$metadata],
+        ]
+    );
+```
+
+## Pagination
+
+Many API calls are paginated. You can provide page and per_page params to the API. In the example below we are getting all inputs and specifying to start at page 2 and get back 20 results per page.
+
+```php
+    $inputResult = $clarifai->getInputRepository()->setPage(2)->setPerPage(20)->get();
 ```
 
 # Roadmap

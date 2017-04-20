@@ -5,7 +5,7 @@
  * @category Input
  * @package  Clarifai
  * @author   Darryn Ten <darrynten@github.com>
- * @license  MIT <https://github.com/darrynten/clarifai-php/LICENSE>
+ * @license  MIT <https://github.com/darrynten/clarifai-php/blob/master/LICENSE>
  * @link     https://github.com/darrynten/clarifai-php
  */
 
@@ -65,7 +65,7 @@ class InputRepository extends BaseRepository
 
         $inputResult = $this->getRequest()->request(
             'POST',
-            'inputs',
+            $this->getRequestUrl('inputs'),
             $data
         );
 
@@ -211,7 +211,7 @@ class InputRepository extends BaseRepository
     {
         $inputResult = $this->getRequest()->request(
             'GET',
-            'inputs'
+            $this->getRequestUrl('inputs')
         );
 
         return $this->getInputsFromResult($inputResult);
@@ -230,7 +230,7 @@ class InputRepository extends BaseRepository
     {
         $inputResult = $this->getRequest()->request(
             'GET',
-            sprintf('inputs/%s', $id)
+            $this->getRequestUrl(sprintf('inputs/%s', $id))
         );
 
         if (isset($inputResult['input'])) {
@@ -253,7 +253,7 @@ class InputRepository extends BaseRepository
     {
         $statusResult = $this->getRequest()->request(
             'GET',
-            'inputs/status'
+            $this->getRequestUrl('inputs/status')
         );
 
         if (isset($statusResult['counts'])) {
@@ -276,7 +276,7 @@ class InputRepository extends BaseRepository
     {
         $deleteResult = $this->getRequest()->request(
             'DELETE',
-            sprintf('inputs/%s', $id)
+            $this->getRequestUrl(sprintf('inputs/%s', $id))
         );
 
         return $deleteResult['status'];
@@ -295,7 +295,7 @@ class InputRepository extends BaseRepository
 
         $deleteResult = $this->getRequest()->request(
             'DELETE',
-            'inputs',
+            $this->getRequestUrl('inputs'),
             $data
         );
 
@@ -311,7 +311,7 @@ class InputRepository extends BaseRepository
     {
         $deleteResult = $this->getRequest()->request(
             'DELETE',
-            'inputs',
+            $this->getRequestUrl('inputs'),
             ['delete_all' => true]
         );
 
@@ -332,7 +332,7 @@ class InputRepository extends BaseRepository
 
         foreach ($conceptsArray as $inputId => $inputConcepts) {
             $input = [];
-            $input['id'] = $inputId;
+            $input['id'] = (string)$inputId;
             $input['data'] = [];
             $input['data'] = $this->addImageConcepts($input['data'], $inputConcepts);
 
@@ -342,7 +342,7 @@ class InputRepository extends BaseRepository
 
         $updateResult = $this->getRequest()->request(
             'PATCH',
-            'inputs',
+            $this->getRequestUrl('inputs'),
             $data
         );
 

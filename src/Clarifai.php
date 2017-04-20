@@ -5,7 +5,7 @@
  * @category Base
  * @package  Clarifai
  * @author   Darryn Ten <darrynten@github.com>
- * @license  MIT <https://github.com/darrynten/clarifai-php/LICENSE>
+ * @license  MIT <https://github.com/darrynten/clarifai-php/blob/master/LICENSE>
  * @link     https://github.com/darrynten/clarifai-php
  */
 
@@ -65,5 +65,27 @@ class Clarifai
     public function getInputRepository($config = null, $data = null)
     {
         return new Repository\InputRepository($this->getRequest(), $config, $data);
+    }
+
+    /**
+     * @param $config
+     * @param $data
+     *
+     * @return Repository\SearchInputRepository
+     */
+    public function getSearchInputRepository($config = null, $data = null)
+    {
+        return new Repository\SearchInputRepository($this->getRequest(), $config, $data);
+    }
+
+    /**
+     * @param $config
+     * @param $data
+     *
+     * @return Repository\SearchModelRepository
+     */
+    public function getSearchModelRepository($config = null, $data = null)
+    {
+        return new Repository\SearchModelRepository($this->getRequest(), $config, $data);
     }
 }
