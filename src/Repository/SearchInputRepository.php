@@ -57,7 +57,7 @@ class SearchInputRepository extends InputRepository
     {
         $searchResult = $this->getRequest()->request(
             'POST',
-            'searches',
+            $this->getRequestUrl('searches'),
             $this->getSearchQuery($params)
         );
 
@@ -235,7 +235,7 @@ class SearchInputRepository extends InputRepository
     {
         $searchResult = $this->getRequest()->request(
             'POST',
-            'searches',
+            $this->getRequestUrl('searches'),
             $this->getSearchQuery([self::OUTPUT_CONCEPTS => $concepts])
         );
 
@@ -253,7 +253,7 @@ class SearchInputRepository extends InputRepository
     {
         $searchResult = $this->getRequest()->request(
             'POST',
-            'searches',
+            $this->getRequestUrl('searches'),
             $this->getSearchQuery([self::INPUT_CONCEPTS => $concepts])
         );
 
@@ -271,7 +271,7 @@ class SearchInputRepository extends InputRepository
     {
         $searchResult = $this->getRequest()->request(
             'POST',
-            'searches',
+            $this->getRequestUrl('searches'),
             $this->getSearchQuery([self::METADATA => $metadata])
         );
 
@@ -289,7 +289,7 @@ class SearchInputRepository extends InputRepository
     {
         $searchResult = $this->getRequest()->request(
             'POST',
-            'searches',
+            $this->getRequestUrl('searches'),
             $this->getSearchQuery([self::REVERSED_IMAGES => $inputs])
         );
 
@@ -307,7 +307,7 @@ class SearchInputRepository extends InputRepository
     {
         $searchResult = $this->getRequest()->request(
             'POST',
-            'searches',
+            $this->getRequestUrl('searches'),
             $this->getSearchQuery([self::IMAGES => $inputs])
         );
 

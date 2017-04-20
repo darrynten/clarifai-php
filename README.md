@@ -242,7 +242,7 @@ Checked off bits are complete.
   - [x] Search Match URL
   - [x] Search by Concept and Prediction
   - [x] Search ANDing
-- [ ] Pagination
+- [x] Pagination
 - [ ] Patching
   - [ ] Merge
   - [ ] Remove
@@ -358,8 +358,6 @@ You can list all the inputs (images) you have previously added either for search
 or train.
 
 If you added inputs with concepts, they will be returned in the response as well.
-
-# This request is implemented but is not yet paginated
 
 ```php
     $inputResult = $clarifai->getInputRepository()->get();
@@ -756,6 +754,14 @@ You can also combine searches using AND.
             SearchInputRepository::METADATA => [$metadata],
         ]
     );
+```
+
+## Pagination
+
+Many API calls are paginated. You can provide page and per_page params to the API. In the example below we are getting all inputs and specifying to start at page 2 and get back 20 results per page.
+
+```php
+    $inputResult = $clarifai->getInputRepository()->setPage(2)->setPerPage(20)->get();
 ```
 
 # Roadmap
