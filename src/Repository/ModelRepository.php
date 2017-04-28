@@ -104,16 +104,6 @@ class ModelRepository extends BaseRepository
     const CELEBRITY = 'e466caa0619f444ab97497640cefc4dc';
 
     /**
-     * Action type for Model Concepts Update
-     */
-    const CONCEPTS_MERGE_ACTION = 'merge';
-
-    /**
-     * Action type for Model Concepts Update
-     */
-    const CONCEPTS_REMOVE_ACTION = 'remove';
-
-    /**
      * Constructor
      *
      * @param RequestHandler $request

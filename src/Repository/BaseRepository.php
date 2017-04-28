@@ -40,6 +40,21 @@ abstract class BaseRepository
     private $perPage;
 
     /**
+     * Action type for Model Concepts Update
+     */
+    const CONCEPTS_MERGE_ACTION = 'merge';
+
+    /**
+     * Action type for Model Concepts Update
+     */
+    const CONCEPTS_REMOVE_ACTION = 'remove';
+
+    /**
+     * Action type for Model Concepts Update
+     */
+    const CONCEPTS_OVERWRITE_ACTION = 'overwrite';
+
+    /**
      * BaseRepository constructor.
      *
      * @param RequestHandler $request
