@@ -461,6 +461,19 @@ class ModelRepository extends BaseRepository
         return $this->updateModelConcepts($modelsArray, self::CONCEPTS_REMOVE_ACTION);
     }
 
+
+    /**
+     * Overwrites Concepts of Model
+     *
+     * @param  array $modelsArray
+     *
+     * @return array
+     */
+    public function overwriteModelConcepts(array $modelsArray)
+    {
+        return $this->updateModelConcepts($modelsArray, self::CONCEPTS_OVERWRITE_ACTION);
+    }
+
     /**
      * Parses Request Result and gets Models
      *

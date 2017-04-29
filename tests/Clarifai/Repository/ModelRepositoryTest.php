@@ -180,7 +180,7 @@ class ModelRepositoryTest extends \PHPUnit_Framework_TestCase
                             ],
                         ],
                     ],
-                    'action' => 'merge',
+                    'action' => ModelRepository::CONCEPTS_MERGE_ACTION,
                 ]
             )
             ->andReturn(
@@ -219,7 +219,7 @@ class ModelRepositoryTest extends \PHPUnit_Framework_TestCase
                             ],
                         ],
                     ],
-                    'action' => 'remove',
+                    'action' => ModelRepository::CONCEPTS_REMOVE_ACTION,
                 ]
             )
             ->andReturn(
@@ -229,6 +229,45 @@ class ModelRepositoryTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(
             [$model],
             $this->modelRepository->deleteModelConcepts([$model->getId() => [$concept1, $concept2]])
+        );
+    }
+
+    public function testOverwriteModelConcepts()
+    {
+        $model = $this->getModelEntity();
+        $model->setRawData($model->generateRawData());
+        $concept1 = $this->getFullConceptEntity('id1');
+        $concept2 = $this->getFullConceptEntity('id2');
+
+        $this->request->shouldReceive('request')
+            ->once()
+            ->with(
+                'PATCH',
+                'models',
+                [
+                    'models' => [
+                        [
+                            'id' => $model->getId(),
+                            'output_info' => [
+                                'data' => [
+                                    'concepts' => [
+                                        ['id' => $concept1->getId()],
+                                        ['id' => $concept2->getId()],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'action' => ModelRepository::CONCEPTS_OVERWRITE_ACTION,
+                ]
+            )
+            ->andReturn(
+                ['status' => $this->getStatusResult(), 'models' => [$model->generateRawData()]]
+            );
+
+        $this->assertEquals(
+            [$model],
+            $this->modelRepository->overwriteModelConcepts([$model->getId() => [$concept1, $concept2]])
         );
     }
 
