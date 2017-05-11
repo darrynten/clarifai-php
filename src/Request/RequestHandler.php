@@ -117,7 +117,9 @@ class RequestHandler
             if ($method === 'GET') {
                 // Send as get params
                 $options['query'] = $parameters;
-            } else {
+            }
+
+            if ($method === 'POST') {
                 // Otherwise send JSON in the body
                 $options['json'] = (object)$parameters;
             }

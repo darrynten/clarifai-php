@@ -148,13 +148,13 @@ abstract class BaseRepository
     {
         $input_array = [];
 
-        if (isset($inputResult['inputs'])) {
-            foreach ($inputResult['inputs'] as $rawInput) {
-                $input = new Input($rawInput);
-                $input_array[] = $input;
-            }
-        } else {
+        if (!isset($inputResult['inputs'])) {
             throw new \Exception('Inputs Not Found');
+        }
+
+        foreach ($inputResult['inputs'] as $rawInput) {
+            $input = new Input($rawInput);
+            $input_array[] = $input;
         }
 
         return $input_array;
