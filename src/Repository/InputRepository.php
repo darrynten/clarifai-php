@@ -23,16 +23,6 @@ use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 class InputRepository extends BaseRepository
 {
     /**
-     * Action type for Input Concepts Update
-     */
-    const CONCEPTS_MERGE_ACTION = 'merge';
-
-    /**
-     * Action type for Input Concepts Update
-     */
-    const CONCEPTS_REMOVE_ACTION = 'remove';
-
-    /**
      * InputRepository constructor.
      *
      * @param RequestHandler $request
@@ -374,27 +364,14 @@ class InputRepository extends BaseRepository
     }
 
     /**
-     * Parses Request Result and gets Inputs
+     * Overwrites Concepts of Inputs
      *
-     * @param $inputResult
+     * @param  array $conceptsArray
      *
      * @return array
-     *
-     * @throws \Exception
      */
-    public function getInputsFromResult($inputResult)
+    public function overwriteInputConcepts(array $conceptsArray)
     {
-        $input_array = [];
-
-        if (isset($inputResult['inputs'])) {
-            foreach ($inputResult['inputs'] as $rawInput) {
-                $input = new Input($rawInput);
-                $input_array[] = $input;
-            }
-        } else {
-            throw new \Exception('Inputs Not Found');
-        }
-
-        return $input_array;
+        return $this->updateInputConcepts($conceptsArray, self::CONCEPTS_OVERWRITE_ACTION);
     }
 }

@@ -225,6 +225,22 @@ class SearchInputRepositoryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @expectedException \Exception
+     */
+    public function testGetInputsFromSearchResultHitsException()
+    {
+        $this->searchInputRepository->getInputsFromSearchResult([]);
+    }
+
+    /**
+     * @expectedException \Exception
+     */
+    public function testGetInputsFromSearchResultInputsException()
+    {
+        $this->searchInputRepository->getInputsFromSearchResult(['hits' => [[], []]]);
+    }
+
+    /**
      * Generates Input Search Result
      *
      * @param Input[] $inputs

@@ -474,6 +474,59 @@ class InputRepositoryTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public function testOverwriteInputConcepts()
+    {
+        $input1 = $this->getFullInputEntity();
+        $input1->setConcepts([]);
+
+        $this->assertEquals(
+            [],
+            $input1->getConcepts()
+        );
+
+        $input2 = $this->getFullInputEntity()->setId('id2')->setImage('image2');
+
+        $concept1 = $this->getFullConceptEntity('id1', true);
+        $concept2 = $this->getFullConceptEntity('id2', false);
+        $concept3 = $this->getFullConceptEntity('id3', true);
+
+        $input1->setConcepts([$concept1, $concept3]);
+        $input2->setConcepts([$concept2, $concept3]);
+
+        $this->request->shouldReceive('request')
+            ->once()
+            ->with(
+                'PATCH',
+                'inputs',
+                $this->getUpdateConceptRequest(
+                    [
+                        $input1->getId() => [$concept2],
+                        $input2->getId() => [$concept1],
+                    ],
+                    InputRepository::CONCEPTS_OVERWRITE_ACTION
+                )
+            )
+            ->andReturn(
+                [
+                    'status' => $this->getStatusResult(),
+                    'inputs' => [
+                        $input1->setConcepts([$concept2])->generateRawData(),
+                        $input2->setConcepts([$concept1])->generateRawData(),
+                    ],
+                ]
+            );
+
+        $this->assertEquals(
+            [$input1, $input2],
+            $this->inputRepository->overwriteInputConcepts(
+                [
+                    $input1->getId() => [$concept2],
+                    $input2->getId() => [$concept1],
+                ]
+            )
+        );
+    }
+
     /**
      * @expectedException \Exception
      */
