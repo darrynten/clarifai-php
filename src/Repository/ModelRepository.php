@@ -364,15 +364,15 @@ class ModelRepository extends BaseRepository
             $this->getRequestUrl(sprintf('models/%s/versions', $id))
         );
 
+        if (!isset($modelResult['model_versions'])) {
+            throw new \Exception('Model Versions Not Found');
+        }
+
         $modelVersions = [];
 
-        if (isset($modelResult['model_versions'])) {
-            foreach ($modelResult['model_versions'] as $version) {
-                $modelVersion = new ModelVersion($version);
-                $modelVersions[] = $modelVersion;
-            }
-        } else {
-            throw new \Exception('Model Versions Not Found');
+        foreach ($modelResult['model_versions'] as $version) {
+            $modelVersion = new ModelVersion($version);
+            $modelVersions[] = $modelVersion;
         }
 
         return $modelVersions;
