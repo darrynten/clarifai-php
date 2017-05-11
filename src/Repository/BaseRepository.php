@@ -11,6 +11,7 @@
 
 namespace DarrynTen\Clarifai\Repository;
 
+use DarrynTen\Clarifai\Entity\Input;
 use DarrynTen\Clarifai\Request\RequestHandler;
 
 /**
@@ -132,5 +133,30 @@ abstract class BaseRepository
         }
 
         return $url;
+    }
+
+    /**
+     * Parses Request Result and gets Inputs
+     *
+     * @param $inputResult
+     *
+     * @return array
+     *
+     * @throws \Exception
+     */
+    public function getInputsFromResult($inputResult)
+    {
+        $input_array = [];
+
+        if (isset($inputResult['inputs'])) {
+            foreach ($inputResult['inputs'] as $rawInput) {
+                $input = new Input($rawInput);
+                $input_array[] = $input;
+            }
+        } else {
+            throw new \Exception('Inputs Not Found');
+        }
+
+        return $input_array;
     }
 }

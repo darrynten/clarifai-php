@@ -660,4 +660,20 @@ class ModelRepositoryTest extends \PHPUnit_Framework_TestCase
             $this->modelRepository->train($model->getId())
         );
     }
+
+    /**
+     * @expectedException \Exception
+     */
+    public function testGetModelsFromResultException()
+    {
+        $this->modelRepository->getModelsFromResult([]);
+    }
+
+    /**
+     * @expectedException \Exception
+     */
+    public function testGetModelFromResultException()
+    {
+        $this->modelRepository->getModelFromResult([]);
+    }
 }
