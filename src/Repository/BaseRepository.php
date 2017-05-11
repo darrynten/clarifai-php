@@ -11,6 +11,7 @@
 
 namespace DarrynTen\Clarifai\Repository;
 
+use DarrynTen\Clarifai\Entity\Input;
 use DarrynTen\Clarifai\Request\RequestHandler;
 
 /**
@@ -38,6 +39,21 @@ abstract class BaseRepository
      * @var string $perPage
      */
     private $perPage;
+
+    /**
+     * Action type for Model Concepts Update
+     */
+    const CONCEPTS_MERGE_ACTION = 'merge';
+
+    /**
+     * Action type for Model Concepts Update
+     */
+    const CONCEPTS_REMOVE_ACTION = 'remove';
+
+    /**
+     * Action type for Model Concepts Update
+     */
+    const CONCEPTS_OVERWRITE_ACTION = 'overwrite';
 
     /**
      * BaseRepository constructor.
@@ -117,5 +133,30 @@ abstract class BaseRepository
         }
 
         return $url;
+    }
+
+    /**
+     * Parses Request Result and gets Inputs
+     *
+     * @param $inputResult
+     *
+     * @return array
+     *
+     * @throws \Exception
+     */
+    public function getInputsFromResult($inputResult)
+    {
+        $input_array = [];
+
+        if (!isset($inputResult['inputs'])) {
+            throw new \Exception('Inputs Not Found');
+        }
+
+        foreach ($inputResult['inputs'] as $rawInput) {
+            $input = new Input($rawInput);
+            $input_array[] = $input;
+        }
+
+        return $input_array;
     }
 }

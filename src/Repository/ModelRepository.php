@@ -11,7 +11,6 @@
 
 namespace DarrynTen\Clarifai\Repository;
 
-use DarrynTen\Clarifai\Entity\Input;
 use DarrynTen\Clarifai\Entity\Model;
 use DarrynTen\Clarifai\Entity\ModelVersion;
 use DarrynTen\Clarifai\Request\RequestHandler;
@@ -102,16 +101,6 @@ class ModelRepository extends BaseRepository
      * recognized celebrity.
      */
     const CELEBRITY = 'e466caa0619f444ab97497640cefc4dc';
-
-    /**
-     * Action type for Model Concepts Update
-     */
-    const CONCEPTS_MERGE_ACTION = 'merge';
-
-    /**
-     * Action type for Model Concepts Update
-     */
-    const CONCEPTS_REMOVE_ACTION = 'remove';
 
     /**
      * Constructor
@@ -375,15 +364,15 @@ class ModelRepository extends BaseRepository
             $this->getRequestUrl(sprintf('models/%s/versions', $id))
         );
 
+        if (!isset($modelResult['model_versions'])) {
+            throw new \Exception('Model Versions Not Found');
+        }
+
         $modelVersions = [];
 
-        if (isset($modelResult['model_versions'])) {
-            foreach ($modelResult['model_versions'] as $version) {
-                $modelVersion = new ModelVersion($version);
-                $modelVersions[] = $modelVersion;
-            }
-        } else {
-            throw new \Exception('Model Versions Not Found');
+        foreach ($modelResult['model_versions'] as $version) {
+            $modelVersion = new ModelVersion($version);
+            $modelVersions[] = $modelVersion;
         }
 
         return $modelVersions;
@@ -471,6 +460,19 @@ class ModelRepository extends BaseRepository
         return $this->updateModelConcepts($modelsArray, self::CONCEPTS_REMOVE_ACTION);
     }
 
+
+    /**
+     * Overwrites Concepts of Model
+     *
+     * @param  array $modelsArray
+     *
+     * @return array
+     */
+    public function overwriteModelConcepts(array $modelsArray)
+    {
+        return $this->updateModelConcepts($modelsArray, self::CONCEPTS_OVERWRITE_ACTION);
+    }
+
     /**
      * Parses Request Result and gets Models
      *
@@ -484,7 +486,7 @@ class ModelRepository extends BaseRepository
     {
         $modelsArray = [];
 
-        if ($modelResult['models']) {
+        if (isset($modelResult['models'])) {
             foreach ($modelResult['models'] as $model) {
                 $model = new Model($model);
                 $modelsArray[] = $model;
@@ -507,7 +509,7 @@ class ModelRepository extends BaseRepository
      */
     public function getModelFromResult($modelResult)
     {
-        if ($modelResult['model']) {
+        if (isset($modelResult['model'])) {
             $model = new Model($modelResult['model']);
         } else {
             throw new \Exception('Model Not Found');
@@ -621,30 +623,5 @@ class ModelRepository extends BaseRepository
         );
 
         return $this->getInputsFromResult($inputResult);
-    }
-
-    /**
-     * Parses Request Result and gets Inputs
-     *
-     * @param $inputResult
-     *
-     * @return array
-     *
-     * @throws \Exception
-     */
-    public function getInputsFromResult($inputResult)
-    {
-        $input_array = [];
-
-        if (isset($inputResult['inputs'])) {
-            foreach ($inputResult['inputs'] as $rawInput) {
-                $input = new Input($rawInput);
-                $input_array[] = $input;
-            }
-        } else {
-            throw new \Exception('Inputs Not Found');
-        }
-
-        return $input_array;
     }
 }

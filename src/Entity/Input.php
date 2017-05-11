@@ -73,7 +73,6 @@ class Input
      */
     private $metaData;
 
-
     /**
      * The status code
      *
@@ -105,31 +104,42 @@ class Input
     public function __construct(array $rawData = null)
     {
         if ($rawData) {
+            if (!isset($rawData['data']['image']['url']) && !isset($rawData['data']['image']['base64'])) {
+                throw new \Exception('Couldn\'t identify image method');
+            }
+
+            if (isset($rawData['data']['image']['url'])) {
+                $this->setImage($rawData['data']['image']['url'])->isUrl();
+            }
+
+            if (isset($rawData['data']['image']['base64'])) {
+                $this->setImage($rawData['data']['image']['base64'])->isEncoded();
+            }
+
             if (isset($rawData['id'])) {
                 $this->setId($rawData['id']);
             }
+
             if (isset($rawData['created_at'])) {
                 $this->setCreatedAt($rawData['created_at']);
             }
+
             if (isset($rawData['status']) && isset($rawData['status']['code'])) {
                 $this->setStatusCode($rawData['status']['code']);
             }
+
             if (isset($rawData['status']) && isset($rawData['status']['description'])) {
                 $this->setStatusDescription($rawData['status']['description']);
             }
-            if (isset($rawData['data']['image']['url'])) {
-                $this->setImage($rawData['data']['image']['url'])->isUrl();
-            } elseif (isset($rawData['data']['image']['base64'])) {
-                $this->setImage($rawData['data']['image']['base64'])->isEncoded();
-            } else {
-                throw new \Exception('Couldn\'t indetify image method');
-            }
+
             if (isset($rawData['data']['image']['crop'])) {
                 $this->setCrop($rawData['data']['image']['crop']);
             }
+
             if (isset($rawData['data']['concepts'])) {
                 $this->setRawConcepts($rawData['data']['concepts']);
             }
+
             if (isset($rawData['data']['metadata'])) {
                 $this->setMetaData($rawData['data']['metadata']);
             }
