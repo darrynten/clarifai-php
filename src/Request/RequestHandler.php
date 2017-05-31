@@ -118,8 +118,7 @@ class RequestHandler
                 // Send as get params
                 $options['query'] = $parameters;
             }
-
-            if ($method === 'POST') {
+            if ($method === 'POST' || $method === 'PATCH' || $method === 'DELETE') {
                 // Otherwise send JSON in the body
                 $options['json'] = (object)$parameters;
             }
