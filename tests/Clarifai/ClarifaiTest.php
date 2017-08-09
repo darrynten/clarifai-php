@@ -18,7 +18,7 @@ class ClarifaiTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->clarifai = new Clarifai('clientId', 'clientSecret');
+        $this->clarifai = new Clarifai('apiKey');
     }
 
     /**
