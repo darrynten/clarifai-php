@@ -22,6 +22,11 @@ use DarrynTen\Clarifai\Request\RequestHandler;
 class Clarifai
 {
     /**
+     * @var string $VERSION The library version
+     */
+    const VERSION = '0.9.3';
+
+    /**
      * @var RequestHandler $clientId
      */
     private $request;

@@ -188,6 +188,7 @@ class RequestHandlerTest extends \PHPUnit_Framework_TestCase
                 [
                     'headers' => [
                         'Authorization' => $tokenType . ' ' . $token,
+                        'User-Agent' => 'Clarifai PHP (https://github.com/darrynten/clarifai-php);v0.9.3;' . phpversion(),
                     ],
                 ],
                 []
