@@ -139,5 +139,4 @@ class RequestHandlerTest extends \PHPUnit_Framework_TestCase
         $clarifai = new RequestHandler('');
         $clarifai->handleRequest('GET', 'http://localhost:8082/foo', []);
     }
-
 }
