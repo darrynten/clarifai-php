@@ -11,6 +11,7 @@
 
 namespace DarrynTen\Clarifai\Request;
 
+use DarrynTen\Clarifai;
 use DarrynTen\Clarifai\Exception\ApiException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
@@ -132,6 +133,11 @@ class RequestHandler
         $options = [
             'headers' => [
                 'Authorization' => "Key " . $this->getApiKey(),
+                'User-Agent' => sprintf(
+                  'Clarifai PHP (https://github.com/darrynten/clarifai-php);v%s;%s',
+                  \DarrynTen\Clarifai\Clarifai::VERSION,
+                  phpversion()
+                ),
             ],
         ];
 
