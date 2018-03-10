@@ -108,16 +108,6 @@ class RequestHandler
     }
 
     /**
-     * Get API Key for Clarifai API Requests
-     *
-     * @return string
-     */
-    private function getApiKey()
-    {
-        return $this->apiKey;
-    }
-
-    /**
      * Makes a request to Clarifai
      *
      * @param string $method The API method
@@ -132,7 +122,7 @@ class RequestHandler
     {
         $options = [
             'headers' => [
-                'Authorization' => $this->getAuthToken(),
+                'Authorization' => sprintf('Key %s', $this->apiKey),
                 'User-Agent' => sprintf(
                   'Clarifai PHP (https://github.com/darrynten/clarifai-php);v%s;%s',
                   \DarrynTen\Clarifai\Clarifai::VERSION,
